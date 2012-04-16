@@ -1,0 +1,35 @@
+#
+# Description
+# -----------
+# The events table stores information about events that are related
+# to the business, or the business will be attending.
+# This module was developed to support artists shows and events.
+#
+# Fields
+# ------
+# id:				The ID assigned to the event.
+# uuid:				The Universal Unique ID.
+# business_id:		The business the event is attached to.
+# name:				The name for the event.
+# url:				The URL for more information on the event.
+# description:		The longer text description of the event (optional).
+# start_date:		The date of the start of the event.
+# end_date:			The date of the end of the event.
+# date_added:		The UTC date and time the record was added.
+# last_updated:		The UTC date and time the record was last updated.
+#
+create table ciniki_events (
+	id int not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	name varchar(150) not null,
+	url varchar(250) not null,
+	description varchar(6000) not null,
+	start_date date not null,
+	end_date date not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	unique index (uuid),
+	index (business_id, name, start_date)
+) ENGINE='InnoDB', COMMENT='v1.01';
