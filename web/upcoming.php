@@ -30,7 +30,7 @@ function ciniki_events_webUpcoming($ciniki, $business_id) {
 		. "FROM ciniki_events "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND (end_date >= DATE(NOW()) OR start_date >= DATE(NOW())) "
-		. "ORDER BY start_date ASC "
+		. "ORDER BY ciniki_events.start_date ASC "
 		. "";
 
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
