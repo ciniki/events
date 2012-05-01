@@ -52,7 +52,7 @@ function ciniki_events_list($ciniki) {
 		. "DATE_FORMAT(end_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS end_date "
 		. "FROM ciniki_events "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "ORDER BY start_date ASC "
+		. "ORDER BY ciniki_events.start_date ASC "
 		. "";
 
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
