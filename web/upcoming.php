@@ -29,7 +29,7 @@ function ciniki_events_webUpcoming($ciniki, $business_id) {
 		. "DATE_FORMAT(end_date, '%b %c, %Y') AS end_date "
 		. "FROM ciniki_events "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-		. "AND (end_date >= DATE(NOW()) OR start_date >= DATE(NOW())) "
+		. "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
 		. "ORDER BY ciniki_events.start_date ASC "
 		. "";
 
