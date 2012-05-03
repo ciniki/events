@@ -16,7 +16,7 @@
 // 	<event id="" name="" />
 // </events>
 //
-function ciniki_events_webUpcoming($ciniki, $business_id) {
+function ciniki_events_webUpcoming($ciniki, $business_id, $limit) {
 
 	$strsql = "SELECT id, name, url, description, "
 		. "DATE_FORMAT(start_date, '%M') AS start_month, "
@@ -32,8 +32,13 @@ function ciniki_events_webUpcoming($ciniki, $business_id) {
 		. "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
 		. "ORDER BY ciniki_events.start_date ASC "
 		. "";
+	if( $limit != '' && $limit > 0 && is_int($limit) ) {
+		$strsql .= "LIMIT $limit ";
+	}
 
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	return ciniki_core_dbRspQuery($ciniki, $strsql, 'events', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'events', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
+	
+	return $rc;
 }
 ?>
