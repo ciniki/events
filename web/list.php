@@ -16,7 +16,7 @@
 // 	<event id="" name="" />
 // </events>
 //
-function ciniki_events_webUpcoming($ciniki, $business_id, $limit) {
+function ciniki_events_web_list($ciniki, $business_id, $type, $limit) {
 
 	$strsql = "SELECT id, name, url, description, "
 		. "DATE_FORMAT(start_date, '%M') AS start_month, "
@@ -29,9 +29,18 @@ function ciniki_events_webUpcoming($ciniki, $business_id, $limit) {
 		. "DATE_FORMAT(end_date, '%b %c, %Y') AS end_date "
 		. "FROM ciniki_events "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-		. "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
-		. "ORDER BY ciniki_events.start_date ASC "
 		. "";
+	if( $type == 'past' ) {
+		$strsql .= "AND ((ciniki_events.end_date > ciniki_events.start_date AND ciniki_events.end_date < DATE(NOW())) "
+				. "OR (ciniki_events.end_date < ciniki_events.start_date AND ciniki_events.start_date <= DATE(NOW())) "
+				. ") "
+			. "ORDER BY ciniki_events.start_date DESC "
+			. "";
+	} else {
+		$strsql .= "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
+			. "ORDER BY ciniki_events.start_date ASC "
+			. "";
+	}
 	if( $limit != '' && $limit > 0 && is_int($limit) ) {
 		$strsql .= "LIMIT $limit ";
 	}
