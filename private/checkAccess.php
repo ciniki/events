@@ -25,7 +25,7 @@ function ciniki_events_checkAccess($ciniki, $business_id, $method) {
 	}
 
 	if( !isset($rc['ruleset']) ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'696', 'msg'=>'No permissions granted'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'604', 'msg'=>'No permissions granted'));
 	}
 
 	//
