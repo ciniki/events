@@ -50,6 +50,6 @@ function ciniki_events_getHistory($ciniki) {
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistory.php');
-	return ciniki_core_dbGetModuleHistory($ciniki, 'events', 'ciniki_event_history', $args['business_id'], 'ciniki_events', $args['event_id'], $args['field'], 'events');
+	return ciniki_core_dbGetModuleHistory($ciniki, 'events', 'ciniki_event_history', $args['business_id'], 'ciniki_events', $args['event_id'], $args['field']);
 }
 ?>
