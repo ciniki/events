@@ -41,15 +41,15 @@ function ciniki_events_getHistory($ciniki) {
 	}
 
 	if( $args['field'] == 'start_date' ) {
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLogReformat.php');
-		return ciniki_core_dbGetChangeLogReformat($ciniki, $args['business_id'], 'ciniki_events', $args['event_id'], $args['field'], 'events','date');
+		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistoryReformat.php');
+		return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'events', 'ciniki_event_history', $args['business_id'], 'ciniki_events', $args['event_id'], $args['field'], 'events','date');
 	}
 	if( $args['field'] == 'end_date' ) {
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLogReformat.php');
-		return ciniki_core_dbGetChangeLogReformat($ciniki, $args['business_id'], 'ciniki_events', $args['event_id'], $args['field'], 'events','date');
+		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistoryReformat.php');
+		return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'events', 'ciniki_event_history', $args['business_id'], 'ciniki_events', $args['event_id'], $args['field'], 'events','date');
 	}
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLog.php');
-	return ciniki_core_dbGetChangeLog($ciniki, $args['business_id'], 'ciniki_events', $args['event_id'], $args['field'], 'events');
+	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistory.php');
+	return ciniki_core_dbGetModuleHistory($ciniki, 'events', 'ciniki_event_history', $args['business_id'], 'ciniki_events', $args['event_id'], $args['field'], 'events');
 }
 ?>
