@@ -97,6 +97,6 @@ function ciniki_events_update($ciniki) {
 		return $rc;
 	}
 
-	return array('stat'=>'ok', 'id'=>$event_id);
+	return array('stat'=>'ok');
 }
 ?>
