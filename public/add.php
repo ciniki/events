@@ -2,22 +2,22 @@
 //
 // Description
 // -----------
-// This method will add a new website to a business.  
-//
-// Info
-// ----
-// Status: beta
+// This method will add a new event for the business.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// name:			(optional) The name of the website, typically the domain name.
-// hostname:		The hostname for the website, if different from the domain name.
+// business_id:		The ID of the business to add the event to.
+// name:			The name of the event.
+// url:				(optional) The URL for the event website.
+// description:		(optional) The description for the event.
+// start_date:		(optional) The date the event starts.  
+// end_date:		(optional) The date the event ends, if it's longer than one day.
 //
 // Returns
 // -------
-// <rsp stat="ok">
+// <rsp stat="ok" id="42">
 //
 function ciniki_events_add($ciniki) {
 	//

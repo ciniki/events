@@ -2,13 +2,8 @@
 //
 // Description
 // -----------
-// This function will return the list of events for a business.  It is restricted
+// This method will return the list of events for a business.  It is restricted
 // to business owners and sysadmins.
-//
-//
-// Info
-// ----
-// Status: beta
 //
 // Arguments
 // ---------
@@ -18,9 +13,10 @@
 //
 // Returns
 // -------
-// <events>
-// 	<event id="" name="" />
-// </events>
+// <upcoming>
+//		<event id="41" name="Event name" url="http://www.ciniki.org/" description="Event description" start_date="Jul 18, 2012" end_date="Jul 20, 2012" />
+// </upcoming>
+// <past />
 //
 function ciniki_events_list($ciniki) {
 	//
@@ -89,6 +85,5 @@ function ciniki_events_list($ciniki) {
 	$rsp['past'] = $rc['events'];
 
 	return $rsp;
-
 }
 ?>

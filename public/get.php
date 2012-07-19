@@ -2,14 +2,20 @@
 //
 // Description
 // ===========
-// This function will return all the details for a events.
+// This method will return all the information about an event.
 //
 // Arguments
 // ---------
-// user_id: 		The user making the request
+// api_key:
+// auth_token:
+// business_id:		The ID of the business the event is attached to.
+// event_id:		The ID of the event to get the details for.
 // 
 // Returns
 // -------
+// <event id="419" name="Event Name" url="http://myevent.com" 
+//		description="Event description" start_date="July 18, 2012" end_date="July 19, 2012"
+//		date_added="2012-07-19 03:08:05" last_updated="2012-07-19 03:08:05" />
 //
 function ciniki_events_get($ciniki) {
     //  

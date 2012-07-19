@@ -2,15 +2,22 @@
 //
 // Description
 // ===========
-// This function will update an event in the database.
+// This method will update an event in the database.
 //
 // Arguments
 // ---------
-// user_id: 		The user making the request
+// api_key:
+// auth_token:
+// business_id:		The ID of the business the event is attached to.
+// name:			(optional) The new name of the event.
+// url:				(optional) The new URL for the event website.
+// description:		(optional) The new description for the event.
+// start_date:		(optional) The new date the event starts.  
+// end_date:		(optional) The new date the event ends, if it's longer than one day.
 // 
 // Returns
 // -------
-// <rsp stat='ok' id='34' />
+// <rsp stat='ok' />
 //
 function ciniki_events_update($ciniki) {
     //  

@@ -2,19 +2,25 @@
 //
 // Description
 // -----------
-// This function will get the history of a field from the ciniki_core_change_logs table.
-// This allows the user to view what has happened to a data element, and if they
-// choose, revert to a previous version.
+// This method will return the list of actions that were applied to an element of an event. 
+// This method is typically used by the UI to display a list of changes that have occured 
+// on an element through time. This information can be used to revert elements to a previous value.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
 // business_id:			The ID of the business to get the details for.
-// key:					The detail key to get the history for.
+// event_id:			The ID of the event to get the history for.
+// field:				The field to get the history for. This can be any of the elements 
+//						returned by the ciniki.events.get method.
 //
 // Returns
 // -------
+// <history>
+// <action user_id="2" date="May 12, 2012 10:54 PM" value="Event Name" age="2 months" user_display_name="Andrew" />
+// ...
+// </history>
 //
 function ciniki_events_getHistory($ciniki) {
 	//

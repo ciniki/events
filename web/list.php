@@ -2,18 +2,22 @@
 //
 // Description
 // -----------
-// This function will return a list of events, with the dates formatted for english suffix
+// This function will return a list of events, with the dates formatted for english suffix.
 //
 // Arguments
 // ---------
-// api_key:
-// auth_token:
+// ciniki:
 // business_id:		The ID of the business to get events for.
+// type:			The type of events to get.  Leave blank for upcoming, and 'past' to get past events.
+// limit:			Limit the number of results, 0 for unlimited.
 //
 // Returns
 // -------
 // <events>
-// 	<event id="" name="" />
+//		<event id="41" name="Event name" url="http://www.ciniki.org/" description="Event description" 
+//			start_month="July" start_day="18th" start_year="2012"
+//			end_month="July" end_day="20th" end_year="2012"
+//			start_date="Jul 18, 2012" end_date="Jul 20, 2012" />
 // </events>
 //
 function ciniki_events_web_list($ciniki, $business_id, $type, $limit) {
