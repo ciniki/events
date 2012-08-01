@@ -55,7 +55,7 @@ function ciniki_events_get($ciniki) {
 		. "";
 	
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'events', 'event');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'event');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

@@ -50,7 +50,7 @@ function ciniki_events_web_list($ciniki, $business_id, $type, $limit) {
 	}
 
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'events', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.events', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
 	
 	return $rc;
 }

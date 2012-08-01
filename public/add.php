@@ -54,7 +54,7 @@ function ciniki_events_add($ciniki) {
 	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionCommit.php');
 	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbInsert.php');
 	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddModuleHistory.php');
-	$rc = ciniki_core_dbTransactionStart($ciniki, 'events');
+	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.events');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;
 	}   
@@ -74,13 +74,13 @@ function ciniki_events_add($ciniki) {
 		. "'" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['end_date']) . "', "
 		. "UTC_TIMESTAMP(), UTC_TIMESTAMP())";
-	$rc = ciniki_core_dbInsert($ciniki, $strsql, 'events');
+	$rc = ciniki_core_dbInsert($ciniki, $strsql, 'ciniki.events');
 	if( $rc['stat'] != 'ok' ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'events');
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
 		return $rc;
 	}
 	if( !isset($rc['insert_id']) || $rc['insert_id'] < 1 ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'events');
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'615', 'msg'=>'Unable to add event'));
 	}
 	$event_id = $rc['insert_id'];
@@ -97,7 +97,7 @@ function ciniki_events_add($ciniki) {
 		);
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) && $args[$field] != '' ) {
-			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'events', 'ciniki_event_history', $args['business_id'], 
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.events', 'ciniki_event_history', $args['business_id'], 
 				1, 'ciniki_events', $event_id, $field, $args[$field]);
 		}
 	}
@@ -105,10 +105,17 @@ function ciniki_events_add($ciniki) {
 	//
 	// Commit the transaction
 	//
-	$rc = ciniki_core_dbTransactionCommit($ciniki, 'events');
+	$rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.events');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
+
+	//
+	// Update the last_change date in the business modules
+	// Ignore the result, as we don't want to stop user updates if this fails.
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
+	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
 
 	return array('stat'=>'ok', 'id'=>$event_id);
 }

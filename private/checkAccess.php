@@ -45,7 +45,7 @@ function ciniki_events_checkAccess($ciniki, $business_id, $method) {
 		. "AND (permission_group = 'owners' OR permission_group = 'employees') "
 		. "";
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'businesses', 'user');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.businesses', 'user');
 	if( $rc['stat'] != 'ok' ) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'611', 'msg'=>'Access denied.'));
 	}

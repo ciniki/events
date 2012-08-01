@@ -56,7 +56,7 @@ function ciniki_events_list($ciniki) {
 		. "";
 
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'events', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.events', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
@@ -78,7 +78,7 @@ function ciniki_events_list($ciniki) {
 		. "";
 
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'events', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.events', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
