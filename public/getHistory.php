@@ -26,11 +26,11 @@ function ciniki_events_getHistory($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'event_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No item specified'), 
-		'field'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No field specified'), 
+		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event'), 
+		'field'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'field'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -40,22 +40,22 @@ function ciniki_events_getHistory($ciniki) {
 	//
 	// Check access to business_id as owner, or sys admin
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/events/private/checkAccess.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
 	$rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.getHistory');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
 
 	if( $args['field'] == 'start_date' ) {
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistoryReformat.php');
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistoryReformat');
 		return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'ciniki.events', 'ciniki_event_history', $args['business_id'], 'ciniki_events', $args['event_id'], $args['field'],'date');
 	}
 	if( $args['field'] == 'end_date' ) {
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistoryReformat.php');
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistoryReformat');
 		return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'ciniki.events', 'ciniki_event_history', $args['business_id'], 'ciniki_events', $args['event_id'], $args['field'], 'date');
 	}
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistory.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
 	return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.events', 'ciniki_event_history', $args['business_id'], 'ciniki_events', $args['event_id'], $args['field']);
 }
 ?>

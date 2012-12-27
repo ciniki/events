@@ -21,10 +21,10 @@ function ciniki_events_get($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-        'event_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No events specified'), 
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -35,14 +35,14 @@ function ciniki_events_get($ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this business
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/events/private/checkAccess.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
     $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.get'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
-	require_once($ciniki['config']['core']['modules_dir'] . '/users/private/dateFormat.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
 
 	$strsql = "SELECT ciniki_events.id, name, url, description, "

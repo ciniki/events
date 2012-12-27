@@ -19,10 +19,10 @@ function ciniki_events_delete($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'event_id'=>array('required'=>'yes', 'default'=>'', 'blank'=>'yes', 'errmsg'=>'No event specified'), 
+		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'event_id'=>array('required'=>'yes', 'default'=>'', 'blank'=>'yes', 'name'=>'Event'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -32,7 +32,7 @@ function ciniki_events_delete($ciniki) {
 	//
 	// Check access to business_id as owner
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/events/private/checkAccess.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
 	$ac = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.delete');
 	if( $ac['stat'] != 'ok' ) {
 		return $ac;
@@ -41,11 +41,11 @@ function ciniki_events_delete($ciniki) {
 	//
 	// Start transaction
 	//
-	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionStart.php');
-	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionRollback.php');
-	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionCommit.php');
-	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbDelete.php');
-	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddModuleHistory.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDelete');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
 	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.events');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;

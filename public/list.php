@@ -22,9 +22,9 @@ function ciniki_events_list($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
+		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -34,13 +34,13 @@ function ciniki_events_list($ciniki) {
     //  
     // Check access to business_id as owner, or sys admin. 
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/events/private/checkAccess.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
     $ac = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.list');
     if( $ac['stat'] != 'ok' ) { 
         return $ac;
     }   
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/users/private/dateFormat.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
 	
 	//
@@ -55,7 +55,7 @@ function ciniki_events_list($ciniki) {
 		. "ORDER BY ciniki_events.start_date ASC "
 		. "";
 
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.events', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -77,7 +77,7 @@ function ciniki_events_list($ciniki) {
 		. "ORDER BY ciniki_events.start_date ASC "
 		. "";
 
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.events', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

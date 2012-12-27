@@ -49,7 +49,7 @@ function ciniki_events_web_list($ciniki, $business_id, $type, $limit) {
 		$strsql .= "LIMIT $limit ";
 	}
 
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.events', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
 	
 	return $rc;
