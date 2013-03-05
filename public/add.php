@@ -19,7 +19,7 @@
 // -------
 // <rsp stat="ok" id="42">
 //
-function ciniki_events_add($ciniki) {
+function ciniki_events_add(&$ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
@@ -61,13 +61,23 @@ function ciniki_events_add($ciniki) {
 	}   
 
 	//
+	// Get a new UUID
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
+	$rc = ciniki_core_dbUUID($ciniki, 'ciniki.events');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$args['uuid'] = $rc['uuid'];
+
+	//
 	// Add site to web_sites table
 	// FIXME: Add ability to set modules when site is added, right now default to most apps on
 	//
 	$strsql = "INSERT INTO ciniki_events (uuid, business_id, "
 		. "name, url, description, start_date, end_date, "
 		. "date_added, last_updated ) VALUES ( "
-		. "UUID(), "
+		. "'" . ciniki_core_dbQuote($ciniki, $args['uuid']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['name']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['url']) . "', "
@@ -90,6 +100,7 @@ function ciniki_events_add($ciniki) {
 	// Add all the fields to the change log
 	//
 	$changelog_fields = array(
+		'uuid',
 		'name',
 		'url',
 		'description',
@@ -117,6 +128,9 @@ function ciniki_events_add($ciniki) {
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
 	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
+
+	$ciniki['syncqueue'][] = array('push'=>'ciniki.events.event',
+		'args'=>array('id'=>$event_id));
 
 	return array('stat'=>'ok', 'id'=>$event_id);
 }

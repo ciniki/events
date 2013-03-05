@@ -31,5 +31,6 @@ create table ciniki_events (
 	last_updated datetime not null,
 	primary key (id),
 	unique index (uuid),
-	index (business_id, name, start_date)
-) ENGINE='InnoDB', COMMENT='v1.01';
+	index (business_id, name, start_date),
+	index business_uuid (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.02';

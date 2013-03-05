@@ -19,7 +19,7 @@
 // -------
 // <rsp stat='ok' />
 //
-function ciniki_events_update($ciniki) {
+function ciniki_events_update(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -110,6 +110,9 @@ function ciniki_events_update($ciniki) {
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
 	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
+
+	$ciniki['syncqueue'][] = array('push'=>'ciniki.events.event',
+		'args'=>array('id'=>$args['event_id']));
 
 	return array('stat'=>'ok');
 }
