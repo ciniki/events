@@ -17,9 +17,10 @@ function ciniki_events_sync_objects($ciniki, &$sync, $business_id, $args) {
 		'table'=>'ciniki_events',
 		'fields'=>array(
 			'name'=>array(),
-			'category'=>array(),
 			'url'=>array(),
 			'description'=>array(),
+			'start_date'=>array(),
+			'end_date'=>array(),
 			),
 		'history_table'=>'ciniki_event_history',
 		);
