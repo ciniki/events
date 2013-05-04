@@ -28,10 +28,13 @@ function ciniki_events_update(&$ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event'), 
 		'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'), 
+		'permalink'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Permalink'), 
 		'url'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'URL'), 
 		'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'), 
 		'start_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Start Date'), 
 		'end_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'End Date'), 
+		'primary_image_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Image'), 
+		'long_description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Long Description'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -48,6 +51,40 @@ function ciniki_events_update(&$ciniki) {
         return $rc;
     }   
 
+	//
+	// Get the existing image details
+	//
+	$strsql = "SELECT uuid FROM ciniki_events "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+		. "";
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'event');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( !isset($rc['event']) ) {
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1298', 'msg'=>'Event not found'));
+	}
+	$event = $rc['event'];
+
+	if( isset($args['name']) ) {
+		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
+		//
+		// Make sure the permalink is unique
+		//
+		$strsql = "SELECT id, name, permalink FROM ciniki_events "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
+			. "AND id <> '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+			. "";
+		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'event');
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( $rc['num_rows'] > 0 ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1299', 'msg'=>'You already have an event with this name, please choose another name'));
+		}
+	}
 	//  
 	// Turn off autocommit
 	//  
@@ -72,10 +109,13 @@ function ciniki_events_update(&$ciniki) {
 	//
 	$changelog_fields = array(
 		'name',
+		'permalink',
 		'url',
 		'description',
 		'start_date',
 		'end_date',
+		'primary_image_id',
+		'long_description',
 		);
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) ) {

@@ -1,0 +1,9 @@
+#
+# This file will add the uuid to ciniki_events
+# which is required for the sync to work.
+#
+ALTER TABLE ciniki_events ADD COLUMN primary_image_id int not null after end_date;
+ALTER TABLE ciniki_events ADD COLUMN long_description varchar(20000) not null after primary_image_id;
+ALTER TABLE ciniki_events ADD COLUMN permalink varchar(150) not null after name;
+UPDATE ciniki_events SET permalink = REPLACE(LCASE(name), ' ', '-');
+ALTER TABLE ciniki_events COMMENT='v1.03';

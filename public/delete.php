@@ -89,6 +89,55 @@ function ciniki_events_delete(&$ciniki) {
 		3, 'ciniki_events', $args['event_id'], '*', '');
 
 	//
+	// Remove the images
+	//
+	$strsql = "SELECT id, uuid, image_id FROM ciniki_event_images "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+		. "";
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'image');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
+		$images = $rc['rows'];
+		
+		foreach($images as $iid => $image) {
+			//
+			// Delete the reference to the image, and remove the image if no more references
+			//
+			$rc = ciniki_images_refClear($ciniki, $args['business_id'], array(
+				'object'=>'ciniki.events.event_image',
+				'object_id'=>$image['id']));
+			if( $rc['stat'] == 'fail' ) {
+				ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+				return $rc;
+			}
+
+			//
+			// Remove the image from the database
+			//
+			$strsql = "DELETE FROM ciniki_event_images "
+				. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. "AND id = '" . ciniki_core_dbQuote($ciniki, $image['id']) . "' ";
+			$rc = ciniki_core_dbDelete($ciniki, $strsql, 'ciniki.events');
+			if( $rc['stat'] != 'ok' ) { 
+				ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+				return $rc;
+			}
+
+			ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.events', 'ciniki_event_history', 
+				$args['business_id'], 3, 'ciniki_event_images', $image['id'], '*', '');
+
+			//
+			// Add to the sync queue so it will get pushed
+			//
+			$ciniki['syncqueue'][] = array('push'=>'ciniki.events.event_image', 
+				'args'=>array('delete_uuid'=>$image['uuid'], 'delete_id'=>$image['id']));
+		}
+	}
+
+	//
 	// Commit the transaction
 	//
 	$rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.events');

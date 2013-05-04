@@ -25,6 +25,7 @@ function ciniki_events_get($ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event'), 
+		'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -45,24 +46,79 @@ function ciniki_events_get($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
 
-	$strsql = "SELECT ciniki_events.id, name, url, description, "
-		. "DATE_FORMAT(start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
-		. "DATE_FORMAT(end_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS end_date, "
-		. "date_added, last_updated "
-		. "FROM ciniki_events "
-		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+	$strsql = "SELECT ciniki_events.id, "
+		. "ciniki_events.name, "
+		. "ciniki_events.permalink, "
+		. "ciniki_events.url, "
+		. "ciniki_events.description, "
+		. "DATE_FORMAT(ciniki_events.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
+		. "DATE_FORMAT(ciniki_events.end_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS end_date, "
+		. "ciniki_events.primary_image_id, "
+		. "ciniki_events.long_description ";
+	if( isset($args['images']) && $args['images'] == 'yes' ) {
+		$strsql .= ", "
+			. "ciniki_event_images.id AS img_id, "
+			. "ciniki_event_images.name AS image_name, "
+			. "ciniki_event_images.webflags AS image_webflags, "
+			. "ciniki_event_images.image_id, "
+			. "ciniki_event_images.description AS image_description, "
+			. "ciniki_event_images.url AS image_url "
+			. "";
+	}
+	$strsql .= "FROM ciniki_events ";
+	if( isset($args['images']) && $args['images'] == 'yes' ) {
+		$strsql .= "LEFT JOIN ciniki_event_images ON (ciniki_events.id = ciniki_event_images.event_id "
+			. "AND ciniki_event_images.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. ") ";
+	}
+	$strsql .= "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ciniki_events.id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
 		. "";
 	
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'event');
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-	if( !isset($rc['event']) ) {
-		return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'617', 'msg'=>'Unable to find event'));
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
+	if( isset($args['images']) && $args['images'] == 'yes' ) {
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
+			array('container'=>'events', 'fname'=>'id', 'name'=>'event',
+				'fields'=>array('id', 'name', 'permalink', 'url', 'primary_image_id', 
+					'start_date', 'end_date', 'description', 'long_description')),
+			array('container'=>'images', 'fname'=>'img_id', 'name'=>'image',
+				'fields'=>array('id'=>'img_id', 'name'=>'image_name', 'webflags'=>'image_webflags',
+					'image_id', 'description'=>'image_description', 'url'=>'image_url')),
+		));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( !isset($rc['events']) || !isset($rc['events'][0]) ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1301', 'msg'=>'Unable to find event'));
+		}
+		$event = $rc['events'][0]['event'];
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'private', 'loadCacheThumbnail');
+		if( isset($event['images']) ) {
+			foreach($event['images'] as $img_id => $img) {
+				if( isset($img['image']['image_id']) && $img['image']['image_id'] > 0 ) {
+					$rc = ciniki_images_loadCacheThumbnail($ciniki, $img['image']['image_id'], 75);
+					if( $rc['stat'] != 'ok' ) {
+						return $rc;
+					}
+					$event['images'][$img_id]['image']['image_data'] = 'data:image/jpg;base64,' . base64_encode($rc['image']);
+				}
+			}
+		}
+	} else {
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
+			array('container'=>'events', 'fname'=>'id', 'name'=>'event',
+				'fields'=>array('id', 'name', 'permalink', 'url', 'primary_image_id', 
+					'start_date', 'end_date', 'description', 'long_description')),
+		));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( !isset($rc['events']) || !isset($rc['events'][0]) ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1302', 'msg'=>'Unable to find event'));
+		}
+		$event = $rc['events'][0]['event'];
 	}
 
-	return array('stat'=>'ok', 'event'=>$rc['event']);
+	return array('stat'=>'ok', 'event'=>$event);
 }
 ?>

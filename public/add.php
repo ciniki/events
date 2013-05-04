@@ -27,16 +27,23 @@ function ciniki_events_add(&$ciniki) {
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
 		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
 		'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'), 
+		'permalink'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Permalink'), 
 		'url'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'URL'), 
-		'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'), 
+		'description'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Description'), 
 		'start_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Start Date'), 
 		'end_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'End Date'), 
+		'primary_image_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Image'), 
+		'long_description'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Long Description'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
 	$args = $rc['args'];
 	
+	if( !isset($args['permalink']) || $args['permalink'] == '' ) {
+		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
+	}
+
 	//
 	// Check access to business_id as owner
 	//
@@ -75,15 +82,18 @@ function ciniki_events_add(&$ciniki) {
 	// FIXME: Add ability to set modules when site is added, right now default to most apps on
 	//
 	$strsql = "INSERT INTO ciniki_events (uuid, business_id, "
-		. "name, url, description, start_date, end_date, "
+		. "name, permalink, url, description, start_date, end_date, primary_image_id, long_description, "
 		. "date_added, last_updated ) VALUES ( "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['uuid']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['name']) . "', "
+		. "'" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['url']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['description']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['end_date']) . "', "
+		. "'" . ciniki_core_dbQuote($ciniki, $args['primary_image_id']) . "', "
+		. "'" . ciniki_core_dbQuote($ciniki, $args['long_description']) . "', "
 		. "UTC_TIMESTAMP(), UTC_TIMESTAMP())";
 	$rc = ciniki_core_dbInsert($ciniki, $strsql, 'ciniki.events');
 	if( $rc['stat'] != 'ok' ) {
@@ -102,10 +112,13 @@ function ciniki_events_add(&$ciniki) {
 	$changelog_fields = array(
 		'uuid',
 		'name',
+		'permalink',
 		'url',
 		'description',
 		'start_date',
 		'end_date',
+		'primary_image_id',
+		'long_description',
 		);
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) && $args[$field] != '' ) {
