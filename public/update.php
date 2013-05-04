@@ -33,7 +33,7 @@ function ciniki_events_update(&$ciniki) {
 		'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'), 
 		'start_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Start Date'), 
 		'end_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'End Date'), 
-		'primary_image_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Image'), 
+		'primary_image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Image'), 
 		'long_description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Long Description'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
