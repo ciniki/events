@@ -48,7 +48,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 		return $rc;
 	}
 	if( !isset($rc['events']) || count($rc['events']) < 1 ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1288', 'msg'=>'Unable to find event'));
+		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'1288', 'msg'=>"I'm sorry, but we can't find the event you requested."));
 	}
 	$event = array_pop($rc['events']);
 
