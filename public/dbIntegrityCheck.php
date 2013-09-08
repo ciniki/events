@@ -50,6 +50,16 @@ function ciniki_events_dbIntegrityCheck($ciniki) {
 		}
 
 		//
+		// Update the history for ciniki_event_files
+		//
+		$rc = ciniki_core_dbFixTableHistory($ciniki, 'ciniki.events', $args['business_id'],
+			'ciniki_event_files', 'ciniki_event_history', 
+			array('uuid', 'extension', 'name', 'permalink', 'webflags', 'description', 'org_filename', 'publish_date'));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+
+		//
 		// Check for items missing a UUID
 		//
 		$strsql = "UPDATE ciniki_event_history SET uuid = UUID() WHERE uuid = ''";

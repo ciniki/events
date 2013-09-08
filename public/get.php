@@ -26,6 +26,7 @@ function ciniki_events_get($ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event'), 
 		'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
+		'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -89,7 +90,7 @@ function ciniki_events_get($ciniki) {
 			return $rc;
 		}
 		if( !isset($rc['events']) || !isset($rc['events'][0]) ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1301', 'msg'=>'Unable to find event'));
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1330', 'msg'=>'Unable to find event'));
 		}
 		$event = $rc['events'][0]['event'];
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'private', 'loadCacheThumbnail');
@@ -114,9 +115,27 @@ function ciniki_events_get($ciniki) {
 			return $rc;
 		}
 		if( !isset($rc['events']) || !isset($rc['events'][0]) ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1302', 'msg'=>'Unable to find event'));
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1331', 'msg'=>'Unable to find event'));
 		}
 		$event = $rc['events'][0]['event'];
+	}
+
+	if( isset($args['files']) && $args['files'] == 'yes' ) {
+		$strsql = "SELECT id, name, extension, permalink "
+			. "FROM ciniki_event_files "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND ciniki_event_files.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+			. "";
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
+			array('container'=>'files', 'fname'=>'id', 'name'=>'file',
+				'fields'=>array('id', 'name', 'extension', 'permalink')),
+		));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['files']) ) {
+			$event['files'] = $rc['files'];
+		}
 	}
 
 	return array('stat'=>'ok', 'event'=>$event);

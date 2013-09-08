@@ -52,6 +52,25 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 	}
 	$event = array_pop($rc['events']);
 
+	//
+	// Check if any files are attached to the event
+	//
+	$strsql = "SELECT id, name, extension, permalink, description "
+		. "FROM ciniki_event_files "
+		. "WHERE ciniki_event_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+		. "AND ciniki_event_files.event_id = '" . ciniki_core_dbQuote($ciniki, $event['id']) . "' "
+		. "";
+	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
+		array('container'=>'files', 'fname'=>'id', 
+			'fields'=>array('id', 'name', 'extension', 'permalink', 'description')),
+		));
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( isset($rc['files']) ) {
+		$event['files'] = $rc['files'];
+	}
+
 	return array('stat'=>'ok', 'event'=>$event);
 }
 ?>
