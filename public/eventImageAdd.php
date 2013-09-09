@@ -67,6 +67,7 @@ function ciniki_events_eventImageAdd(&$ciniki) {
 	//
 	$strsql = "SELECT id, name, permalink FROM ciniki_event_images "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
 		. "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'image');

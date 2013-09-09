@@ -50,7 +50,7 @@ create table ciniki_event_files (
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),
-	unique index (business_id, permalink), 
+	unique index (business_id, event_id, permalink), 
 	index (name),
 	index uuid (uuid, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.01';
+) ENGINE='InnoDB', COMMENT='v1.02';

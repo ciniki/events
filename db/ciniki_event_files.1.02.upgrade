@@ -1,0 +1,6 @@
+#
+# This file will add the uuid to ciniki_event_files
+#
+DROP INDEX business_id ON ciniki_event_files;
+CREATE INDEX business_id ON ciniki_event_files (business_id, event_id, permalink);
+ALTER TABLE ciniki_event_files COMMENT='v1.02';
