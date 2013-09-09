@@ -23,7 +23,7 @@
 //		...
 //	</users>
 //
-function ciniki_event_fileHistory($ciniki) {
+function ciniki_events_fileHistory($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
@@ -42,7 +42,7 @@ function ciniki_event_fileHistory($ciniki) {
 	// Check access to business_id as owner, or sys admin
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-	$rc = ciniki_event_checkAccess($ciniki, $args['business_id'], 'ciniki.events.fileHistory', 0);
+	$rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.fileHistory', 0);
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

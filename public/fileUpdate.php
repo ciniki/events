@@ -47,11 +47,28 @@ function ciniki_events_fileUpdate(&$ciniki) {
     }
 
 	//
+	// Get the current information about the event
+	//
+	$strsql = "SELECT id, event_id, name, permalink FROM ciniki_event_files "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['file_id']) . "' "
+		. "";
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'file');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( !isset($rc['file']) ) {
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1334', 'msg'=>'File does not exist.'));
+	}
+	$file = $rc['file'];
+
+	//
 	// Check the permalink doesn't already exist
 	//
 	if( isset($args['permalink']) ) {
 		$strsql = "SELECT id, name, permalink FROM ciniki_event_files "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND event_id = '" . ciniki_core_dbQuote($ciniki, $file['event_id']) . "' "
 			. "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
 			. "AND id <> '" . ciniki_core_dbQuote($ciniki, $args['file_id']) . "' "
 			. "";
