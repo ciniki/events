@@ -15,8 +15,9 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 		. "ciniki_events.name, "
 		. "ciniki_events.permalink, "
 		. "ciniki_events.url, "
-		. "DATE_FORMAT(start_date, '%a %b %c, %Y') AS start_date, "
-		. "DATE_FORMAT(end_date, '%a %b %c, %Y') AS end_date, "
+		. "DATE_FORMAT(ciniki_events.start_date, '%a %b %c, %Y') AS start_date, "
+		. "DATE_FORMAT(ciniki_events.end_date, '%a %b %c, %Y') AS end_date, "
+		. "ciniki_events.description AS short_description, "
 		. "ciniki_events.long_description, "
 		. "ciniki_events.primary_image_id, "
 		. "ciniki_event_images.image_id, "
@@ -38,7 +39,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 		array('container'=>'events', 'fname'=>'id', 
 			'fields'=>array('id', 'name', 'permalink', 'image_id'=>'primary_image_id', 
 			'start_date', 'end_date', 
-			'url', 'description'=>'long_description')),
+			'url', 'short_description', 'description'=>'long_description')),
 		array('container'=>'images', 'fname'=>'image_id', 
 			'fields'=>array('image_id', 'title'=>'image_name', 'permalink'=>'image_permalink',
 				'description'=>'image_description', 'url'=>'image_url',
