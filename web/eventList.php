@@ -42,10 +42,12 @@ function ciniki_events_web_eventList($ciniki, $settings, $business_id, $type, $l
 		$strsql .= "AND ((ciniki_events.end_date > ciniki_events.start_date AND ciniki_events.end_date < DATE(NOW())) "
 				. "OR (ciniki_events.end_date < ciniki_events.start_date AND ciniki_events.start_date <= DATE(NOW())) "
 				. ") "
+			. "GROUP BY ciniki_events.id "
 			. "ORDER BY ciniki_events.start_date DESC "
 			. "";
 	} else {
 		$strsql .= "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
+			. "GROUP BY ciniki_events.id "
 			. "ORDER BY ciniki_events.start_date ASC "
 			. "";
 	}
