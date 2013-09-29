@@ -111,8 +111,8 @@ function ciniki_events_eventImageUpdate(&$ciniki) {
 		if( isset($args[$field]) && $args[$field] != '' ) {
 			$strsql .= ", $field = '" . ciniki_core_dbQuote($ciniki, $args[$field]) . "' ";
 			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.events', 
-				'ciniki_events_history', $args['business_id'], 
-				2, 'ciniki_events_event_images', $args['event_image_id'], $field, $args[$field]);
+				'ciniki_event_history', $args['business_id'], 
+				2, 'ciniki_event_images', $args['event_image_id'], $field, $args[$field]);
 		}
 	}
 	$strsql .= "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "

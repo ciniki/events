@@ -48,7 +48,7 @@ function ciniki_events_eventImageHistory($ciniki) {
 	}
 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
-	return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.events', 'ciniki_events_history', 
+	return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.events', 'ciniki_event_history', 
 		$args['business_id'], 'ciniki_event_images', $args['event_image_id'], $args['field']);
 }
 ?>
