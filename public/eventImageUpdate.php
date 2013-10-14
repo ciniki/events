@@ -23,7 +23,7 @@ function ciniki_events_eventImageUpdate(&$ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'event_image_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event Image'), 
 		'image_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Image'),
-        'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Title'), 
+        'name'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Title'), 
         'permalink'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Permalink'), 
         'webflags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Website Flags'), 
         'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'), 
@@ -60,7 +60,11 @@ function ciniki_events_eventImageUpdate(&$ciniki) {
 	$item = $rc['item'];
 
 	if( isset($args['name']) ) {
-		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($args['name'])));
+		if( $args['name'] != '' ) {
+			$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($args['name'])));
+		} else {
+			$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($item['uuid'])));
+		}
 		//
 		// Make sure the permalink is unique
 		//
@@ -105,7 +109,6 @@ function ciniki_events_eventImageUpdate(&$ciniki) {
 		'webflags',
 		'image_id',
 		'description',
-		'url',
 		);
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) && $args[$field] != '' ) {

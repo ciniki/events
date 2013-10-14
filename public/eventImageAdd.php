@@ -18,7 +18,7 @@ function ciniki_events_eventImageAdd(&$ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event'), 
-        'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Title'), 
+        'name'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Title'), 
         'permalink'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Permalink'), 
         'webflags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Website Flags'), 
 		'image_id'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Image'),
@@ -29,14 +29,6 @@ function ciniki_events_eventImageAdd(&$ciniki) {
     }   
     $args = $rc['args'];
 
-	if( !isset($args['permalink']) || $args['permalink'] == '' ) {
-		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
-	}
-
-	if( $args['event_id'] <= 0 ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1291', 'msg'=>'No event specified'));
-	}
-    
     //  
     // Make sure this module is activated, and
     // check permission to run this function for this business
@@ -47,6 +39,31 @@ function ciniki_events_eventImageAdd(&$ciniki) {
         return $rc;
     }   
 
+	//
+	// Get a new UUID
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
+	$rc = ciniki_core_dbUUID($ciniki, 'ciniki.events');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$args['uuid'] = $rc['uuid'];
+
+	//
+	// Determine the permalink
+	//
+	if( !isset($args['permalink']) || $args['permalink'] == '' ) {
+		if( isset($args['name']) && $args['name'] != '' ) {
+			$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
+		} else {
+			$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($args['uuid'])));
+		}
+	}
+
+	if( $args['event_id'] <= 0 ) {
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1291', 'msg'=>'No event specified'));
+	}
+    
 	//  
 	// Turn off autocommit
 	//  
@@ -79,20 +96,10 @@ function ciniki_events_eventImageAdd(&$ciniki) {
 	}
 
 	//
-	// Get a new UUID
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
-	$rc = ciniki_core_dbUUID($ciniki, 'ciniki.events');
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-	$args['uuid'] = $rc['uuid'];
-
-	//
 	// Add the image to the database
 	//
 	$strsql = "INSERT INTO ciniki_event_images (uuid, business_id, event_id, "
-		. "name, permalink, webflags, image_id, description, url, "
+		. "name, permalink, webflags, image_id, description, "
 		. "date_added, last_updated) VALUES ("
 		. "'" . ciniki_core_dbQuote($ciniki, $args['uuid']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
@@ -102,7 +109,6 @@ function ciniki_events_eventImageAdd(&$ciniki) {
 		. "'" . ciniki_core_dbQuote($ciniki, $args['webflags']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['image_id']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['description']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['url']) . "', "
 		. "UTC_TIMESTAMP(), UTC_TIMESTAMP())"
 		. "";
 	$rc = ciniki_core_dbInsert($ciniki, $strsql, 'ciniki.events');
@@ -127,7 +133,6 @@ function ciniki_events_eventImageAdd(&$ciniki) {
 		'webflags',
 		'image_id',
 		'description',
-		'url',
 		);
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) && $args[$field] != '' ) {
