@@ -13,6 +13,15 @@
 # name:				The name for the event.
 # url:				The URL for more information on the event.
 # description:		The longer text description of the event (optional).
+#
+# num_tickets:		The number of tickets available for the event.
+# reg_flags:		The flags to control how registrations are handled.
+#
+#					0x01 - Admin Registration enabled
+#					0x02 - Online Registrations enabled
+#					0x04 -
+#					0x08 - 
+#
 # start_date:		The date of the start of the event.
 # end_date:			The date of the end of the event.
 # date_added:		The UTC date and time the record was added.
@@ -26,6 +35,8 @@ create table ciniki_events (
 	permalink varchar(150) not null,
 	url varchar(250) not null,
 	description varchar(6000) not null,
+	num_tickets int not null,
+	reg_flags tinyint unsigned not null,
 	start_date date not null,
 	end_date date not null,
 	primary_image_id int not null,
@@ -36,4 +47,4 @@ create table ciniki_events (
 	unique index (uuid),
 	index (business_id, name, start_date),
 	index business_uuid (business_id, uuid, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.03';
+) ENGINE='InnoDB', COMMENT='v1.04';

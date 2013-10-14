@@ -52,6 +52,8 @@ function ciniki_events_get($ciniki) {
 		. "ciniki_events.permalink, "
 		. "ciniki_events.url, "
 		. "ciniki_events.description, "
+		. "ciniki_events.num_tickets, "
+		. "ciniki_events.reg_flags, "
 		. "DATE_FORMAT(ciniki_events.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
 		. "DATE_FORMAT(ciniki_events.end_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS end_date, "
 		. "ciniki_events.primary_image_id, "
@@ -81,7 +83,7 @@ function ciniki_events_get($ciniki) {
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
 			array('container'=>'events', 'fname'=>'id', 'name'=>'event',
 				'fields'=>array('id', 'name', 'permalink', 'url', 'primary_image_id', 
-					'start_date', 'end_date', 'description', 'long_description')),
+					'start_date', 'end_date', 'description', 'num_tickets', 'reg_flags', 'long_description')),
 			array('container'=>'images', 'fname'=>'img_id', 'name'=>'image',
 				'fields'=>array('id'=>'img_id', 'name'=>'image_name', 'webflags'=>'image_webflags',
 					'image_id', 'description'=>'image_description', 'url'=>'image_url')),
@@ -109,7 +111,7 @@ function ciniki_events_get($ciniki) {
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
 			array('container'=>'events', 'fname'=>'id', 'name'=>'event',
 				'fields'=>array('id', 'name', 'permalink', 'url', 'primary_image_id', 
-					'start_date', 'end_date', 'description', 'long_description')),
+					'start_date', 'end_date', 'description', 'num_tickets', 'reg_flags', 'long_description')),
 		));
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
@@ -119,7 +121,17 @@ function ciniki_events_get($ciniki) {
 		}
 		$event = $rc['events'][0]['event'];
 	}
+	
+	//
+	// Check how many registrations
+	//
+	if( ($event['reg_flags']&0x03) > 0 ) {
+		$event['num_registered'] = 0;
+	}
 
+	//
+	// Get any files if requested
+	//
 	if( isset($args['files']) && $args['files'] == 'yes' ) {
 		$strsql = "SELECT id, name, extension, permalink "
 			. "FROM ciniki_event_files "

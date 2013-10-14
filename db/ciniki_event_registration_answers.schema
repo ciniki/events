@@ -1,0 +1,45 @@
+#
+# Description
+# -----------
+# The ciniki_event_registration_answers are the answers provided by the customer or
+# filled in by a business owner.
+#
+# Fields
+# ------
+# id:					The ID assigned to the question.
+# uuid:					The Universal Unique ID.
+# business_id:			The business the question is attached to.
+# event_id:				The ID of the event the cost option is for.
+#
+# registration_id:		The ID of the registration this answer is for.
+# customer_id:			The ID of the customer who the answer is for.  This
+#						may not be the same as the customer_id in the registration
+#						as they are allowed to register multiple customers with 
+#						on registration.
+#
+# question_id:			The ID of the question the answer is for.
+# answer:				The answer they gave.  This is stored as text so it can
+#						be in any format and is parsed by the application.
+#
+# notes:				If there are special requests for this customer, they
+#						can be contained within the notes.
+#
+# date_added:			The UTC date and time the record was added.
+# last_updated:			The UTC date and time the record was last updated.
+#
+create table ciniki_event_registration_answers (
+	id int not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	event_id int not null,
+	registration_id int not null,
+	customer_id int not null,
+	question_id int not null,
+	answer varchar(6000) not null,
+	notes varchar(6000) not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	unique index (event_id, registration_id, customer_id, question_id),
+	index business_uuid (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

@@ -30,6 +30,8 @@ function ciniki_events_add(&$ciniki) {
 		'permalink'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Permalink'), 
 		'url'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'URL'), 
 		'description'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Description'), 
+		'num_tickets'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Number of Tickets'),
+		'reg_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Registration Flags'),
 		'start_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Start Date'), 
 		'end_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'End Date'), 
 		'primary_image_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Image'), 
@@ -82,7 +84,8 @@ function ciniki_events_add(&$ciniki) {
 	// FIXME: Add ability to set modules when site is added, right now default to most apps on
 	//
 	$strsql = "INSERT INTO ciniki_events (uuid, business_id, "
-		. "name, permalink, url, description, start_date, end_date, primary_image_id, long_description, "
+		. "name, permalink, url, description, reg_flags, num_tickets, "
+		. "start_date, end_date, primary_image_id, long_description, "
 		. "date_added, last_updated ) VALUES ( "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['uuid']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
@@ -90,6 +93,8 @@ function ciniki_events_add(&$ciniki) {
 		. "'" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['url']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['description']) . "', "
+		. "'" . ciniki_core_dbQuote($ciniki, $args['reg_flags']) . "', "
+		. "'" . ciniki_core_dbQuote($ciniki, $args['num_tickets']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['end_date']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['primary_image_id']) . "', "
@@ -115,6 +120,8 @@ function ciniki_events_add(&$ciniki) {
 		'permalink',
 		'url',
 		'description',
+		'reg_flags',
+		'num_tickets',
 		'start_date',
 		'end_date',
 		'primary_image_id',

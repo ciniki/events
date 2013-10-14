@@ -1,0 +1,6 @@
+#
+# Add fields for storing registration information
+#
+ALTER TABLE ciniki_events ADD COLUMN num_tickets int not null AFTER description;
+ALTER TABLE ciniki_events ADD COLUMN reg_flags tinyint unsigned not null AFTER num_tickets;
+ALTER TABLE ciniki_events COMMENT='v1.04';

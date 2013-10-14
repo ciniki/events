@@ -1,0 +1,60 @@
+#
+# Description
+# -----------
+# The ciniki_event_registration_questions is similar to the surveys module,
+# and allows for options or questions to be asked when registering for an event.
+#
+# Fields
+# ------
+# id:				The ID assigned to the question.
+# uuid:				The Universal Unique ID.
+# business_id:		The business the question is attached to.
+# event_id:			The ID of the event the cost option is for.
+#
+# qnumber:			The question number, used to sort for display.
+# qtype:			The type of question.
+#
+#					0 - unknown
+#					10 - text
+#					11 - textarea **future**
+# 					20 - number **future**
+#					30 - multiple choice (one answer)
+#					31 - multiple choice (multi answer) **future**
+#
+# question:			The question.
+#
+# option1:			The first multiple choice option.
+# option2:			The second multiple choice option.
+# option3:			The third multiple choice option.
+# option4:			The fourth multiple choice option.
+# option5:			The fifth multiple choice option.
+#
+# webflags:			The flags for displaying the question on the website.  Some
+#					questions might only be for administrators, and the user is not
+#					allowed to select.
+#
+#					0x01 - hidden
+#
+# date_added:		The UTC date and time the record was added.
+# last_updated:		The UTC date and time the record was last updated.
+#
+create table ciniki_event_registration_questions (
+	id int not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	event_id int not null,
+	qnumber tinyint unsigned not null,
+	qtype tinyint unsigned not null,
+	question varchar(250) not null,
+	option1 varchar(250) not null,
+	option2 varchar(250) not null,
+	option3 varchar(250) not null,
+	option4 varchar(250) not null,
+	option5 varchar(250) not null,
+	webflags tinyint unsigned not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	index (event_id, qnumber),
+	index business_uuid (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';
