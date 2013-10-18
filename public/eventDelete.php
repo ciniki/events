@@ -15,7 +15,7 @@
 // -------
 // <rsp stat="ok">
 //
-function ciniki_events_delete(&$ciniki) {
+function ciniki_events_eventDelete(&$ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
@@ -33,7 +33,7 @@ function ciniki_events_delete(&$ciniki) {
 	// Check access to business_id as owner
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-	$ac = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.delete');
+	$ac = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventDelete');
 	if( $ac['stat'] != 'ok' ) {
 		return $ac;
 	}
@@ -69,26 +69,6 @@ function ciniki_events_delete(&$ciniki) {
 	}   
 
 	//
-	// remove the event
-	//
-	$strsql = "DELETE FROM ciniki_events "
-		. "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
-		. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' ";
-	$rc = ciniki_core_dbDelete($ciniki, $strsql, 'ciniki.events');
-	if( $rc['stat'] != 'ok' ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
-		return $rc;
-	}
-
-	if( $rc['num_affected_rows'] == 0 ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'614', 'msg'=>'Unable to remove event'));
-	}
-
-	ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.events', 'ciniki_event_history', $args['business_id'], 
-		3, 'ciniki_events', $args['event_id'], '*', '');
-
-	//
 	// Remove the images
 	//
 	$strsql = "SELECT id, uuid, image_id FROM ciniki_event_images "
@@ -107,7 +87,7 @@ function ciniki_events_delete(&$ciniki) {
 			// Delete the reference to the image, and remove the image if no more references
 			//
 			$rc = ciniki_images_refClear($ciniki, $args['business_id'], array(
-				'object'=>'ciniki.events.event_image',
+				'object'=>'ciniki.events.image',
 				'object_id'=>$image['id']));
 			if( $rc['stat'] == 'fail' ) {
 				ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
@@ -132,10 +112,38 @@ function ciniki_events_delete(&$ciniki) {
 			//
 			// Add to the sync queue so it will get pushed
 			//
-			$ciniki['syncqueue'][] = array('push'=>'ciniki.events.event_image', 
+			$ciniki['syncqueue'][] = array('push'=>'ciniki.events.image', 
 				'args'=>array('delete_uuid'=>$image['uuid'], 'delete_id'=>$image['id']));
 		}
 	}
+
+	//
+	// FIXME: Remove the files for the event
+	//
+
+	//
+	// FIXME: Remove the registrations
+	//
+
+	//
+	// remove the event
+	//
+	$strsql = "DELETE FROM ciniki_events "
+		. "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+		. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' ";
+	$rc = ciniki_core_dbDelete($ciniki, $strsql, 'ciniki.events');
+	if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+		return $rc;
+	}
+
+	if( $rc['num_affected_rows'] == 0 ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'614', 'msg'=>'Unable to remove event'));
+	}
+
+	ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.events', 'ciniki_event_history', $args['business_id'], 
+		3, 'ciniki_events', $args['event_id'], '*', '');
 
 	//
 	// Commit the transaction

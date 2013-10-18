@@ -13,7 +13,7 @@
 // Returns
 // -------
 //
-function ciniki_events_eventImageGet($ciniki) {
+function ciniki_events_imageGet($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -32,7 +32,7 @@ function ciniki_events_eventImageGet($ciniki) {
     // check permission to run this function for this business
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventImageGet'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.imageGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   

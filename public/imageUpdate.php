@@ -14,7 +14,7 @@
 // -------
 // <rsp stat='ok' />
 //
-function ciniki_events_eventImageUpdate(&$ciniki) {
+function ciniki_events_imageUpdate(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -38,7 +38,7 @@ function ciniki_events_eventImageUpdate(&$ciniki) {
     // check permission to run this function for this business
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventImageUpdate'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.imageUpdate'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
@@ -140,7 +140,7 @@ function ciniki_events_eventImageUpdate(&$ciniki) {
 		//
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'private', 'refClear');
 		$rc = ciniki_images_refClear($ciniki, $args['business_id'], array(
-			'object'=>'ciniki.events.event_image', 
+			'object'=>'ciniki.events.image', 
 			'object_id'=>$args['event_image_id']));
 		if( $rc['stat'] == 'fail' ) {
 			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
@@ -153,7 +153,7 @@ function ciniki_events_eventImageUpdate(&$ciniki) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'private', 'refAdd');
 		$rc = ciniki_images_refAdd($ciniki, $args['business_id'], array(
 			'image_id'=>$args['image_id'], 
-			'object'=>'ciniki.events.event_image', 
+			'object'=>'ciniki.events.image', 
 			'object_id'=>$args['event_image_id'],
 			'object_field'=>'image_id'));
 		if( $rc['stat'] != 'ok' ) {

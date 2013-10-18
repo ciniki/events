@@ -10,7 +10,7 @@
 // -------
 // <rsp stat='ok' />
 //
-function ciniki_events_eventImageDelete(&$ciniki) {
+function ciniki_events_imageDelete(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -29,7 +29,7 @@ function ciniki_events_eventImageDelete(&$ciniki) {
     // check permission to run this function for this business
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventImageDelete'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.imageDelete'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -72,7 +72,7 @@ function ciniki_events_eventImageDelete(&$ciniki) {
 	// Delete the reference to the image, and remove the image if no more references
 	//
 	$rc = ciniki_images_refClear($ciniki, $args['business_id'], array(
-		'object'=>'ciniki.events.event_image',
+		'object'=>'ciniki.events.image',
 		'object_id'=>$item['id']));
 	if( $rc['stat'] == 'fail' ) {
 		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');

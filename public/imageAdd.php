@@ -10,7 +10,7 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_events_eventImageAdd(&$ciniki) {
+function ciniki_events_imageAdd(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -34,7 +34,7 @@ function ciniki_events_eventImageAdd(&$ciniki) {
     // check permission to run this function for this business
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventImageAdd'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.imageAdd'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -148,7 +148,7 @@ function ciniki_events_eventImageAdd(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'private', 'refAdd');
 	$rc = ciniki_images_refAdd($ciniki, $args['business_id'], array(
 		'image_id'=>$args['image_id'], 
-		'object'=>'ciniki.events.event_image', 
+		'object'=>'ciniki.events.image', 
 		'object_id'=>$event_image_id,
 		'object_field'=>'image_id'));
 	if( $rc['stat'] != 'ok' ) {

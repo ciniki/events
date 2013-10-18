@@ -23,7 +23,7 @@
 //		...
 //	</users>
 //
-function ciniki_events_eventImageHistory($ciniki) {
+function ciniki_events_imageHistory($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
@@ -42,7 +42,7 @@ function ciniki_events_eventImageHistory($ciniki) {
 	// Check access to business_id as owner, or sys admin
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-	$rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventImageHistory');
+	$rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.imageHistory');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

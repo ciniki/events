@@ -17,7 +17,7 @@
 //		description="Event description" start_date="July 18, 2012" end_date="July 19, 2012"
 //		date_added="2012-07-19 03:08:05" last_updated="2012-07-19 03:08:05" />
 //
-function ciniki_events_get($ciniki) {
+function ciniki_events_eventGet($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -38,7 +38,7 @@ function ciniki_events_get($ciniki) {
     // check permission to run this function for this business
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.get'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -127,6 +127,19 @@ function ciniki_events_get($ciniki) {
 	//
 	if( ($event['reg_flags']&0x03) > 0 ) {
 		$event['num_registered'] = 0;
+		$strsql = "SELECT 'num_reg', COUNT(id) AS num_reg "	
+			. "FROM ciniki_event_registrations "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND ciniki_event_registrations.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+			. "";
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbCount');
+		$rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.events', 'num_registered');
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['num_registered']['num_reg']) ) {
+			$event['num_registered'] = $rc['num_registered']['num_reg'];
+		}
 	}
 
 	//
