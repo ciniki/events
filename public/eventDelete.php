@@ -62,6 +62,7 @@ function ciniki_events_eventDelete(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDelete');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
 	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.events');
 	if( $rc['stat'] != 'ok' ) { 
@@ -83,67 +84,100 @@ function ciniki_events_eventDelete(&$ciniki) {
 		$images = $rc['rows'];
 		
 		foreach($images as $iid => $image) {
-			//
-			// Delete the reference to the image, and remove the image if no more references
-			//
-			$rc = ciniki_images_refClear($ciniki, $args['business_id'], array(
-				'object'=>'ciniki.events.image',
-				'object_id'=>$image['id']));
-			if( $rc['stat'] == 'fail' ) {
+			$rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.image', 
+				$image['id'], $image['uuid'], 0x04);
+			if( $rc['stat'] != 'ok' ) {
 				ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
-				return $rc;
+				return $rc;	
 			}
-
-			//
-			// Remove the image from the database
-			//
-			$strsql = "DELETE FROM ciniki_event_images "
-				. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-				. "AND id = '" . ciniki_core_dbQuote($ciniki, $image['id']) . "' ";
-			$rc = ciniki_core_dbDelete($ciniki, $strsql, 'ciniki.events');
-			if( $rc['stat'] != 'ok' ) { 
-				ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
-				return $rc;
-			}
-
-			ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.events', 'ciniki_event_history', 
-				$args['business_id'], 3, 'ciniki_event_images', $image['id'], '*', '');
-
-			//
-			// Add to the sync queue so it will get pushed
-			//
-			$ciniki['syncqueue'][] = array('push'=>'ciniki.events.image', 
-				'args'=>array('delete_uuid'=>$image['uuid'], 'delete_id'=>$image['id']));
 		}
 	}
 
 	//
-	// FIXME: Remove the files for the event
+	// Remove the files for the event
 	//
-
-	//
-	// FIXME: Remove the registrations
-	//
-
-	//
-	// remove the event
-	//
-	$strsql = "DELETE FROM ciniki_events "
-		. "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
-		. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' ";
-	$rc = ciniki_core_dbDelete($ciniki, $strsql, 'ciniki.events');
+	$strsql = "SELECT id, uuid "
+		. "FROM ciniki_event_files "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+		. "";
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'file');
 	if( $rc['stat'] != 'ok' ) {
 		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
 		return $rc;
 	}
-
-	if( $rc['num_affected_rows'] == 0 ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'614', 'msg'=>'Unable to remove event'));
+	if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
+		$files = $rc['rows'];
+		foreach($files as $fid => $file) {
+			$rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.file', 
+				$file['id'], $file['uuid'], 0x04);
+			if( $rc['stat'] != 'ok' ) {
+				ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+				return $rc;	
+			}
+		}
 	}
 
-	ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.events', 'ciniki_event_history', $args['business_id'], 
-		3, 'ciniki_events', $args['event_id'], '*', '');
+	//
+	// Remove the registrations
+	//
+	$strsql = "SELECT id, uuid "
+		. "FROM ciniki_event_registrations "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+		. "";
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'registration');
+	if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+		return $rc;
+	}
+	if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'registrationDelete');
+		$registrations = $rc['rows'];
+		foreach($registrations as $rid => $registration) {
+			$rc = ciniki_core__registrationDelete($ciniki, $args['business_id'], 
+				$registration['id'],$registration['uuid']);
+			if( $rc['stat'] != 'ok' ) {
+				ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+				return $rc;
+			}
+		}
+	}
+
+	//
+	// Remove any registration questions for this event
+	//
+/*	$strsql = "SELECT id, uuid "
+		. "FROM ciniki_event_registration_questions "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+		. "";
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'question');
+	if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+		return $rc;
+	}
+	if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
+		$questions = $rc['rows'];
+		foreach($questions as $qid => $question) {
+			$rc = ciniki_core_objectDelete($ciniki, 'ciniki.events.question', $question['id'], $question['uuid'],
+				array('business_id'=>$args['business_id']), 0x04);
+			if( $rc['stat'] != 'ok' ) {
+				ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+				return $rc;	
+			}
+		}
+	}
+*/
+
+	//
+	// Remove the event
+	//
+	$rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.event', 
+		$args['event_id'], $event_uuid, 0x04);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
 
 	//
 	// Commit the transaction
@@ -160,8 +194,8 @@ function ciniki_events_eventDelete(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
 	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
 
-	$ciniki['syncqueue'][] = array('push'=>'ciniki.events.event',
-		'args'=>array('delete_uuid'=>$event_uuid, 'delete_id'=>$args['event_id']));
+//	$ciniki['syncqueue'][] = array('push'=>'ciniki.events.event',
+//		'args'=>array('delete_uuid'=>$event_uuid, 'delete_id'=>$args['event_id']));
 
 	return array('stat'=>'ok');
 }

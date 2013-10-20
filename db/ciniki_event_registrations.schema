@@ -46,6 +46,6 @@ create table ciniki_event_registrations (
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),
-	unique index (event_id, customer_id),
+	index (event_id, customer_id),
 	index business_uuid (business_id, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

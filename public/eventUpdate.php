@@ -92,6 +92,6 @@ function ciniki_events_eventUpdate(&$ciniki) {
 	// Update the event in the database
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-	return ciniki_core_objectUpdate($ciniki, 'ciniki', 'events', 'event', $args['event_id'], $args);
+	return ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.events.event', $args['event_id'], $args);
 }
 ?>

@@ -59,6 +59,6 @@ function ciniki_events_eventAdd(&$ciniki) {
 	// Add the event to the database
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-	return ciniki_core_objectAdd($ciniki, 'ciniki', 'events', 'event', $args);
+	return ciniki_core_objectAdd($ciniki, $args['business_id', 'ciniki.events.event', $args);
 }
 ?>

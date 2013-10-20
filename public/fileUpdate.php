@@ -81,73 +81,10 @@ function ciniki_events_fileUpdate(&$ciniki) {
 		}
 	}
 
-	//  
-	// Turn off autocommit
-	//  
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbInsert');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUpdate');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
-	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.events');
-	if( $rc['stat'] != 'ok' ) { 
-		return $rc;
-	}   
-
 	//
-	// Add all the fields to the change log
+	// Update the file in the database
 	//
-	$strsql = "UPDATE ciniki_event_files SET last_updated = UTC_TIMESTAMP()";
-
-	$changelog_fields = array(
-		'type',
-		'name',
-		'permalink',
-		'webflags',
-		'description',
-		'publish_date',
-		);
-	foreach($changelog_fields as $field) {
-		if( isset($args[$field]) ) {
-			$strsql .= ", $field = '" . ciniki_core_dbQuote($ciniki, $args[$field]) . "' ";
-			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.events', 
-				'ciniki_event_history', $args['business_id'], 
-				2, 'ciniki_event_files', $args['file_id'], $field, $args[$field]);
-		}
-	}
-	$strsql .= "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['file_id']) . "' "
-		. "";
-	$rc = ciniki_core_dbUpdate($ciniki, $strsql, 'ciniki.events');
-	if( $rc['stat'] != 'ok' ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
-		return $rc;
-	}
-	if( !isset($rc['num_affected_rows']) || $rc['num_affected_rows'] != 1 ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1323', 'msg'=>'Unable to update event file'));	
-	}
-
-	//
-	// Commit the database changes
-	//
-    $rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.events');
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-
-	//
-	// Update the last_change date in the business modules
-	// Ignore the result, as we don't want to stop user updates if this fails.
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
-
-	$ciniki['syncqueue'][] = array('push'=>'ciniki.events.file', 
-		'args'=>array('id'=>$args['file_id']));
-
-	return array('stat'=>'ok');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
+	return ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.events.file', $args['file_id'], $args, 0x07);
 }
 ?>

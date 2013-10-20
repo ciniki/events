@@ -39,20 +39,6 @@ function ciniki_events_fileDelete(&$ciniki) {
         return $rc;
     }   
 
-	//  
-	// Turn off autocommit
-	// 
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDelete');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
-	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.events');
-	if( $rc['stat'] != 'ok' ) { 
-		return $rc;
-	}   
-
 	//
 	// Get the uuid of the events item to be deleted
 	//
@@ -69,45 +55,7 @@ function ciniki_events_fileDelete(&$ciniki) {
 	}
 	$uuid = $rc['file']['uuid'];
 
-	//
-	// Start building the delete SQL
-	//
-	$strsql = "DELETE FROM ciniki_event_files "
-		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['file_id']) . "' "
-		. "";
-
-	$rc = ciniki_core_dbDelete($ciniki, $strsql, 'ciniki.events');
-	if( $rc['stat'] != 'ok' ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
-		return $rc;
-	}
-	if( !isset($rc['num_affected_rows']) || $rc['num_affected_rows'] != 1 ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1329', 'msg'=>'Unable to delete art'));
-	}
-
-	$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.events', 'ciniki_event_history', 
-		$args['business_id'], 3, 'ciniki_event_files', $args['file_id'], '*', '');
-
-	//
-	// Commit the database changes
-	//
-    $rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.events');
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-
-	//
-	// Update the last_change date in the business modules
-	// Ignore the result, as we don't want to stop user updates if this fails.
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
-
-	$ciniki['syncqueue'][] = array('push'=>'ciniki.events.file', 
-		'args'=>array('delete_uuid'=>$uuid, 'delete_id'=>$args['file_id']));
-
-	return array('stat'=>'ok');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
+	return ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.file', $args['file_id'], $uuid, $args, 0x07);
 }
 ?>

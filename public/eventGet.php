@@ -126,19 +126,19 @@ function ciniki_events_eventGet($ciniki) {
 	// Check how many registrations
 	//
 	if( ($event['reg_flags']&0x03) > 0 ) {
-		$event['num_registered'] = 0;
-		$strsql = "SELECT 'num_reg', COUNT(id) AS num_reg "	
+		$event['tickets_sold'] = 0;
+		$strsql = "SELECT 'num_tickets', SUM(num_tickets) AS num_tickets "	
 			. "FROM ciniki_event_registrations "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND ciniki_event_registrations.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
 			. "";
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbCount');
-		$rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.events', 'num_registered');
+		$rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.events', 'num');
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
 		}
-		if( isset($rc['num_registered']['num_reg']) ) {
-			$event['num_registered'] = $rc['num_registered']['num_reg'];
+		if( isset($rc['num']['num_tickets']) ) {
+			$event['tickets_sold'] = $rc['num']['num_tickets'];
 		}
 	}
 

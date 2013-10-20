@@ -22,6 +22,7 @@ function ciniki_events_registrationUpdate(&$ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'registration_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Registration'), 
+		'customer_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Customer'),
 		'num_tickets'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Number of Tickets'),
         'customer_notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Customer Notes'), 
         'notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Notes'), 
@@ -45,6 +46,6 @@ function ciniki_events_registrationUpdate(&$ciniki) {
 	// Update the registration in the database
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-	return ciniki_core_objectUpdate($ciniki, 'ciniki', 'events', 'registration', $args['registration_id'], $args);
+	return ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.events.registration', $args['registration_id'], $args);
 }
 ?>
