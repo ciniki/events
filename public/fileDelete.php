@@ -56,6 +56,6 @@ function ciniki_events_fileDelete(&$ciniki) {
 	$uuid = $rc['file']['uuid'];
 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
-	return ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.file', $args['file_id'], $uuid, $args, 0x07);
+	return ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.file', $args['file_id'], $uuid, 0x07);
 }
 ?>

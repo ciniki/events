@@ -78,6 +78,7 @@ function ciniki_events_eventDelete(&$ciniki) {
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'image');
 	if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
 		return $rc;
 	}
 	if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
@@ -176,6 +177,7 @@ function ciniki_events_eventDelete(&$ciniki) {
 	$rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.event', 
 		$args['event_id'], $event_uuid, 0x04);
 	if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
 		return $rc;
 	}
 
