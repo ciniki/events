@@ -47,7 +47,7 @@ function ciniki_events_fileUpdate(&$ciniki) {
     }
 
 	//
-	// Get the current information about the event
+	// Get the current information about the file
 	//
 	$strsql = "SELECT id, event_id, name, permalink FROM ciniki_event_files "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
