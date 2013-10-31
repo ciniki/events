@@ -56,6 +56,21 @@ function ciniki_events_eventAdd(&$ciniki) {
 	}
 
 	//
+	// Check the permalink doesn't already exist
+	//
+	$strsql = "SELECT id FROM ciniki_events "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' " 
+		. "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
+		. "";
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'event');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( $rc['num_rows'] > 0 ) {
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'999', 'msg'=>'You already have an event with this name, please choose another name'));
+	}
+
+	//
 	// Add the event to the database
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
