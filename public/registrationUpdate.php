@@ -37,7 +37,7 @@ function ciniki_events_registrationUpdate(&$ciniki) {
     // check permission to run this function for this business
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.update'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.registrationUpdate'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
