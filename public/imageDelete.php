@@ -46,7 +46,7 @@ function ciniki_events_imageDelete(&$ciniki) {
 		return $rc;
 	}
 	if( !isset($rc['item']) ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1286', 'msg'=>'Event image does not exist'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1318', 'msg'=>'Event image does not exist'));
 	}
 	$item = $rc['item'];
 
