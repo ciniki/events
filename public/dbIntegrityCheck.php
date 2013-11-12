@@ -37,8 +37,29 @@ function ciniki_events_dbIntegrityCheck($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUpdate');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDelete');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbFixTableHistory');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectRefFix');
 
 	if( $args['fix'] == 'yes' ) {
+		//
+		// Load objects file
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'objects');
+		$rc = ciniki_events_objects($ciniki);
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		$objects = $rc['objects'];
+
+		//
+		// Check any references for the objects
+		//
+		foreach($objects as $o => $obj) {
+			$rc = ciniki_core_objectRefFix($ciniki, $args['business_id'], 'ciniki.events.'.$o, 0x04);
+			if( $rc['stat'] != 'ok' ) {
+				return $rc;
+			}
+		}
+
 		//
 		// Update the history for ciniki_events
 		//
