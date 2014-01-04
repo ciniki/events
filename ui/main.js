@@ -352,7 +352,13 @@ function ciniki_events_main() {
 							M.api.err(rsp);
 							return false;
 						} 
-						M.ciniki_events_main.edit.close();
+						if( rsp.id > 0 ) {
+							var cb = M.ciniki_events_main.edit.cb;
+							M.ciniki_events_main.edit.close();
+							M.ciniki_events_main.showEvent(cb,rsp.id);
+						} else {
+							M.ciniki_events_main.edit.close();
+						}
 					});
 			} else {
 				this.edit.close();
