@@ -72,7 +72,7 @@ function ciniki_events_eventList($ciniki) {
 		. "FROM ciniki_events "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ((ciniki_events.end_date > ciniki_events.start_date AND ciniki_events.end_date < DATE(NOW())) "
-			. "OR (ciniki_events.end_date < ciniki_events.start_date AND ciniki_events.start_date <= DATE(NOW())) "
+			. "OR (ciniki_events.end_date <= ciniki_events.start_date AND ciniki_events.start_date <= DATE(NOW())) "
 			. ") "
 		. "ORDER BY ciniki_events.start_date ASC "
 		. "";
