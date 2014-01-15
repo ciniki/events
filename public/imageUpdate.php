@@ -46,7 +46,7 @@ function ciniki_events_imageUpdate(&$ciniki) {
 	//
 	// Get the existing image details
 	//
-	$strsql = "SELECT uuid, image_id FROM ciniki_event_images "
+	$strsql = "SELECT event_id, uuid, image_id FROM ciniki_event_images "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['event_image_id']) . "' "
 		. "";
@@ -70,7 +70,7 @@ function ciniki_events_imageUpdate(&$ciniki) {
 		//
 		$strsql = "SELECT id, name, permalink FROM ciniki_event_images "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-			. "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+			. "AND event_id = '" . ciniki_core_dbQuote($ciniki, $item['event_id']) . "' "
 			. "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
 			. "AND id <> '" . ciniki_core_dbQuote($ciniki, $args['event_image_id']) . "' "
 			. "";
