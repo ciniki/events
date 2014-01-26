@@ -62,6 +62,23 @@ function ciniki_events_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_event_history',
 		);
+	$objects['price'] = array(
+		'name'=>'Price',
+		'sync'=>'yes',
+		'table'=>'ciniki_event_prices',
+		'fields'=>array(
+			'event_id'=>array('ref'=>'ciniki.events.event'),
+			'name'=>array(),
+			'valid_from'=>array(),
+			'valid_to'=>array(),
+			'unit_amount'=>array(),
+			'unit_discount_amount'=>array(),
+			'unit_discount_percentage'=>array(),
+			'taxtype_id'=>array('ref'=>'ciniki.taxes.type'),
+			'webflags'=>array(),
+			),
+		'history_table'=>'ciniki_event_history',
+		);
 	$objects['registration'] = array(
 		'name'=>'Registration',
 		'sync'=>'yes',

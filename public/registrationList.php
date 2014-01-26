@@ -45,7 +45,7 @@ function ciniki_events_registrationList($ciniki) {
 	//
 	$strsql = "SELECT ciniki_event_registrations.id, "
 		. "ciniki_event_registrations.customer_id, "
-		. "CONCAT_WS(' ', ciniki_customers.first, ciniki_customers.last) AS customer_name, "
+		. "IFNULL(ciniki_customers.display_name, '') AS customer_name, "
 		. "ciniki_event_registrations.num_tickets "
 		. "FROM ciniki_event_registrations "
 		. "LEFT JOIN ciniki_customers ON (ciniki_event_registrations.customer_id = ciniki_customers.id "

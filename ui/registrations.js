@@ -53,11 +53,15 @@ function ciniki_events_registrations() {
 				'addTxt':'Edit',
 				'addFn':'M.startApp(\'ciniki.customers.edit\',null,\'M.ciniki_events_registrations.updateEditCustomer(null);\',\'mc\',{\'next\':\'M.ciniki_events_registrations.updateEditCustomer\',\'customer_id\':M.ciniki_events_registrations.edit.customer_id});',
 				},
+			'invoice':{'label':'Invoice', 'visible':'no', 'type':'simplegrid', 'num_cols':4,
+				'headerValues':['Invoice #', 'Date', 'Amount', 'Status'],
+				'cellClasses':['label',''],
+//				'addTxt':'Ad',
+//				'addFn':'M.startApp(\'ciniki.sapos.invoice\',null,\'M.ciniki_events_registrations.showEdit();\',\'mc\',{\'invoice_id\':M.ciniki_events_registrations.edit.invoice_id});',
+				},
 			'registration':{'label':'Registration', 'fields':{
 				'num_tickets':{'label':'Number of Tickets', 'type':'text', 'size':'small'},
 				}},
-//			'questions':{'label':'Questions', 'fields':{
-//				}},
 			'_customer_notes':{'label':'Customer Notes', 'fields':{
 				'customer_notes':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'small', 'type':'textarea'},
 				}},
@@ -75,15 +79,29 @@ function ciniki_events_registrations() {
 				'registration_id':this.registration_id, 'event_id':this.event_id, 'field':i}};
 		}
 		this.edit.sectionData = function(s) {
+			if( s == 'invoice' ) { return {'invoice':this.data[s]}; }
 			return this.data[s];
 		}
 		this.edit.cellValue = function(s, i, j, d) {
-			switch(j) {
-				case 0: return d.detail.label;
-				case 1: return d.detail.value.replace(/\n/, '<br/>');
+			if( s == 'customer' ) {
+				switch(j) {
+					case 0: return d.detail.label;
+					case 1: return d.detail.value.replace(/\n/, '<br/>');
+				}
+			} 
+			if( s == 'invoice' ) {
+				switch(j) {
+					case 0: return d.invoice_number;
+					case 1: return d.invoice_date;
+					case 2: return d.total_amount_display;
+					case 3: return d.status_text;
+				}
 			}
 		};
-		this.edit.rowFn = function(s, i, d) { return ''; }
+		this.edit.rowFn = function(s, i, d) { 
+			if( s == 'invoice' ) { return 'M.startApp(\'ciniki.sapos.invoice\',null,\'M.ciniki_events_registrations.showEdit();\',\'mc\',{\'invoice_id\':\'' + d.id + '\'});'; }
+			return ''; 
+		};
 		this.edit.addButton('save', 'Save', 'M.ciniki_events_registrations.saveRegistration();');
 		this.edit.addClose('Cancel');
 	}
@@ -164,16 +182,18 @@ function ciniki_events_registrations() {
 		if( this.edit.registration_id > 0 ) {
 			this.edit.sections._buttons.buttons.delete.visible = 'yes';
 			var rsp = M.api.getJSONCb('ciniki.events.registrationGet', {'business_id':M.curBusinessID, 
-				'registration_id':this.edit.registration_id, 'customer':'yes'}, function(rsp) {
+				'registration_id':this.edit.registration_id, 'customer':'yes', 'invoice':'yes'}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
 						return false;
 					}
-					M.ciniki_events_registrations.edit.data = rsp.registration;
-					M.ciniki_events_registrations.edit.customer_id = rsp.registration.customer_id;
-					M.ciniki_events_registrations.edit.event_id = rsp.registration.event_id;
-					M.ciniki_events_registrations.edit.refresh();
-					M.ciniki_events_registrations.edit.show(cb);
+					var p = M.ciniki_events_registrations.edit;
+					p.data = rsp.registration;
+					p.customer_id = rsp.registration.customer_id;
+					p.sections.invoice.visible = (M.curBusiness.modules['ciniki.sapos']!=null&&rsp.registration.invoice_id>0)?'yes':'no';
+					p.event_id = rsp.registration.event_id;
+					p.refresh();
+					p.show(cb);
 				});
 		} else if( this.edit.customer_id > 0 ) {
 			this.edit.sections._buttons.buttons.delete.visible = 'no';
@@ -183,9 +203,10 @@ function ciniki_events_registrations() {
 						M.api.err(rsp);
 						return false;
 					}
-					M.ciniki_events_registrations.edit.data = {'customer':rsp.details};
-					M.ciniki_events_registrations.edit.refresh();
-					M.ciniki_events_registrations.edit.show(cb);
+					var p = M.ciniki_events_registrations.edit;
+					p.data = {'customer':rsp.details};
+					p.refresh();
+					p.show(cb);
 				});
 		}
 	};
@@ -205,9 +226,10 @@ function ciniki_events_registrations() {
 						M.api.err(rsp);
 						return false;
 					}
-					M.ciniki_events_registrations.edit.data.customer = rsp.details;
-					M.ciniki_events_registrations.edit.refreshSection('customer');
-					M.ciniki_events_registrations.edit.show();
+					var p = M.ciniki_events_registrations.edit;
+					p.data.customer = rsp.details;
+					p.refreshSection('customer');
+					p.show();
 				});
 		}	
 	};

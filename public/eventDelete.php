@@ -120,6 +120,32 @@ function ciniki_events_eventDelete(&$ciniki) {
 	}
 
 	//
+	// Remove the prices
+	//
+	$strsql = "SELECT id, uuid "
+		. "FROM ciniki_event_prices "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+		. "";
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'price');
+	if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+		return $rc;
+	}
+	if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'priceDelete');
+		$prices = $rc['rows'];
+		foreach($prices as $rid => $price) {
+			$rc = ciniki_core__priceDelete($ciniki, $args['business_id'], 
+				$price['id'],$price['uuid']);
+			if( $rc['stat'] != 'ok' ) {
+				ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+				return $rc;
+			}
+		}
+	}
+
+	//
 	// Remove the registrations
 	//
 	$strsql = "SELECT id, uuid "

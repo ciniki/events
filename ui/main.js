@@ -79,6 +79,13 @@ function ciniki_events_main() {
 				}},
 			'description':{'label':'Description', 'type':'htmlcontent'},
 			'long_description':{'label':'Full Description', 'type':'htmlcontent'},
+			'prices':{'label':'Price List', 'type':'simplegrid', 'num_cols':2,
+				'headerValues':null,
+				'cellClasses':['', ''],
+				'noData':'No prices',
+				'addTxt':'Add Price',
+				'addFn':'M.startApp(\'ciniki.events.prices\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'event_id\':M.ciniki_events_main.event.event_id,\'price_id\':\'0\'});',
+			},
 			'files':{'label':'Files', 'type':'simplegrid', 'num_cols':1,
 				'headerValues':null,
 				'cellClasses':['multiline'],
@@ -142,11 +149,20 @@ function ciniki_events_main() {
 			return this.data[i];
 		};
 		this.event.cellValue = function(s, i, j, d) {
+			if( s == 'prices' ) { 
+				switch(j) {
+					case 0: return d.price.name;
+					case 1: return d.price.unit_amount_display;
+				}
+			}
 			if( s == 'files' && j == 0 ) { 
 				return '<span class="maintext">' + d.file.name + '</span>';
 			}
 		};
 		this.event.rowFn = function(s, i, d) {
+			if( s == 'prices' ) {
+				return 'M.startApp(\'ciniki.events.prices\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'price_id\':\'' + d.price.id + '\',\'event_id\':\'0\'});';
+			}
 			if( s == 'files' ) {
 				return 'M.startApp(\'ciniki.events.files\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'file_id\':\'' + d.file.id + '\'});';
 			}

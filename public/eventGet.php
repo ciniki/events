@@ -43,6 +43,18 @@ function ciniki_events_eventGet($ciniki) {
         return $rc;
     }   
 
+	//
+	// Load the business intl settings
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
+	$rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$intl_timezone = $rc['settings']['intl-default-timezone'];
+	$intl_currency_fmt = numfmt_create($rc['settings']['intl-default-locale'], NumberFormatter::CURRENCY);
+	$intl_currency = $rc['settings']['intl-default-currency'];
+
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
@@ -139,6 +151,30 @@ function ciniki_events_eventGet($ciniki) {
 		}
 		if( isset($rc['num']['num_tickets']) ) {
 			$event['tickets_sold'] = $rc['num']['num_tickets'];
+		}
+		//
+		// Get the price list for the event
+		//
+		$strsql = "SELECT id, name, unit_amount "
+			. "FROM ciniki_event_prices "
+			. "WHERE ciniki_event_prices.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+			. "ORDER BY ciniki_event_prices.name "
+			. "";
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
+			array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
+				'fields'=>array('id', 'name', 'unit_amount')),
+			));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['prices']) ) {
+			$event['prices'] = $rc['prices'];
+			foreach($event['prices'] as $pid => $price) {
+				$event['prices'][$pid]['price']['unit_amount_display'] = numfmt_format_currency(
+					$intl_currency_fmt, $price['price']['unit_amount'], $intl_currency);
+			}
+		} else {
+			$event['prices'] = array();
 		}
 	}
 

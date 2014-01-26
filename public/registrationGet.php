@@ -81,12 +81,16 @@ function ciniki_events_registrationGet($ciniki) {
 	}
 
 	//
-	// FIXME: Add invoice information
+	// Add invoice information
 	//
-//	if( isset($args['invoice']) && $args['invoice'] == 'yes' && $registration['invoice_id'] > 0 ) {
-//		ciniki_core_loadMethod($ciniki, 'ciniki', 'pos', 'private', 'invoiceGet');
-//		$rc = ciniki_pos_invoiceGet($ciniki, $args['business_id'], $registration['invoice_id']);
-//	}
+	if( isset($args['invoice']) && $args['invoice'] == 'yes' && $registration['invoice_id'] > 0 ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'invoiceLoad');
+		$rc = ciniki_sapos_invoiceLoad($ciniki, $args['business_id'], $registration['invoice_id']);
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		$registration['invoice'] = $rc['invoice'];
+	}
 
 	return array('stat'=>'ok', 'registration'=>$registration);
 }

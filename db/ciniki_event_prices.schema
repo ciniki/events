@@ -1,0 +1,51 @@
+#
+# Description
+# -----------
+# This table stores the prices for events.  This allows multiple prices to be specified for
+# each event, which could allow for member/non-member prices, etc.
+#
+# Fields
+# ------
+# id:						The file ID.
+# uuid:						The Universal Unique ID for the file.
+# business_id:				The business the file is for.
+#
+# event_id:					The ID of the event the price is attached to
+#
+# name:						The name for the price. (Member/Non-Member/etc)
+#
+# valid_from:				The UTC date and time the price is valid from.
+# valid_to:					The UTC date and time the price is valid until.
+#
+# unit_amount:				The price for single person for the event.
+# unit_discount_amount:		The discount amount for a single unit.
+# unit_discount_percentage:	The percentage discount for a single unit.
+#
+# taxtype_id:				The ciniki.taxes to be applied for this price.
+#
+# webflags:					Flags for displaying the file on the website.
+#
+#							0x01 - Hidden, Do now show the file on the website
+#
+# date_added:				The UTC date and time the file was added.
+# last_updated:				The UTC date and time the file was last updated.
+#
+create table ciniki_event_prices (
+	id int not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	event_id int not null,
+	name varchar(100) not null,
+	valid_from datetime not null,
+	valid_to datetime not null,
+	unit_amount decimal(19,4) not null,
+	unit_discount_amount decimal(19,4) not null,
+	unit_discount_percentage decimal(19,4) not null,
+	taxtype_id int not null,
+	webflags tinyint unsigned not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	index (event_id, name),
+	index sync (uuid, business_id, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

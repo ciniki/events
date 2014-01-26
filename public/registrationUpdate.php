@@ -40,12 +40,77 @@ function ciniki_events_registrationUpdate(&$ciniki) {
     $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.registrationUpdate'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
-    }   
+    }
+
+	//
+	// Get the existing details for the registration
+	//
+	$strsql = "SELECT id, num_tickets, invoice_id "
+		. "FROM ciniki_event_registrations "
+		. "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['registration_id']) . "' "
+		. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "";
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'registration');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( !isset($rc['registration']) ) {
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1515', 'msg'=>'Registration does not exist'));
+	}
+	$registration = $rc['registration'];
+
+	//
+	// Start transaction
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
+	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.events');
+	if( $rc['stat'] != 'ok' ) { 
+		return $rc;
+	}   
 
 	//
 	// Update the registration in the database
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-	return ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.events.registration', $args['registration_id'], $args);
+	$rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.events.registration', $args['registration_id'], $args);
+	if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+		return $rc;
+	}
+
+	//
+	// Check if there is an invoice for this event, and update the invoice.
+	//
+	if( isset($args['num_tickets']) && $args['num_tickets'] != $registration['num_tickets'] && $registration['invoice_id'] > 0 ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'invoiceUpdateItem');
+		$rc = ciniki_sapos_invoiceUpdateItem($ciniki, $args['business_id'], $registration['invoice_id'],
+			array('object'=>'ciniki.events.registration',
+				'object_id'=>$registration['id'],
+				'quantity'=>$args['num_tickets'],
+				));
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+			return $rc;
+		}
+	}
+
+	//
+	// Commit the transaction
+	//
+	$rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.events');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+
+	//
+	// Update the last_change date in the business modules
+	// Ignore the result, as we don't want to stop user updates if this fails.
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
+	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
+
+	return array('stat'=>'ok');
 }
 ?>
