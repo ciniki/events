@@ -45,6 +45,7 @@ function ciniki_events_registrationGet($ciniki) {
 	$date_format = ciniki_users_dateFormat($ciniki);
 
 	$strsql = "SELECT ciniki_event_registrations.id, "
+		. "ciniki_event_registrations.event_id, "
 		. "ciniki_event_registrations.customer_id, "
 		. "ciniki_event_registrations.invoice_id, "
 		. "ciniki_event_registrations.num_tickets, "
@@ -57,7 +58,7 @@ function ciniki_events_registrationGet($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
 		array('container'=>'registrations', 'fname'=>'id', 'name'=>'registration',
-			'fields'=>array('id', 'customer_id', 'invoice_id', 'num_tickets', 'customer_notes', 'notes')),
+			'fields'=>array('id', 'event_id', 'customer_id', 'invoice_id', 'num_tickets', 'customer_notes', 'notes')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
