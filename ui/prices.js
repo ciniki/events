@@ -20,6 +20,7 @@ function ciniki_events_prices() {
 				'unit_amount':{'label':'Unit Amount', 'type':'text', 'size':'small'},
 				'unit_discount_amount':{'label':'Discount Amount', 'type':'text', 'size':'small'},
 				'unit_discount_percentage':{'label':'Discount Percent', 'type':'text', 'size':'small'},
+				'taxtype_id':{'label':'Taxes', 'active':'no', 'type':'select', 'options':{}},
 				}},
 			'_buttons':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_events_prices.savePrice();'},
@@ -62,6 +63,23 @@ function ciniki_events_prices() {
 			alert('App Error');
 			return false;
 		} 
+
+		//
+		// Setup the tax types
+		//
+		if( M.curBusiness.modules['ciniki.taxes'] != null ) {
+			this.edit.sections.price.fields.taxtype_id.active = 'yes';
+			this.edit.sections.price.fields.taxtype_id.options = {'0':'No Taxes'};
+			console.log(M.curBusiness.taxes);
+			if( M.curBusiness.taxes != null && M.curBusiness.taxes.settings.types != null ) {
+				for(i in M.curBusiness.taxes.settings.types) {
+					this.edit.sections.price.fields.taxtype_id.options[M.curBusiness.taxes.settings.types[i].type.id] = M.curBusiness.taxes.settings.types[i].type.name;
+				}
+			}
+		} else {
+			this.edit.sections.price.fields.taxtype_id.active = 'no';
+			this.edit.sections.price.fields.taxtype_id.options = {'0':'No Taxes'};
+		}
 
 		this.showEdit(cb, args.price_id, args.event_id);
 	}
@@ -118,8 +136,7 @@ function ciniki_events_prices() {
 		} else {
 			var c = this.edit.serializeForm('yes');
 			M.api.postJSONCb('ciniki.events.priceAdd', 
-				{'business_id':M.curBusinessID, 'event_id':this.edit.event_id,
-					'customer_id':this.edit.customer_id}, c, function(rsp) {
+				{'business_id':M.curBusinessID, 'event_id':this.edit.event_id}, c, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
 						return false;

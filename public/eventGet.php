@@ -27,6 +27,7 @@ function ciniki_events_eventGet($ciniki) {
         'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event'), 
 		'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
 		'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
+		'prices'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Prices'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -152,6 +153,9 @@ function ciniki_events_eventGet($ciniki) {
 		if( isset($rc['num']['num_tickets']) ) {
 			$event['tickets_sold'] = $rc['num']['num_tickets'];
 		}
+	}
+
+	if( isset($args['prices']) && $args['prices'] == 'yes' ) {
 		//
 		// Get the price list for the event
 		//

@@ -283,7 +283,7 @@ function ciniki_events_main() {
 			this.event.event_id = eid;
 		}
 		var rsp = M.api.getJSONCb('ciniki.events.eventGet', {'business_id':M.curBusinessID, 
-			'event_id':this.event.event_id, 'images':'yes', 'files':'yes'}, function(rsp) {
+			'event_id':this.event.event_id, 'images':'yes', 'files':'yes', 'prices':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;
