@@ -15,8 +15,8 @@ function ciniki_events_prices() {
         this.edit.sections = { 
 			'price':{'label':'Price', 'fields':{
 				'name':{'label':'Name', 'type':'text'},
-				'valid_from':{'label':'Valid From', 'hint':'', 'type':'text'},
-				'valid_to':{'label':'Valid To', 'hint':'', 'type':'text'},
+//				'valid_from':{'label':'Valid From', 'hint':'', 'type':'text'},
+//				'valid_to':{'label':'Valid To', 'hint':'', 'type':'text'},
 				'unit_amount':{'label':'Unit Amount', 'type':'text', 'size':'small'},
 				'unit_discount_amount':{'label':'Discount Amount', 'type':'text', 'size':'small'},
 				'unit_discount_percentage':{'label':'Discount Percent', 'type':'text', 'size':'small'},
@@ -35,12 +35,6 @@ function ciniki_events_prices() {
 		this.edit.sectionData = function(s) {
 			return this.data[s];
 		}
-//		this.edit.cellValue = function(s, i, j, d) {
-//			switch(j) {
-//				case 0: return d.detail.label;
-//				case 1: return d.detail.value;
-//			}
-//		};
 		this.edit.rowFn = function(s, i, d) { return ''; }
 		this.edit.addButton('save', 'Save', 'M.ciniki_events_prices.savePrice();');
 		this.edit.addClose('Cancel');
