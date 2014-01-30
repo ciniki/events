@@ -68,13 +68,13 @@ function ciniki_events_main() {
 			'_image':{'label':'', 'aside':'yes', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'history':'no'},
 				}},
-			'info':{'label':'', 'list':{
+			'info':{'label':'', 'aside':'yes', 'list':{
 				'name':{'label':'Name'},
 				'start_date':{'label':'Start'},
 				'end_date':{'label':'End'},
 				'url':{'label':'Website'},
 				}},
-			'_registrations':{'label':'', 'hidelabel':'yes', 'visible':'no', 'list':{
+			'_registrations':{'label':'', 'aside':'yes', 'hidelabel':'yes', 'visible':'no', 'list':{
 				'registrations':{'label':'Tickets'},
 				}},
 			'description':{'label':'Description', 'type':'htmlcontent'},

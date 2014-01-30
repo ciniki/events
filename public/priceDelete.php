@@ -17,7 +17,7 @@ function ciniki_events_priceDelete(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
-		'price_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Registration'),
+		'price_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Price'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
