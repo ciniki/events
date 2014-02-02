@@ -309,9 +309,8 @@ function ciniki_events_registrations() {
 						return false;
 					} 
 					if( inv != null && inv == 'yes' ) {
-						M.ciniki_events_registrations.newInvoice('M.ciniki_events_registration.showEdit(null,null,'+rsp.id+',null);', this.edit.event_id, this.edit.customer_id, rsp.id, quantity);
-								
-//						M.startApp('ciniki.sapos.invoice',null,'M.ciniki_events_registration.showEdit(null,null,' + rsp.id + ',null);','mc',{'object':'ciniki.events.registration','object_id':rsp.id});
+//						M.ciniki_events_registrations.newInvoice(M.ciniki_events_registrations.edit.cb'M.ciniki_events_registrations.showEdit(null,null,'+rsp.id+',null);', M.ciniki_events_registrations.edit.event_id, M.ciniki_events_registrations.edit.customer_id, rsp.id, quantity);
+						M.ciniki_events_registrations.newInvoice(M.ciniki_events_registrations.edit.cb, M.ciniki_events_registrations.edit.event_id, M.ciniki_events_registrations.edit.customer_id, rsp.id, quantity);
 					} else {
 						M.ciniki_events_registrations.edit.close();
 					}
@@ -383,8 +382,9 @@ function ciniki_events_registrations() {
 				items[0].unit_amount = prices[i].price.unit_amount;
 				items[0].unit_discount_amount = prices[i].price.unit_discount_amount;
 				items[0].unit_discount_percentage = prices[i].price.unit_discount_percentage;
+				items[0].taxtype_id = prices[i].price.taxtype_id;
 			}
 		}
-		M.startApp('ciniki.sapos.invoice',null,'M.ciniki_events_registrations.showEdit(null,null,\'' + this.newinvoice.registration_id + '\',null);','mc',{'customer_id':this.newinvoice.customer_id,'items':items});
+		M.startApp('ciniki.sapos.invoice',null,this.newinvoice.cb,'mc',{'customer_id':this.newinvoice.customer_id,'items':items});
 	};
 }

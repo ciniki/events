@@ -64,7 +64,6 @@ function ciniki_events_prices() {
 		if( M.curBusiness.modules['ciniki.taxes'] != null ) {
 			this.edit.sections.price.fields.taxtype_id.active = 'yes';
 			this.edit.sections.price.fields.taxtype_id.options = {'0':'No Taxes'};
-			console.log(M.curBusiness.taxes);
 			if( M.curBusiness.taxes != null && M.curBusiness.taxes.settings.types != null ) {
 				for(i in M.curBusiness.taxes.settings.types) {
 					this.edit.sections.price.fields.taxtype_id.options[M.curBusiness.taxes.settings.types[i].type.id] = M.curBusiness.taxes.settings.types[i].type.name;
