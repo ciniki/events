@@ -2,6 +2,9 @@
 // This app will display and update prices for an event
 //
 function ciniki_events_prices() {
+	this.webFlags = {
+		'1':{'name':'Hidden'},
+		};
 	this.init = function() {
 		//
 		// The panel for editing a registrant
@@ -21,6 +24,7 @@ function ciniki_events_prices() {
 				'unit_discount_amount':{'label':'Discount Amount', 'type':'text', 'size':'small'},
 				'unit_discount_percentage':{'label':'Discount Percent', 'type':'text', 'size':'small'},
 				'taxtype_id':{'label':'Taxes', 'active':'no', 'type':'select', 'options':{}},
+				'webflags':{'label':'Web', 'type':'flags', 'toggle':'no', 'join':'yes', 'flags':this.webFlags},
 				}},
 			'_buttons':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_events_prices.savePrice();'},
