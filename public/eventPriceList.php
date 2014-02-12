@@ -36,7 +36,7 @@ function ciniki_events_eventPriceList($ciniki) {
     // check permission to run this function for this business
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventGet'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventPriceList'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
