@@ -20,7 +20,9 @@ function ciniki_events_main() {
 			'upcoming':{'label':'Upcoming Events', 'type':'simplegrid', 'num_cols':2,
 				'headerValues':null,
 				'cellClasses':['multiline center nobreak', 'multiline'],
-				'noData':'No events added'
+				'noData':'No upcoming events',
+				'addTxt':'Add Event',
+				'addFn':'M.ciniki_events_main.showEdit(\'M.ciniki_events_main.showMenu();\',0);',
 				},
 			'past':{'label':'Past Events', 'type':'simplegrid', 'num_cols':2,
 				'headerValues':null,
