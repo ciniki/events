@@ -231,7 +231,7 @@ function ciniki_events_registrations() {
 		} else if( this.edit.customer_id > 0 ) {
 			this.edit.sections._buttons.buttons.delete.visible = 'no';
 			M.api.getJSONCb('ciniki.customers.customerDetails', {'business_id':M.curBusinessID, 
-				'customer_id':this.edit.customer_id}, function(rsp) {
+				'customer_id':this.edit.customer_id, 'phones':'yes', 'emails':'yes'}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
 						return false;
