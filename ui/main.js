@@ -74,7 +74,7 @@ function ciniki_events_main() {
 				'name':{'label':'Name'},
 				'start_date':{'label':'Start'},
 				'end_date':{'label':'End'},
-				'times':{'label':'Times'},
+				'times':{'label':'Hours'},
 				'url':{'label':'Website'},
 				}},
 			'_registrations':{'label':'', 'aside':'yes', 'hidelabel':'yes', 'visible':'no', 'list':{
@@ -208,7 +208,7 @@ function ciniki_events_main() {
                 'url':{'label':'URL', 'hint':'Enter the http:// address for your events website', 'type':'text'},
                 'start_date':{'label':'Start', 'type':'date'},
                 'end_date':{'label':'End', 'type':'date'},
-                'times':{'label':'Times', 'type':'text'},
+                'times':{'label':'Hours', 'type':'text'},
                 }}, 
 			'_registrations':{'label':'Registrations', 'visible':'no', 'fields':{
 				'reg_flags':{'label':'Options', 'active':'no', 'type':'flags', 'joined':'no', 'flags':this.regFlags},
