@@ -1,0 +1,5 @@
+#
+# Add fields for event times
+#
+ALTER TABLE ciniki_events ADD COLUMN times varchar(150) not null AFTER end_date;
+ALTER TABLE ciniki_events COMMENT='v1.05';
