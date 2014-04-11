@@ -24,6 +24,7 @@ function ciniki_events_web_eventList($ciniki, $settings, $business_id, $type, $l
 		. "IF(ciniki_events.end_date = '0000-00-00', '', DATE_FORMAT(ciniki_events.end_date, '%Y')) AS end_year, "
 		. "DATE_FORMAT(ciniki_events.start_date, '%a %b %c, %Y') AS start_date, "
 		. "DATE_FORMAT(ciniki_events.end_date, '%a %b %c, %Y') AS end_date, "
+		. "ciniki_events.times, "
 		. "ciniki_events.description, "
 		. "ciniki_events.primary_image_id, "
 		. "COUNT(ciniki_event_images.id) AS num_images, "
@@ -59,7 +60,8 @@ function ciniki_events_web_eventList($ciniki, $settings, $business_id, $type, $l
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
 		array('container'=>'events', 'fname'=>'id', 
 			'fields'=>array('id', 'name', 'image_id'=>'primary_image_id', 'isdetails', 
-				'start_month', 'start_day', 'start_year', 'end_month', 'end_day', 'end_year', 'start_date', 'end_date', 
+				'start_month', 'start_day', 'start_year', 'end_month', 'end_day', 'end_year', 
+				'start_date', 'end_date', 'times',
 				'permalink', 'description', 'url', 'num_images', 'num_files')),
 		));
 	if( $rc['stat'] != 'ok' ) {

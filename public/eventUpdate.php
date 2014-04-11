@@ -35,6 +35,7 @@ function ciniki_events_eventUpdate(&$ciniki) {
 		'reg_flags'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Registration Flags'),
 		'start_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Start Date'), 
 		'end_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'End Date'), 
+		'times'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Times'), 
 		'primary_image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Image'), 
 		'long_description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Long Description'), 
         )); 
@@ -70,7 +71,9 @@ function ciniki_events_eventUpdate(&$ciniki) {
 	$event = $rc['event'];
 
 	if( isset($args['name']) ) {
-		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
+		$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
+//		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
 		//
 		// Make sure the permalink is unique
 		//

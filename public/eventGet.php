@@ -69,6 +69,7 @@ function ciniki_events_eventGet($ciniki) {
 		. "ciniki_events.reg_flags, "
 		. "DATE_FORMAT(ciniki_events.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
 		. "DATE_FORMAT(ciniki_events.end_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS end_date, "
+		. "ciniki_events.times, "
 		. "ciniki_events.primary_image_id, "
 		. "ciniki_events.long_description ";
 	if( isset($args['images']) && $args['images'] == 'yes' ) {
@@ -96,7 +97,8 @@ function ciniki_events_eventGet($ciniki) {
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
 			array('container'=>'events', 'fname'=>'id', 'name'=>'event',
 				'fields'=>array('id', 'name', 'permalink', 'url', 'primary_image_id', 
-					'start_date', 'end_date', 'description', 'num_tickets', 'reg_flags', 'long_description')),
+					'start_date', 'end_date', 'times', 'description', 
+					'num_tickets', 'reg_flags', 'long_description')),
 			array('container'=>'images', 'fname'=>'img_id', 'name'=>'image',
 				'fields'=>array('id'=>'img_id', 'name'=>'image_name', 'webflags'=>'image_webflags',
 					'image_id', 'description'=>'image_description', 'url'=>'image_url')),
@@ -124,7 +126,8 @@ function ciniki_events_eventGet($ciniki) {
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
 			array('container'=>'events', 'fname'=>'id', 'name'=>'event',
 				'fields'=>array('id', 'name', 'permalink', 'url', 'primary_image_id', 
-					'start_date', 'end_date', 'description', 'num_tickets', 'reg_flags', 'long_description')),
+					'start_date', 'end_date', 'times',
+					'description', 'num_tickets', 'reg_flags', 'long_description')),
 		));
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;

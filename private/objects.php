@@ -25,6 +25,7 @@ function ciniki_events_objects($ciniki) {
 			'num_tickets'=>array(),
 			'start_date'=>array(),
 			'end_date'=>array(),
+			'times'=>array(),
 			'primary_image_id'=>array('ref'=>'ciniki.images.image'),
 			'long_description'=>array(),
 			),
