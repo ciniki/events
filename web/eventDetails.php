@@ -29,6 +29,13 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 		. "ciniki_events.url, "
 		. "DATE_FORMAT(ciniki_events.start_date, '%a %b %c, %Y') AS start_date, "
 		. "DATE_FORMAT(ciniki_events.end_date, '%a %b %c, %Y') AS end_date, "
+		. "DATE_FORMAT(ciniki_events.start_date, '%M') AS start_month, "
+		. "DATE_FORMAT(ciniki_events.start_date, '%D') AS start_day, "
+		. "DATE_FORMAT(ciniki_events.start_date, '%Y') AS start_year, "
+		. "IF(ciniki_events.end_date = '0000-00-00', '', DATE_FORMAT(ciniki_events.end_date, '%M')) AS end_month, "
+		. "IF(ciniki_events.end_date = '0000-00-00', '', DATE_FORMAT(ciniki_events.end_date, '%D')) AS end_day, "
+		. "IF(ciniki_events.end_date = '0000-00-00', '', DATE_FORMAT(ciniki_events.end_date, '%Y')) AS end_year, "
+		. "ciniki_events.times, "
 		. "ciniki_events.description AS short_description, "
 		. "ciniki_events.long_description, "
 		. "ciniki_events.primary_image_id, "
@@ -50,7 +57,8 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artclub', array(
 		array('container'=>'events', 'fname'=>'id', 
 			'fields'=>array('id', 'name', 'permalink', 'image_id'=>'primary_image_id', 
-			'start_date', 'end_date', 
+			'start_date', 'start_day', 'start_month', 'start_year', 
+			'end_date', 'end_day', 'end_month', 'end_year', 'times',
 			'url', 'short_description', 'description'=>'long_description')),
 		array('container'=>'images', 'fname'=>'image_id', 
 			'fields'=>array('image_id', 'title'=>'image_name', 'permalink'=>'image_permalink',
