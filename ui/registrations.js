@@ -96,7 +96,7 @@ function ciniki_events_registrations() {
 					case 1: return d.invoice_date;
 					case 2: return (d.customer!=null&&d.customer.display_name!=null)?d.customer.display_name:'';
 					case 3: return d.total_amount_display;
-					case 4: return d.status_text;
+					case 4: return d.payment_status_text;
 				}
 			}
 		};

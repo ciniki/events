@@ -47,12 +47,12 @@ function ciniki_events_registrationList($ciniki) {
 		//
 		// Load the status maps for the text description of each status
 		//
-		ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'invoiceStatusMaps');
-		$rc = ciniki_sapos_invoiceStatusMaps($ciniki);
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'invoiceMaps');
+		$rc = ciniki_sapos_invoiceMaps($ciniki);
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
 		}
-		$status_maps = $rc['maps'];
+		$status_maps = $rc['maps']['payment_status'];
 		$status_maps[0] = 'No Invoice';
 
 		$strsql = "SELECT ciniki_event_registrations.id, "
@@ -60,8 +60,8 @@ function ciniki_events_registrationList($ciniki) {
 			. "IFNULL(ciniki_customers.display_name, '') AS customer_name, "
 			. "ciniki_event_registrations.num_tickets, "
 			. "ciniki_event_registrations.invoice_id, "
-			. "ciniki_sapos_invoices.status AS invoice_status, "
-			. "IFNULL(ciniki_sapos_invoices.status, 0) AS invoice_status_text "
+			. "ciniki_sapos_invoices.payment_status AS invoice_status, "
+			. "IFNULL(ciniki_sapos_invoices.payment_status, 0) AS invoice_status_text "
 			. "FROM ciniki_event_registrations "
 			. "LEFT JOIN ciniki_customers ON (ciniki_event_registrations.customer_id = ciniki_customers.id "
 				. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
