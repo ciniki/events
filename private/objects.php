@@ -70,6 +70,7 @@ function ciniki_events_objects($ciniki) {
 		'fields'=>array(
 			'event_id'=>array('ref'=>'ciniki.events.event'),
 			'name'=>array(),
+			'available_to'=>array(),
 			'valid_from'=>array(),
 			'valid_to'=>array(),
 			'unit_amount'=>array(),

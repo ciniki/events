@@ -56,6 +56,7 @@ function ciniki_events_priceGet($ciniki) {
 	$strsql = "SELECT ciniki_event_prices.id, "
 		. "ciniki_event_prices.event_id, "
 		. "ciniki_event_prices.name, "
+		. "ciniki_event_prices.available_to, "
 		. "ciniki_event_prices.valid_from, "
 		. "ciniki_event_prices.valid_to, "
 		. "ciniki_event_prices.unit_amount, "
@@ -70,7 +71,7 @@ function ciniki_events_priceGet($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
 		array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
-			'fields'=>array('id', 'event_id', 'name', 'valid_from', 'valid_to', 
+			'fields'=>array('id', 'event_id', 'name', 'available_to', 'valid_from', 'valid_to', 
 				'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
 				'taxtype_id', 'webflags'),
 			'utctotz'=>array('valid_from'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),
@@ -86,6 +87,7 @@ function ciniki_events_priceGet($ciniki) {
 	}
 	$price = $rc['prices'][0]['price'];
 
+	$price['unit_discount_percentage'] = (float)$price['unit_discount_percentage'];
 	$price['unit_amount'] = numfmt_format_currency($intl_currency_fmt,
 		$price['unit_amount'], $intl_currency);
 	$price['unit_discount_amount'] = numfmt_format_currency($intl_currency_fmt,

@@ -11,6 +11,8 @@
 //
 function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $permalink) {
 
+	
+//	print "<pre>" . print_r($ciniki, true) . "</pre>";
 	//
 	// Load INTL settings
 	//
@@ -36,6 +38,8 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 		. "IF(ciniki_events.end_date = '0000-00-00', '', DATE_FORMAT(ciniki_events.end_date, '%D')) AS end_day, "
 		. "IF(ciniki_events.end_date = '0000-00-00', '', DATE_FORMAT(ciniki_events.end_date, '%Y')) AS end_year, "
 		. "ciniki_events.times, "
+		. "ciniki_events.reg_flags, "
+		. "ciniki_events.num_tickets, "
 		. "ciniki_events.description AS short_description, "
 		. "ciniki_events.long_description, "
 		. "ciniki_events.primary_image_id, "
@@ -59,6 +63,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 			'fields'=>array('id', 'name', 'permalink', 'image_id'=>'primary_image_id', 
 			'start_date', 'start_day', 'start_month', 'start_year', 
 			'end_date', 'end_day', 'end_month', 'end_year', 'times',
+			'reg_flags', 'num_tickets', 
 			'url', 'short_description', 'description'=>'long_description')),
 		array('container'=>'images', 'fname'=>'image_id', 
 			'fields'=>array('image_id', 'title'=>'image_name', 'permalink'=>'image_permalink',
@@ -74,18 +79,44 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 	$event = array_pop($rc['events']);
 
 	//
+	// If registrations online enabled, check the available tickets
+	//
+	if( ($event['reg_flags']&0x02) > 0 ) {
+		$event['tickets_sold'] = 0;
+		$strsql = "SELECT 'num_tickets', SUM(num_tickets) AS num_tickets "
+			. "FROM ciniki_event_registrations "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. "AND ciniki_event_registrations.event_id = '" . ciniki_core_dbQuote($ciniki, $event['id']) . "' "
+			. "";
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbCount');
+		$rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.events', 'num');
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['num']['num_tickets']) ) {
+			$event['tickets_sold'] = $rc['num']['num_tickets'];
+		}
+	}
+
+	//
 	// Check if any prices are attached to the event
 	//
-	$strsql = "SELECT id, name, unit_amount "
+	if( isset($ciniki['session']['customer']['price_flags']) ) {
+		$price_flags = $ciniki['session']['customer']['price_flags'];
+	} else {
+		$price_flags = 0x01;
+	}
+	$strsql = "SELECT id, name, available_to, unit_amount "
 		. "FROM ciniki_event_prices "
 		. "WHERE ciniki_event_prices.event_id = '" . ciniki_core_dbQuote($ciniki, $event['id']) . "' "
 		. "AND ciniki_event_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND (ciniki_event_prices.webflags&0x01) = 0 "
+		. "AND ((ciniki_event_prices.available_to&$price_flags) > 0 OR (webflags&available_to&0xF0) > 0) "
 		. "ORDER BY ciniki_event_prices.name "
 		. "";
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
 		array('container'=>'prices', 'fname'=>'id',
-			'fields'=>array('id', 'name', 'unit_amount')),
+			'fields'=>array('id', 'name', 'available_to', 'unit_amount')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -93,6 +124,16 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 	if( isset($rc['prices']) ) {
 		$event['prices'] = $rc['prices'];
 		foreach($event['prices'] as $pid => $price) {
+			// Check if online registrations enabled
+			if( ($event['reg_flags']&0x02) > 0 && ($price['available_to']&$price_flags) > 0 ) {
+				$event['prices'][$pid]['cart'] = 'yes';
+			} else {
+				$event['prices'][$pid]['cart'] = 'no';
+			}
+			$event['prices'][$pid]['object'] = 'ciniki.events.event';
+			$event['prices'][$pid]['object_id'] = $event['id'];
+			$event['prices'][$pid]['limited_units'] = 'yes';
+			$event['prices'][$pid]['units_available'] = $event['num_tickets'] - $event['tickets_sold'];
 			$event['prices'][$pid]['unit_amount_display'] = numfmt_format_currency(
 				$intl_currency_fmt, $price['unit_amount'], $intl_currency);
 		}

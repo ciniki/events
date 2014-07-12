@@ -43,6 +43,7 @@ function ciniki_events_eventGet($ciniki) {
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
+	$modules = $rc['modules'];
 
 	//
 	// Load the business intl settings
@@ -59,6 +60,16 @@ function ciniki_events_eventGet($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
+
+	//
+	// Load event maps
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'maps');
+	$rc = ciniki_events_maps($ciniki, $modules);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$maps = $rc['maps'];
 
 	$strsql = "SELECT ciniki_events.id, "
 		. "ciniki_events.name, "
@@ -162,14 +173,15 @@ function ciniki_events_eventGet($ciniki) {
 		//
 		// Get the price list for the event
 		//
-		$strsql = "SELECT id, name, unit_amount "
+		$strsql = "SELECT id, name, available_to, available_to AS available_to_text, unit_amount "
 			. "FROM ciniki_event_prices "
 			. "WHERE ciniki_event_prices.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
 			. "ORDER BY ciniki_event_prices.name "
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
 			array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
-				'fields'=>array('id', 'name', 'unit_amount')),
+				'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount'),
+				'flags'=>array('available_to_text'=>$maps['prices']['available_to'])),
 			));
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;

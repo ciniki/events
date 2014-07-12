@@ -5,11 +5,18 @@ function ciniki_events_prices() {
 	this.webFlags = {
 		'1':{'name':'Hidden'},
 		};
+	this.availableToFlags = {
+		'1':{'name':'Customers'},
+		'2':{'name':'Private'},
+		'5':{'name':'Members'},
+		'6':{'name':'Dealers'},
+		'7':{'name':'Distributors'},
+		};
 	this.init = function() {
 		//
 		// The panel for editing a registrant
 		//
-		this.edit = new M.panel('Registrant',
+		this.edit = new M.panel('Event Price',
 			'ciniki_events_prices', 'edit',
 			'mc', 'medium', 'sectioned', 'ciniki.events.prices.edit');
 		this.edit.data = null;
@@ -18,13 +25,14 @@ function ciniki_events_prices() {
         this.edit.sections = { 
 			'price':{'label':'Price', 'fields':{
 				'name':{'label':'Name', 'type':'text'},
+				'available_to':{'label':'Available', 'type':'flags', 'default':'1', 'flags':{}},
 //				'valid_from':{'label':'Valid From', 'hint':'', 'type':'text'},
 //				'valid_to':{'label':'Valid To', 'hint':'', 'type':'text'},
 				'unit_amount':{'label':'Unit Amount', 'type':'text', 'size':'small'},
 				'unit_discount_amount':{'label':'Discount Amount', 'type':'text', 'size':'small'},
 				'unit_discount_percentage':{'label':'Discount Percent', 'type':'text', 'size':'small'},
 				'taxtype_id':{'label':'Taxes', 'active':'no', 'type':'select', 'options':{}},
-				'webflags':{'label':'Web', 'type':'flags', 'toggle':'no', 'join':'yes', 'flags':this.webFlags},
+				'webflags':{'label':'Web', 'type':'flags', 'toggle':'no', 'join':'yes', 'flags':{}},
 				}},
 			'_buttons':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_events_prices.savePrice();'},
@@ -77,7 +85,24 @@ function ciniki_events_prices() {
 			this.edit.sections.price.fields.taxtype_id.active = 'no';
 			this.edit.sections.price.fields.taxtype_id.options = {'0':'No Taxes'};
 		}
-
+		
+		//
+		// Setup the available_to flags and webflags
+		//
+		this.edit.sections.price.fields.available_to.flags = {'1':{'name':'Customers'}};
+		this.edit.sections.price.fields.webflags.flags = {'1':{'name':'Hidden'}};
+		if( (M.curBusiness.modules['ciniki.customers'].flags&0x02) > 0 ) {
+			this.edit.sections.price.fields.available_to.flags['5'] = {'name':'Members'};
+			this.edit.sections.price.fields.webflags.flags['5'] = {'name':'Show Members Price'};
+		}
+		if( (M.curBusiness.modules['ciniki.customers'].flags&0x10) > 0 ) {
+			this.edit.sections.price.fields.available_to.flags['6'] = {'name':'Dealers'};
+			this.edit.sections.price.fields.webflags.flags['6'] = {'name':'Show Dealers Price'};
+		}
+		if( (M.curBusiness.modules['ciniki.customers'].flags&0x100) > 0 ) {
+			this.edit.sections.price.fields.available_to.flags['7'] = {'name':'Distributors'};
+			this.edit.sections.price.fields.webflags.flags['7'] = {'name':'Show Distributors Price'};
+		}
 		this.showEdit(cb, args.price_id, args.event_id);
 	}
 

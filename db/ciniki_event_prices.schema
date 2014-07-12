@@ -14,6 +14,16 @@
 #
 # name:						The name for the price. (Member/Non-Member/etc)
 #
+# available_to:				The flags that control who the price is for.
+#
+#							0x01 - Public/Customers
+#							0x02 - Private (internal UI use only)
+#							0x04 -
+#							0x08 - 
+#							0x10 - Members
+#							0x20 - Dealers
+#							0x40 - Distributors
+#
 # valid_from:				The UTC date and time the price is valid from.
 # valid_to:					The UTC date and time the price is valid until.
 #
@@ -36,6 +46,7 @@ create table ciniki_event_prices (
 	business_id int not null,
 	event_id int not null,
 	name varchar(100) not null,
+	available_to tinyint unsigned not null,
 	valid_from datetime not null,
 	valid_to datetime not null,
 	unit_amount decimal(19,4) not null,
@@ -48,4 +59,4 @@ create table ciniki_event_prices (
 	primary key (id),
 	index (event_id, name),
 	index sync (uuid, business_id, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.01';
+) ENGINE='InnoDB', COMMENT='v1.02';

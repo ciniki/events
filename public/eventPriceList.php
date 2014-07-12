@@ -62,6 +62,8 @@ function ciniki_events_eventPriceList($ciniki) {
 	//
 	$strsql = "SELECT ciniki_event_prices.id, "
 		. "ciniki_event_prices.name, "
+		. "ciniki_event_prices.available_to, "
+		. "ciniki_event_prices.available_to AS available_to_text, "
 		. "ciniki_event_prices.unit_amount, "
 		. "ciniki_event_prices.unit_discount_amount, "
 		. "ciniki_event_prices.unit_discount_percentage, "
@@ -78,8 +80,9 @@ function ciniki_events_eventPriceList($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
 		array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
-			'fields'=>array('id', 'event_name', 'name', 
-				'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id')),
+			'fields'=>array('id', 'event_name', 'name', 'available_to', 'available_to_text',
+				'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id'),
+			'flags'=>array('available_to_text'=>$maps['prices']['available_to'])),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

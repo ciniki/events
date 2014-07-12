@@ -154,7 +154,7 @@ function ciniki_events_main() {
 		this.event.cellValue = function(s, i, j, d) {
 			if( s == 'prices' ) { 
 				switch(j) {
-					case 0: return d.price.name;
+					case 0: return d.price.name + ' <span class="subdue">(' + d.price.available_to_text + ')</span>';
 					case 1: return d.price.unit_amount_display;
 				}
 			}
@@ -203,14 +203,14 @@ function ciniki_events_main() {
 			'_image':{'label':'', 'aside':'yes', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
 			}},
-            'general':{'label':'General', 'fields':{
+            'general':{'label':'General', 'aside':'yes', 'fields':{
                 'name':{'label':'Name', 'hint':'Events name', 'type':'text'},
                 'url':{'label':'URL', 'hint':'Enter the http:// address for your events website', 'type':'text'},
                 'start_date':{'label':'Start', 'type':'date'},
                 'end_date':{'label':'End', 'type':'date'},
                 'times':{'label':'Hours', 'type':'text'},
                 }}, 
-			'_registrations':{'label':'Registrations', 'visible':'no', 'fields':{
+			'_registrations':{'label':'Registrations', 'aside':'yes', 'visible':'no', 'fields':{
 				'reg_flags':{'label':'Options', 'active':'no', 'type':'flags', 'joined':'no', 'flags':this.regFlags},
 				'num_tickets':{'label':'Number of Tickets', 'active':'no', 'type':'text', 'size':'small'},
 				}},
