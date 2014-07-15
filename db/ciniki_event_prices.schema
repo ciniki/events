@@ -36,9 +36,12 @@
 # webflags:					Flags for displaying the file on the website.
 #
 #							0x01 - Hidden, Do now show the file on the website
+#							0x10 - Show Members price to the public.
+#							0x20 - Show Dealers price to the public.
+#							0x40 - Show Distributors price to the public.
 #
-# date_added:				The UTC date and time the file was added.
-# last_updated:				The UTC date and time the file was last updated.
+# date_added:				The UTC date and time the price was added.
+# last_updated:				The UTC date and time the price was last updated.
 #
 create table ciniki_event_prices (
 	id int not null auto_increment,
