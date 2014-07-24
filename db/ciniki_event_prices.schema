@@ -16,13 +16,14 @@
 #
 # available_to:				The flags that control who the price is for.
 #
-#							0x01 - Public/Customers
+#							0x01 - Public - unregistered customers, registered customers, etc.
 #							0x02 - Private (internal UI use only)
 #							0x04 -
 #							0x08 - 
-#							0x10 - Members
-#							0x20 - Dealers
-#							0x40 - Distributors
+#							0x10 - Customers - must already exist in the database
+#							0x20 - Members - must be member_status = 10 in customers
+#							0x40 - Dealers - must be dealer_status = 10 in customers
+#							0x80 - Distributors - must be distributor_status = 10 in customers
 #
 # valid_from:				The UTC date and time the price is valid from.
 # valid_to:					The UTC date and time the price is valid until.
