@@ -47,7 +47,7 @@ function ciniki_events_registrations() {
 		this.edit.event_id = 0;
 		this.edit.registration_id = 0;
         this.edit.sections = { 
-			'customer':{'label':'Customer', 'type':'simplegrid', 'num_cols':2,
+			'customer_details':{'label':'Customer', 'type':'simplegrid', 'num_cols':2,
 				'cellClasses':['label',''],
 				'addTxt':'Edit',
 				'addFn':'M.startApp(\'ciniki.customers.edit\',null,\'M.ciniki_events_registrations.updateEditCustomer(null);\',\'mc\',{\'next\':\'M.ciniki_events_registrations.updateEditCustomer\',\'customer_id\':M.ciniki_events_registrations.edit.customer_id});',
@@ -84,7 +84,7 @@ function ciniki_events_registrations() {
 			return this.data[s];
 		}
 		this.edit.cellValue = function(s, i, j, d) {
-			if( s == 'customer' ) {
+			if( s == 'customer_details' ) {
 				switch(j) {
 					case 0: return d.detail.label;
 					case 1: return d.detail.value.replace(/\n/, '<br/>');
@@ -182,12 +182,8 @@ function ciniki_events_registrations() {
 
 	this.showAdd = function(cb, eid) {
 		// Setup the edit panel for when the customer edit returns
-		if( cb != null ) {
-			this.edit.cb = cb;
-		}
-		if( eid != null ) {
-			this.edit.event_id = eid;
-		}
+		if( cb != null ) { this.edit.cb = cb; }
+		if( eid != null ) { this.edit.event_id = eid; }
 		M.startApp('ciniki.customers.edit',null,cb,'mc',{'next':'M.ciniki_events_registrations.showFromCustomer','customer_id':0});
 	};
 
@@ -197,15 +193,9 @@ function ciniki_events_registrations() {
 
 	this.showEdit = function(cb, cid, eid, rid) {
 		this.edit.reset();
-		if( cid != null ) {
-			this.edit.customer_id = cid;
-		}
-		if( eid != null ) {
-			this.edit.event_id = eid;
-		}
-		if( rid != null ) {
-			this.edit.registration_id = rid;
-		}
+		if( cid != null ) { this.edit.customer_id = cid; }
+		if( eid != null ) { this.edit.event_id = eid; }
+		if( rid != null ) { this.edit.registration_id = rid; }
 
 		// Check if this is editing a existing registration or adding a new one
 		if( this.edit.registration_id > 0 ) {
@@ -237,7 +227,7 @@ function ciniki_events_registrations() {
 						return false;
 					}
 					var p = M.ciniki_events_registrations.edit;
-					p.data = {'customer':rsp.details};
+					p.data = {'customer_details':rsp.details};
 //					p.sections.invoice.addTxt = '';
 					p.sections._buttons.buttons.saveandinvoice.visible = (M.curBusiness.modules['ciniki.sapos']!=null)?'yes':'no';
 					p.refresh();
@@ -263,7 +253,7 @@ function ciniki_events_registrations() {
 					}
 					var p = M.ciniki_events_registrations.edit;
 					p.data.customer = rsp.details;
-					p.refreshSection('customer');
+					p.refreshSection('customer_details');
 					p.show();
 				});
 		}	

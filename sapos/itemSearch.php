@@ -10,9 +10,9 @@
 // Returns
 // =======
 //
-function ciniki_events_sapos_itemSearch($ciniki, $business_id, $start_needle, $limit) {
+function ciniki_events_sapos_itemSearch($ciniki, $business_id, $args) {
 
-	if( $start_needle == '' ) {
+	if( $args['start_needle'] == '' ) {
 		return array('stat'=>'ok', 'items'=>array());
 	}
 
@@ -61,8 +61,8 @@ function ciniki_events_sapos_itemSearch($ciniki, $business_id, $start_needle, $l
 		. "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND (ciniki_events.reg_flags&0x03) > 0 "
 		. "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
-		. "AND (ciniki_events.name LIKE '" . ciniki_core_dbQuote($ciniki, $start_needle) . "%' "
-			. "OR ciniki_events.name LIKE '% " . ciniki_core_dbQuote($ciniki, $start_needle) . "%' "
+		. "AND (ciniki_events.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+			. "OR ciniki_events.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. ") "
 		. "";
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
