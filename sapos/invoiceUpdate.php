@@ -30,7 +30,7 @@ function ciniki_events_sapos_invoiceUpdate($ciniki, $business_id, $invoice_id, $
 			return $rc;
 		}
 		if( !isset($rc['registration']) ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1512', 'msg'=>'Unable to find event registration'));
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1964', 'msg'=>'Unable to find event registration'));
 		}
 		$registration = $rc['registration'];
 
@@ -47,7 +47,7 @@ function ciniki_events_sapos_invoiceUpdate($ciniki, $business_id, $invoice_id, $
 			return $rc;
 		}
 		if( !isset($rc['invoice']) ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1512', 'msg'=>'Unable to find invoice'));
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1965', 'msg'=>'Unable to find invoice'));
 		}
 		$invoice = $rc['invoice'];
 		

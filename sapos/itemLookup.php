@@ -16,7 +16,7 @@ function ciniki_events_sapos_itemLookup($ciniki, $business_id, $args) {
 		|| !isset($args['object_id']) || $args['object_id'] == '' 
 		|| !isset($args['price_id']) || $args['price_id'] == '' 
 		) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1818', 'msg'=>'No event specified.'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1970', 'msg'=>'No event specified.'));
 	}
 
 	//
@@ -34,7 +34,7 @@ function ciniki_events_sapos_itemLookup($ciniki, $business_id, $args) {
 			return $rc;
 		}
 		if( !isset($rc['event']) ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1819', 'msg'=>'Unable to find event'));
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1971', 'msg'=>'Unable to find event'));
 		}
 		$event = $rc['event'];
 		$item = array(
