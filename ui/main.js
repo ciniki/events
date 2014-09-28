@@ -101,6 +101,10 @@ function ciniki_events_main() {
 				'addTxt':'Add Additional Image',
 				'addFn':'M.startApp(\'ciniki.events.images\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'event_id\':M.ciniki_events_main.event.event_id,\'add\':\'yes\'});',
 				},
+			'sponsors':{'label':'Sponsors', 'type':'simplegrid', 'num_cols':1,
+				'addTxt':'Add Sponsor',
+				'addFn':'M.startApp(\'ciniki.sponsors.refedit\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'object\':\'ciniki.events.event\',\'object_id\':M.ciniki_events_main.event.event_id,\'sponsor_id\':\'0\'});',
+				},
 			'_buttons':{'label':'', 'buttons':{
 				'edit':{'label':'Edit', 'fn':'M.ciniki_events_main.showEdit(\'M.ciniki_events_main.showEvent();\',M.ciniki_events_main.event.event_id);'},
 				}},
@@ -161,6 +165,9 @@ function ciniki_events_main() {
 			if( s == 'files' && j == 0 ) { 
 				return '<span class="maintext">' + d.file.name + '</span>';
 			}
+			if( s == 'sponsors' && j == 0 ) { 
+				return '<span class="maintext">' + d.sponsor.title + '</span>';
+			}
 		};
 		this.event.rowFn = function(s, i, d) {
 			if( s == 'prices' ) {
@@ -168,6 +175,9 @@ function ciniki_events_main() {
 			}
 			if( s == 'files' ) {
 				return 'M.startApp(\'ciniki.events.files\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'file_id\':\'' + d.file.id + '\'});';
+			}
+			if( s == 'sponsors' ) {
+				return 'M.startApp(\'ciniki.sponsors.refedit\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'ref_id\':\'' + d.sponsor.ref_id + '\'});';
 			}
 		};
 		this.event.thumbSrc = function(s, i, d) {
@@ -262,6 +272,13 @@ function ciniki_events_main() {
 			return false;
 		} 
 
+		if( M.curBusiness.modules['ciniki.sponsors'] != null 
+			&& (M.curBusiness.modules['ciniki.sponsors'].flags&0x02) ) {
+			this.event.sections.sponsors.visible = 'yes';
+		} else {
+			this.event.sections.sponsors.visible = 'no';
+		}
+
 		this.showMenu(cb);
 	}
 
@@ -287,7 +304,7 @@ function ciniki_events_main() {
 			this.event.event_id = eid;
 		}
 		var rsp = M.api.getJSONCb('ciniki.events.eventGet', {'business_id':M.curBusinessID, 
-			'event_id':this.event.event_id, 'images':'yes', 'files':'yes', 'prices':'yes'}, function(rsp) {
+			'event_id':this.event.event_id, 'images':'yes', 'files':'yes', 'prices':'yes', 'sponsors':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;

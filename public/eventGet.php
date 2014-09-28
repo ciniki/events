@@ -28,6 +28,7 @@ function ciniki_events_eventGet($ciniki) {
 		'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
 		'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
 		'prices'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Prices'),
+		'sponsors'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sponsors'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -215,6 +216,24 @@ function ciniki_events_eventGet($ciniki) {
 		}
 		if( isset($rc['files']) ) {
 			$event['files'] = $rc['files'];
+		}
+	}
+
+	//
+	// Get any sponsors for this event, and that references for sponsors is enabled
+	//
+	if( isset($args['sponsors']) && $args['sponsors'] == 'yes' 
+		&& isset($ciniki['business']['modules']['ciniki.sponsors']) 
+		&& ($ciniki['business']['modules']['ciniki.sponsors']['flags']&0x02) == 0x02
+		) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'sponsors', 'hooks', 'sponsorList');
+		$rc = ciniki_sponsors_hooks_sponsorList($ciniki, $args['business_id'], 
+			array('object'=>'ciniki.events.event', 'object_id'=>$args['event_id']));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['sponsors']) ) {
+			$event['sponsors'] = $rc['sponsors'];
 		}
 	}
 
