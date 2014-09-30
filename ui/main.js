@@ -102,8 +102,8 @@ function ciniki_events_main() {
 				'addFn':'M.startApp(\'ciniki.events.images\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'event_id\':M.ciniki_events_main.event.event_id,\'add\':\'yes\'});',
 				},
 			'sponsors':{'label':'Sponsors', 'type':'simplegrid', 'num_cols':1,
-				'addTxt':'Add Sponsor',
-				'addFn':'M.startApp(\'ciniki.sponsors.refedit\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'object\':\'ciniki.events.event\',\'object_id\':M.ciniki_events_main.event.event_id,\'sponsor_id\':\'0\'});',
+				'addTxt':'Manage Sponsors',
+				'addFn':'M.startApp(\'ciniki.sponsors.ref\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'object\':\'ciniki.events.event\',\'object_id\':M.ciniki_events_main.event.event_id});',
 				},
 			'_buttons':{'label':'', 'buttons':{
 				'edit':{'label':'Edit', 'fn':'M.ciniki_events_main.showEdit(\'M.ciniki_events_main.showEvent();\',M.ciniki_events_main.event.event_id);'},
@@ -177,7 +177,7 @@ function ciniki_events_main() {
 				return 'M.startApp(\'ciniki.events.files\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'file_id\':\'' + d.file.id + '\'});';
 			}
 			if( s == 'sponsors' ) {
-				return 'M.startApp(\'ciniki.sponsors.refedit\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'ref_id\':\'' + d.sponsor.ref_id + '\'});';
+				return 'M.startApp(\'ciniki.sponsors.ref\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'ref_id\':\'' + d.sponsor.ref_id + '\'});';
 			}
 		};
 		this.event.thumbSrc = function(s, i, d) {
