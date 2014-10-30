@@ -132,8 +132,10 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 			}
 			$event['prices'][$pid]['object'] = 'ciniki.events.event';
 			$event['prices'][$pid]['object_id'] = $event['id'];
-			$event['prices'][$pid]['limited_units'] = 'yes';
-			$event['prices'][$pid]['units_available'] = $event['num_tickets'] - $event['tickets_sold'];
+			if( $event['num_tickets'] > 0 ) {
+				$event['prices'][$pid]['limited_units'] = 'yes';
+				$event['prices'][$pid]['units_available'] = $event['num_tickets'] - $event['tickets_sold'];
+			}
 			$event['prices'][$pid]['unit_amount_display'] = numfmt_format_currency(
 				$intl_currency_fmt, $price['unit_amount'], $intl_currency);
 		}
