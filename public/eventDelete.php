@@ -198,6 +198,21 @@ function ciniki_events_eventDelete(&$ciniki) {
 */
 
 	//
+	// Remove the event from any web collections
+	//
+	if( isset($ciniki['business']['modules']['ciniki.web']) 
+		&& ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+		) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionDeleteObjRef');
+		$rc = ciniki_web_hooks_collectionDeleteObjRef($ciniki, $args['business_id'],
+			array('object'=>'ciniki.events.event', 'object_id'=>$args['event_id']));
+		if( $rc['stat'] != 'ok' ) {	
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+			return $rc;
+		}
+	}
+
+	//
 	// Remove the event
 	//
 	$rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.event', 

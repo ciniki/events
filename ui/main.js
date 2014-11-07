@@ -76,6 +76,7 @@ function ciniki_events_main() {
 				'end_date':{'label':'End'},
 				'times':{'label':'Hours'},
 				'url':{'label':'Website'},
+				'webcollections_text':{'label':'Web Collections'},
 				}},
 			'_registrations':{'label':'', 'aside':'yes', 'hidelabel':'yes', 'visible':'no', 'list':{
 				'registrations':{'label':'Tickets'},
@@ -220,6 +221,9 @@ function ciniki_events_main() {
                 'end_date':{'label':'End', 'type':'date'},
                 'times':{'label':'Hours', 'type':'text'},
                 }}, 
+			'_webcollections':{'label':'Web Collections', 'aside':'yes', 'active':'no', 'fields':{
+				'webcollections':{'label':'', 'hidelabel':'yes', 'type':'collection'},
+				}},
 			'_registrations':{'label':'Registrations', 'aside':'yes', 'visible':'no', 'fields':{
 				'reg_flags':{'label':'Options', 'active':'no', 'type':'flags', 'joined':'no', 'flags':this.regFlags},
 				'num_tickets':{'label':'Number of Tickets', 'active':'no', 'type':'text', 'size':'small'},
@@ -279,6 +283,18 @@ function ciniki_events_main() {
 			this.event.sections.sponsors.visible = 'no';
 		}
 
+		//
+		// Check if web collections are enabled
+		//
+		if( M.curBusiness.modules['ciniki.web'] != null 
+			&& (M.curBusiness.modules['ciniki.web'].flags&0x08) ) {
+			this.event.sections.info.list.webcollections_text.visible = 'yes';
+			this.edit.sections._webcollections.active = 'yes';
+		} else {
+			this.event.sections.info.list.webcollections_text.visible = 'no';
+			this.edit.sections._webcollections.active = 'no';
+		}
+
 		this.showMenu(cb);
 	}
 
@@ -304,7 +320,8 @@ function ciniki_events_main() {
 			this.event.event_id = eid;
 		}
 		var rsp = M.api.getJSONCb('ciniki.events.eventGet', {'business_id':M.curBusinessID, 
-			'event_id':this.event.event_id, 'images':'yes', 'files':'yes', 'prices':'yes', 'sponsors':'yes'}, function(rsp) {
+			'event_id':this.event.event_id, 'images':'yes', 'files':'yes', 'prices':'yes', 
+			'sponsors':'yes', 'webcollections':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;
@@ -349,16 +366,34 @@ function ciniki_events_main() {
 		}
 
 		if( this.edit.event_id > 0 ) {
-			var rsp = M.api.getJSONCb('ciniki.events.eventGet', {'business_id':M.curBusinessID, 
-				'event_id':this.edit.event_id}, function(rsp) {
+			M.api.getJSONCb('ciniki.events.eventGet', {'business_id':M.curBusinessID, 
+				'event_id':this.edit.event_id, 'webcollections':'yes'}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
 						return false;
 					}
-					M.ciniki_events_main.edit.data = rsp.event;
-					M.ciniki_events_main.edit.refresh();
-					M.ciniki_events_main.edit.show(cb);
+					var p = M.ciniki_events_main.edit;
+					p.data = rsp.event;
+					p.refresh();
+					p.show(cb);
 				});
+		} else if( this.edit.sections._webcollections.active == 'yes' ) {
+			this.edit.reset();
+			this.edit.data = {};
+			// Get the list of collections
+			M.api.getJSONCb('ciniki.web.collectionList', {'business_id':M.curBusinessID}, function(rsp) {
+				if( rsp.stat != 'ok' ) {
+					M.api.err(rsp);
+					return false;
+				}
+				var p = M.ciniki_events_main.edit;
+				p.data = {};
+				if( rsp.collections != null ) {
+					p.data['_webcollections'] = rsp.collections;
+				}
+				p.refresh();
+				p.show(cb);
+			});
 		} else {
 			this.edit.data = {};
 			this.edit.show(cb);

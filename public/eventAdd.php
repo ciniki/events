@@ -37,6 +37,7 @@ function ciniki_events_eventAdd(&$ciniki) {
 		'times'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Times'), 
 		'primary_image_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Image'), 
 		'long_description'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Long Description'), 
+		'webcollections'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Web Collections'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -74,9 +75,60 @@ function ciniki_events_eventAdd(&$ciniki) {
 	}
 
 	//
+	// Start transaction
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
+	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.events');
+	if( $rc['stat'] != 'ok' ) { 
+		return $rc;
+	}   
+
+	//
 	// Add the event to the database
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-	return ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.events.event', $args);
+	$rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.events.event', $args, 0x04);
+	if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+		return $rc;
+	}
+	$event_id = $rc['id'];
+
+	//
+	// If event was added ok, Check if any web collections to add
+	//
+	if( isset($args['webcollections'])
+		&& isset($ciniki['business']['modules']['ciniki.web']) 
+		&& ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+		) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionUpdate');
+		$rc = ciniki_web_hooks_webCollectionUpdate($ciniki, $args['business_id'],
+			array('object'=>'ciniki.events.event', 'object_id'=>$event_id, 
+				'collection_ids'=>$args['webcollections']));
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+			return $rc;
+		}
+	}
+
+	//
+	// Commit the transaction
+	//
+	$rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.events');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+
+	//
+	// Update the last_change date in the business modules
+	// Ignore the result, as we don't want to stop user updates if this fails.
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
+	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
+
+	return array('stat'=>'ok', 'id'=>$event_id);
 }
 ?>

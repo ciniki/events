@@ -29,6 +29,7 @@ function ciniki_events_eventGet($ciniki) {
 		'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
 		'prices'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Prices'),
 		'sponsors'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sponsors'),
+		'webcollections'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Web Collections'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -234,6 +235,26 @@ function ciniki_events_eventGet($ciniki) {
 		}
 		if( isset($rc['sponsors']) ) {
 			$event['sponsors'] = $rc['sponsors'];
+		}
+	}
+
+	//
+	// Get the list of web collections, and which ones this event is attached to
+	//
+	if( isset($args['webcollections']) && $args['webcollections'] == 'yes'
+		&& isset($ciniki['business']['modules']['ciniki.web']) 
+		&& ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+		) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionList');
+		$rc = ciniki_web_hooks_webCollectionList($ciniki, $args['business_id'],
+			array('object'=>'ciniki.events.event', 'object_id'=>$args['event_id']));
+		if( $rc['stat'] != 'ok' ) {	
+			return $rc;
+		}
+		if( isset($rc['collections']) ) {
+			$event['_webcollections'] = $rc['collections'];
+			$event['webcollections'] = $rc['selected'];
+			$event['webcollections_text'] = $rc['selected_text'];
 		}
 	}
 
