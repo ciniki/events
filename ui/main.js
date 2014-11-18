@@ -81,8 +81,8 @@ function ciniki_events_main() {
 			'_registrations':{'label':'', 'aside':'yes', 'hidelabel':'yes', 'visible':'no', 'list':{
 				'registrations':{'label':'Tickets'},
 				}},
-			'description':{'label':'Description', 'type':'htmlcontent'},
-			'long_description':{'label':'Full Description', 'type':'htmlcontent'},
+			'description':{'label':'Synopsis', 'type':'htmlcontent'},
+			'long_description':{'label':'Description', 'type':'htmlcontent'},
 			'prices':{'label':'Price List', 'type':'simplegrid', 'num_cols':2,
 				'headerValues':null,
 				'cellClasses':['', ''],
@@ -228,11 +228,11 @@ function ciniki_events_main() {
 				'reg_flags':{'label':'Options', 'active':'no', 'type':'flags', 'joined':'no', 'flags':this.regFlags},
 				'num_tickets':{'label':'Number of Tickets', 'active':'no', 'type':'text', 'size':'small'},
 				}},
-			'_description':{'label':'Brief Description', 'fields':{
-				'description':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea'},
+			'_description':{'label':'Synopsis', 'fields':{
+				'description':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'small', 'type':'textarea'},
 				}},
-			'_long_description':{'label':'Full Description', 'fields':{
-				'long_description':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea'},
+			'_long_description':{'label':'Description', 'fields':{
+				'long_description':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'large', 'type':'textarea'},
 				}},
 			'_save':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_events_main.saveEvent();'},
