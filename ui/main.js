@@ -181,21 +181,21 @@ function ciniki_events_main() {
 				return 'M.startApp(\'ciniki.sponsors.ref\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'ref_id\':\'' + d.sponsor.ref_id + '\'});';
 			}
 		};
-		this.event.thumbSrc = function(s, i, d) {
-			if( d.image.image_data != null && d.image.image_data != '' ) {
-				return d.image.image_data;
-			} else {
-				return '/ciniki-mods/core/ui/themes/default/img/noimage_75.jpg';
-			}
-		};
-		this.event.thumbTitle = function(s, i, d) {
-			if( d.image.name != null ) { return d.image.name; }
-			return '';
-		};
-		this.event.thumbID = function(s, i, d) {
-			if( d.image.id != null ) { return d.image.id; }
-			return 0;
-		};
+//		this.event.thumbSrc = function(s, i, d) {
+//			if( d.image.image_data != null && d.image.image_data != '' ) {
+//				return d.image.image_data;
+//			} else {
+//				return '/ciniki-mods/core/ui/themes/default/img/noimage_75.jpg';
+//			}
+//		};
+//		this.event.thumbTitle = function(s, i, d) {
+//			if( d.image.name != null ) { return d.image.name; }
+//			return '';
+//		};
+//		this.event.thumbID = function(s, i, d) {
+//			if( d.image.id != null ) { return d.image.id; }
+//			return 0;
+//		};
 		this.event.thumbFn = function(s, i, d) {
 			return 'M.startApp(\'ciniki.events.images\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'event_image_id\':\'' + d.image.id + '\'});';
 		};
