@@ -52,6 +52,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 		. "FROM ciniki_events "
 		. "LEFT JOIN ciniki_event_images ON ("
 			. "ciniki_events.id = ciniki_event_images.event_id "
+			. "AND ciniki_event_images.image_id > 0 "
 			. "AND (ciniki_event_images.webflags&0x01) = 0 "
 			. ") "
 		. "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
