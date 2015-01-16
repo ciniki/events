@@ -37,6 +37,7 @@ function ciniki_events_eventAdd(&$ciniki) {
 		'times'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Times'), 
 		'primary_image_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Image'), 
 		'long_description'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Long Description'), 
+		'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'),
 		'webcollections'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Web Collections'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
@@ -96,6 +97,20 @@ function ciniki_events_eventAdd(&$ciniki) {
 		return $rc;
 	}
 	$event_id = $rc['id'];
+
+	//
+	// Update the categories
+	//
+	if( isset($args['categories']) ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
+		$rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.events', 'tag', $args['business_id'],
+			'ciniki_event_tags', 'ciniki_event_history',
+			'event_id', $event_id, 10, $args['categories']);
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+			return $rc;
+		}
+	}
 
 	//
 	// If event was added ok, Check if any web collections to add

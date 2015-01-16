@@ -1,0 +1,41 @@
+#
+# Description
+# -----------
+# This table stores tags for events.
+#
+# Fields
+# -------
+# id:				The ID of the tag.
+# uuid:				The Universal Unique ID for the tag.
+# business_id:		The ID of the business the blog post is attached to.
+#
+# event_id:			The ID of the event.
+#
+# tag_type:			The type of tag, which is how it will be used.  This allows
+#					these tags to be used for multiple purposes.
+#	
+#					0 - unknown
+#					10 - Category 
+#					20 - Tag 
+#
+# tag_name:			The name of the tag, list or category.
+#
+# permalink:		The permalink for the tag_name.
+#
+# date_added:       The UTC date and time the thread was added.
+# last_updated:     The UTC date and time the thread was last updated.
+#
+create table ciniki_event_tags (
+	id bigint not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	event_id int not null,
+	tag_type tinyint not null,
+	tag_name varchar(150) not null,
+	permalink varchar(150) not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	unique index (event_id, tag_type, tag_name),
+	index sync (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

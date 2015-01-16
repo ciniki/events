@@ -198,6 +198,19 @@ function ciniki_events_eventDelete(&$ciniki) {
 */
 
 	//
+	// Remove any tags
+	//
+	if( ($ciniki['business']['modules']['ciniki.events']['flags']&0x10) > 0 ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsDelete');
+		$rc = ciniki_core_tagsDelete($ciniki, 'ciniki.events', 'tag', $args['business_id'],
+			'ciniki_event_tags', 'ciniki_event_history', 'event_id', $args['event_id']);
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
+			return $rc;
+		}
+	}
+
+	//
 	// Remove the event from any web collections
 	//
 	if( isset($ciniki['business']['modules']['ciniki.web']) 

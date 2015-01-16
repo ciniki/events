@@ -29,6 +29,7 @@ function ciniki_events_eventGet($ciniki) {
 		'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
 		'prices'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Prices'),
 		'sponsors'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sponsors'),
+		'categories'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Categories'),
 		'webcollections'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Web Collections'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -150,6 +151,32 @@ function ciniki_events_eventGet($ciniki) {
 		}
 		$event = $rc['events'][0]['event'];
 	}
+
+	//
+	// Get the categories and tags for the post
+	//
+	if( ($ciniki['business']['modules']['ciniki.events']['flags']&0x10) > 0 ) {
+		$strsql = "SELECT tag_type, tag_name AS lists "
+			. "FROM ciniki_event_tags "
+			. "WHERE event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "ORDER BY tag_type, tag_name "
+			. "";
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
+			array('container'=>'tags', 'fname'=>'tag_type', 'name'=>'tags',
+				'fields'=>array('tag_type', 'lists'), 'dlists'=>array('lists'=>'::')),
+			));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['tags']) ) {
+			foreach($rc['tags'] as $tags) {
+				if( $tags['tags']['tag_type'] == 10 ) {
+					$event['categories'] = $tags['tags']['lists'];
+				}
+			}
+		}
+	}
 	
 	//
 	// Check how many registrations
@@ -239,6 +266,27 @@ function ciniki_events_eventGet($ciniki) {
 	}
 
 	//
+	// Check if all tags should be returned
+	//
+	$categories = array();
+	if( ($ciniki['business']['modules']['ciniki.events']['flags']&0x10) > 0
+		&& isset($args['categories']) && $args['categories'] == 'yes' 
+		) {
+		//
+		// Get the available tags
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
+		$rc = ciniki_core_tagsList($ciniki, 'ciniki.events', $args['business_id'], 
+			'ciniki_event_tags', 10);
+		if( $rc['stat'] != 'ok' ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2165', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
+		}
+		if( isset($rc['tags']) ) {
+			$categories = $rc['tags'];
+		}
+	}
+
+	//
 	// Get the list of web collections, and which ones this event is attached to
 	//
 	if( isset($args['webcollections']) && $args['webcollections'] == 'yes'
@@ -258,6 +306,6 @@ function ciniki_events_eventGet($ciniki) {
 		}
 	}
 
-	return array('stat'=>'ok', 'event'=>$event);
+	return array('stat'=>'ok', 'event'=>$event, 'categories'=>$categories);
 }
 ?>

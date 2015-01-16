@@ -95,6 +95,24 @@ function ciniki_events_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_event_history',
 		);
+	$objects['tag'] = array(
+		'name'=>'Tag',
+		'sync'=>'yes',
+		'table'=>'ciniki_event_tags',
+			'fields'=>array(
+			'event_id'=>array('ref'=>'ciniki.events.event'),
+			'tag_type'=>array(),
+			'tag_name'=>array(),
+			'permalink'=>array(),
+			),
+		'history_table'=>'ciniki_event_history',
+		);
+	$objects['setting'] = array(
+		'type'=>'settings',
+		'name'=>'Event Settings',
+		'table'=>'ciniki_event_settings',
+		'history_table'=>'ciniki_event_history',
+		);
 	
 	return array('stat'=>'ok', 'objects'=>$objects);
 }
