@@ -57,7 +57,7 @@ function ciniki_events_eventNew($ciniki) {
 		$rc = ciniki_core_tagsList($ciniki, 'ciniki.events', $args['business_id'], 
 			'ciniki_event_tags', 10);
 		if( $rc['stat'] != 'ok' ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2165', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2156', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
 		}
 		if( isset($rc['tags']) ) {
 			$categories = $rc['tags'];
