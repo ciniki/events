@@ -227,6 +227,29 @@ function ciniki_events_eventGet($ciniki) {
 	}
 
 	//
+	// Get the links for the post
+	//
+	if( isset($args['files']) && $args['files'] == 'yes' ) {
+		$strsql = "SELECT id, name, url, description "
+			. "FROM ciniki_event_links "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND ciniki_event_links.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+			. "";
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
+			array('container'=>'links', 'fname'=>'id', 'name'=>'link',
+				'fields'=>array('id', 'name', 'url', 'description')),
+		));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['links']) ) {
+			$event['links'] = $rc['links'];
+		} else {
+			$event['links'] = array();
+		}
+	}
+
+	//
 	// Get any files if requested
 	//
 	if( isset($args['files']) && $args['files'] == 'yes' ) {

@@ -102,6 +102,13 @@ function ciniki_events_main() {
 				'addTxt':'Add Price',
 				'addFn':'M.startApp(\'ciniki.events.prices\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'event_id\':M.ciniki_events_main.event.event_id,\'price_id\':\'0\'});',
 			},
+			'links':{'label':'Links', 'type':'simplegrid', 'num_cols':1,
+				'headerValues':null,
+				'cellClasses':['multiline'],
+				'noData':'No event links',
+				'addTxt':'Add Link',
+				'addFn':'M.startApp(\'ciniki.events.links\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'event_id\':M.ciniki_events_main.event.event_id,\'add\':\'yes\'});',
+				},
 			'files':{'label':'Files', 'type':'simplegrid', 'num_cols':1,
 				'headerValues':null,
 				'cellClasses':['multiline'],
@@ -175,6 +182,9 @@ function ciniki_events_main() {
 					case 1: return d.price.unit_amount_display;
 				}
 			}
+			if( s == 'links' && j == 0 ) {
+				return '<span class="maintext">' + d.link.name + '</span><span class="subtext">' + d.link.url + '</span>';
+			}
 			if( s == 'files' && j == 0 ) { 
 				return '<span class="maintext">' + d.file.name + '</span>';
 			}
@@ -185,6 +195,9 @@ function ciniki_events_main() {
 		this.event.rowFn = function(s, i, d) {
 			if( s == 'prices' ) {
 				return 'M.startApp(\'ciniki.events.prices\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'price_id\':\'' + d.price.id + '\',\'event_id\':\'0\'});';
+			}
+			if( s == 'links' ) {
+				return 'M.startApp(\'ciniki.events.links\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'link_id\':\'' + d.link.id + '\'});';
 			}
 			if( s == 'files' ) {
 				return 'M.startApp(\'ciniki.events.files\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'file_id\':\'' + d.file.id + '\'});';
@@ -313,6 +326,14 @@ function ciniki_events_main() {
 			this.event.sections.info.list.categories_text.visible = 'no';
 			this.edit.sections._categories.active = 'no';
 		}
+		//
+		// Check if accounting is enabled
+		//
+		if( M.curBusiness.modules['ciniki.sapos'] != null ) {
+			this.event.sections.prices.visible = 'yes';
+		} else {
+			this.event.sections.prices.visible = 'no';
+		}
 
 		//
 		// Check if web collections are enabled
@@ -382,7 +403,7 @@ function ciniki_events_main() {
 		}
 		var rsp = M.api.getJSONCb('ciniki.events.eventGet', {'business_id':M.curBusinessID, 
 			'event_id':this.event.event_id, 'images':'yes', 'files':'yes', 'prices':'yes', 
-			'sponsors':'yes', 'webcollections':'yes', 'categories':'yes'}, function(rsp) {
+			'sponsors':'yes', 'webcollections':'yes', 'categories':'yes', 'links':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;

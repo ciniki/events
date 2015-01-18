@@ -107,6 +107,18 @@ function ciniki_events_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_event_history',
 		);
+	$objects['link'] = array(
+		'name'=>'Link',
+		'sync'=>'yes',
+		'table'=>'ciniki_event_links',
+		'fields'=>array(
+			'event_id'=>array('ref'=>'ciniki.events.event'),
+			'name'=>array(),
+			'url'=>array(),
+			'description'=>array(),
+			),
+		'history_table'=>'ciniki_event_history',
+		);
 	$objects['setting'] = array(
 		'type'=>'settings',
 		'name'=>'Event Settings',
