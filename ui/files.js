@@ -12,15 +12,27 @@ function ciniki_events_files() {
 		this.add.default_data = {'type':'20'};
 		this.add.data = {};	
 		this.add.sections = {
-			'_file':{'label':'File', 'fields':{
-				'uploadfile':{'label':'', 'type':'file', 'hidelabel':'yes'},
-			}},
-			'info':{'label':'Information', 'type':'simpleform', 'fields':{
-				'name':{'label':'Title', 'type':'text'},
-			}},
-			'_save':{'label':'', 'buttons':{
-				'save':{'label':'Save', 'fn':'M.ciniki_events_files.addFile();'},
-			}},
+			'_file':{'label':'File', 
+				'gstep':1,
+				'gtitle':'Select the file to upload',
+				'gtext':'Press the button below to select a file from your computer to table.',
+				'fields':{
+					'uploadfile':{'label':'', 'type':'file', 'hidelabel':'yes'},
+				}},
+			'info':{'label':'Information', 'type':'simpleform', 
+				'gstep':1,
+				'fields':{
+					'name':{'label':'Name', 'type':'text',
+						'gtitle':'What is the name of the file?',
+						'htext':"The name you want to display on your website. Examples: Registration Form, Event Schedule, etc.",
+						},
+				}},
+			'_buttons':{'label':'', 
+				'gstep':1,
+				'gtitle':'Save the file',
+				'buttons':{
+					'save':{'label':'Save', 'fn':'M.ciniki_events_files.addFile();'},
+				}},
 		};
 		this.add.fieldValue = function(s, i, d) { 
 			if( this.data[i] != null ) {
@@ -40,14 +52,25 @@ function ciniki_events_files() {
 		this.edit.file_id = 0;
 		this.edit.data = null;
 		this.edit.sections = {
-			'info':{'label':'Details', 'type':'simpleform', 'fields':{
-				'name':{'label':'Title', 'type':'text'},
-			}},
-			'_save':{'label':'', 'buttons':{
-				'save':{'label':'Save', 'fn':'M.ciniki_events_files.saveFile();'},
-				'download':{'label':'Download', 'fn':'M.ciniki_events_files.downloadFile(M.ciniki_events_files.edit.file_id);'},
-				'delete':{'label':'Delete', 'fn':'M.ciniki_events_files.deleteFile();'},
-			}},
+			'info':{'label':'Details', 'type':'simpleform', 
+				'gstep':1,
+				'gtitle':'File Details',
+				'gtext':'If you want to change the file, you need to delete this one, and add the new one.',
+				'fields':{
+					'name':{'label':'Name', 'type':'text',
+						'gtitle':'Would you like to change the name?',
+						'htext':"The name you want to display on your website. Examples: Registration Form, Event Schedule, etc.",
+						},
+				}},
+			'_buttons':{'label':'', 
+				'gstep':1,
+				'gmore':'If you want to save the original file to your computer, press <em>Download</em>.<br/>'
+					+ 'If you want to remove the file, press <em>Delete</em>.',
+				'buttons':{
+					'save':{'label':'Save', 'fn':'M.ciniki_events_files.saveFile();'},
+					'download':{'label':'Download', 'fn':'M.ciniki_events_files.downloadFile(M.ciniki_events_files.edit.file_id);'},
+					'delete':{'label':'Delete', 'fn':'M.ciniki_events_files.deleteFile();'},
+				}},
 		};
 		this.edit.fieldValue = function(s, i, d) { 
 			return this.data[i]; 

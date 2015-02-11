@@ -13,17 +13,35 @@ function ciniki_events_links() {
 		this.edit.data = {};
 		this.edit.link_id = 0;
 		this.edit.sections = {
-			'link':{'label':'Link', 'fields':{
-				'name':{'label':'Name', 'hint':'', 'type':'text'},
-				'url':{'label':'URL', 'hint':'Enter the http:// address', 'type':'text'},
-				}},
-			'_description':{'label':'Additional Information', 'fields':{
-				'description':{'label':'', 'hidelabel':'yes', 'hint':'Add additional information about your link', 'type':'textarea'},
-				}},
-			'_buttons':{'label':'', 'buttons':{
-				'save':{'label':'Save Link', 'fn':'M.ciniki_events_links.saveLink();'},
-				'delete':{'label':'Delete Link', 'fn':'M.ciniki_events_links.deleteLink();'},
-				}},
+			'link':{'label':'Link', 
+				'gstep':1,
+				'gtitle':function(p) { return (p.link_id>0?'Change the link':'Add a link'); },
+				'fields':{
+					'name':{'label':'Name', 'hint':'', 'type':'text',
+							'gtitle':'What is the name for this link?',
+							'htext':"The name is optional. For long URL's it's best to provide a shorter name for displaying on your website. Examples: Registration Link, Event Schedule, etc.",
+							},
+					'url':{'label':'URL', 'hint':'', 'type':'text',
+						'gtitle':'What is the web address of the other website?',
+						'htext':"It doesn't matter if you include the http:// at the beginning or not.",
+						},
+					}},
+			'_description':{'label':'Additional Information', 
+				'gstep':2,
+				'gtitle':'What is the link about?',
+				'gmore':'The brief 2-3 sentence description of the link. Why should somebody click on this link from your website?',
+				'fields':{
+					'description':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea'},
+					}},
+			'_buttons':{'label':'', 
+				'gstep':3,
+				'gtitle':'Save the link',
+				'gtext':function(p) { return (p.event_image_id>0)?'Press the save button to update the link information.':'Press the save button to add the link.';},
+				'gmore':function(p) { return (p.link_id>0)?'If you want to remove this link, press the <em>Delete</em> button.':null;},
+				'buttons':{
+					'save':{'label':'Save', 'fn':'M.ciniki_events_links.saveLink();'},
+					'delete':{'label':'Delete', 'fn':'M.ciniki_events_links.deleteLink();'},
+					}},
 			};
 		this.edit.fieldValue = function(s, i, d) { return this.data[i]; }
 		this.edit.fieldHistoryArgs = function(s, i) {
@@ -65,6 +83,7 @@ function ciniki_events_links() {
 		if( pid != null ) { this.edit.event_id = pid; }
 		if( lid != null ) { this.edit.link_id = lid; }
 		if( this.edit.link_id > 0 ) {
+			this.edit.reset();
 			this.edit.sections._buttons.buttons.delete.visible = 'yes';
 			var rsp = M.api.getJSONCb('ciniki.events.linkGet', 
 				{'business_id':M.curBusinessID, 'link_id':this.edit.link_id}, function(rsp) {

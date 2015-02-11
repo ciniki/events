@@ -16,20 +16,44 @@ function ciniki_events_images() {
 		this.edit.data = {};
 		this.edit.event_id = 0;
 		this.edit.sections = {
-			'_image':{'label':'Photo', 'fields':{
-				'image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
-			}},
-			'info':{'label':'Information', 'type':'simpleform', 'fields':{
-				'name':{'label':'Title', 'type':'text'},
-				'webflags':{'label':'Website', 'type':'flags', 'join':'yes', 'flags':this.webFlags},
-			}},
-			'_description':{'label':'Description', 'type':'simpleform', 'fields':{
-				'description':{'label':'', 'type':'textarea', 'size':'small', 'hidelabel':'yes'},
-			}},
+			'_image':{'label':'Image', 
+				'gstep':1,
+				'gtitle':function(p) { return (p.data.image_id != null && p.data.image_id > 0)?'Would you like to change this photo?':'Do you have an additional photo to add?';},
+				'gmore':function(p) { return (p.data.image_id != null && p.data.image_id > 0)?
+					'Use the <b>Change Photo</b> button below to select a new photo from your computer or tablet.'
+					+ ' If you would like to save the original photo to your computer, press the <span class="icon">G</span> button.'
+					:'Use the <b>Add Photo</b> button to select a photo from your computer or tablet.';},
+				'fields':{
+					'image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
+				}},
+			'info':{'label':'Information', 'type':'simpleform', 
+				'gstep':2,
+				'gtitle':'Additional Information',
+				'fields':{
+					'name':{'label':'Title', 'type':'text',
+						'gtitle':'Do you have a title for this photo?',
+						'htext':'The title is optional, you can leave this blank.'
+						},
+					'webflags':{'label':'Website', 'type':'flags', 'join':'yes', 'flags':this.webFlags,
+						'htext':'If you do not want this image visible on your website, press the hidden button.'},
+				}},
+			'_description':{'label':'Description', 'type':'simpleform', 
+				'gstep':3,
+				'gtitle':'How would you describe this photo?',
+				'gmore':'This is optional, but can be used to describe the details of the photo.',
+				'fields':{
+					'description':{'label':'', 'type':'textarea', 'size':'medium', 'hidelabel':'yes'},
+				}},
 			'_save':{'label':'', 'buttons':{
-				'save':{'label':'Save', 'fn':'M.ciniki_events_images.saveImage();'},
-				'delete':{'label':'Delete', 'fn':'M.ciniki_events_images.deleteImage();'},
 			}},
+			'_buttons':{'label':'', 
+				'gstep':4,
+				'gtext':function(p) { return (p.event_image_id>0)?'Press the save button to update the additional image.':'Press the save button to add the additional image.';},
+				'gmore':function(p) { return (p.event_image_id>0)?'If you want to remove this additional photo, press the <em>Delete</em> button.':null;},
+				'buttons':{
+					'save':{'label':'Save', 'fn':'M.ciniki_events_images.saveImage();'},
+					'delete':{'label':'Delete', 'visible':'no', 'fn':'M.ciniki_events_images.deleteImage();'},
+				}},
 		};
 		this.edit.fieldValue = function(s, i, d) { 
 			if( this.data[i] != null ) {
@@ -80,6 +104,8 @@ function ciniki_events_images() {
 			this.edit.event_id = eid;
 		}
 		if( this.edit.event_image_id > 0 ) {
+			this.edit.reset();
+			this.edit.sections._buttons.buttons.delete.visible = 'yes';
 			var rsp = M.api.getJSONCb('ciniki.events.imageGet', 
 				{'business_id':M.curBusinessID, 'event_image_id':this.edit.event_image_id}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
@@ -92,6 +118,7 @@ function ciniki_events_images() {
 				});
 		} else {
 			this.edit.reset();
+			this.edit.sections._buttons.buttons.delete.visible = 'no';
 			this.edit.data = {};
 			this.edit.refresh();
 			this.edit.show(cb);

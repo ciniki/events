@@ -236,36 +236,80 @@ function ciniki_events_main() {
 		this.edit.data = null;
 		this.edit.event_id = 0;
         this.edit.sections = { 
-			'_image':{'label':'', 'aside':'yes', 'fields':{
-				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
-			}},
-            'general':{'label':'General', 'aside':'yes', 'fields':{
-                'name':{'label':'Name', 'hint':'Events name', 'type':'text'},
-                'url':{'label':'URL', 'hint':'Enter the http:// address for your events website', 'type':'text'},
-                'start_date':{'label':'Start', 'type':'date'},
-                'end_date':{'label':'End', 'type':'date'},
-                'times':{'label':'Hours', 'type':'text'},
-                }}, 
-			'_categories':{'label':'Categories', 'aside':'yes', 'active':'no', 'fields':{
-				'categories':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':[], 'hint':'Enter a new category: '},
+			'_image':{'label':'Image', 'aside':'yes',
+				'gstep':1,
+				'gtitle':function(p) { return (p.data.primary_image_id != null && p.data.primary_image_id > 0)?'Would you like to change the photo for this event?':'Do you have a photo for this event?';},
+				'gmore':function(p) { return (p.data.primary_image_id != null && p.data.primary_image_id > 0)?
+					'Use the <b>Change Photo</b> button below to select a new photo from your computer or tablet.'
+					+ ' If you would like to save the original photo to your computer, press the <span class="icon">G</span> button.'
+					:'The photo is optional, however it will look better on your website if you have one. Use the <b>Add Photo</b> button to select a photo from your computer or tablet.';},
+				'fields':{
+					'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
 				}},
-			'_webcollections':{'label':'Web Collections', 'aside':'yes', 'active':'no', 'fields':{
-				'webcollections':{'label':'', 'hidelabel':'yes', 'type':'collection'},
-				}},
-			'_registrations':{'label':'Registrations', 'aside':'yes', 'visible':'no', 'fields':{
-				'reg_flags':{'label':'Options', 'active':'no', 'type':'flags', 'joined':'no', 'flags':this.regFlags},
-				'num_tickets':{'label':'Number of Tickets', 'active':'no', 'type':'text', 'size':'small'},
-				}},
-			'_description':{'label':'Synopsis', 'fields':{
-				'description':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'small', 'type':'textarea'},
-				}},
-			'_long_description':{'label':'Description', 'fields':{
-				'long_description':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'large', 'type':'textarea'},
-				}},
-			'_save':{'label':'', 'buttons':{
-				'save':{'label':'Save', 'fn':'M.ciniki_events_main.saveEvent();'},
-				'delete':{'label':'Delete', 'fn':'M.ciniki_events_main.removeEvent();'},
-				}},
+            'general':{'label':'General', 'aside':'yes', 
+				'gstep':2,
+				'gtitle':'Event Details',
+				'fields':{
+					'name':{'label':'Name', 'hint':'Events name', 'type':'text',
+						'gtitle':'What is the name of this event?',
+						'htext':'The name of your event must be unique. If this is an annual event, add the year or season to the name. Eg: Centreville Art Show 2015, Trade Show 2016, etc',
+						},
+					'url':{'label':'URL', 'hint':'Enter the http:// address for your events website', 'type':'text',
+						'gtitle':'Does the event have a website?',
+						'htext':"If the event has it's own website, enter the address here. It doesn't matter if it begins with http:// or not.  Examples: http://www.artbythelighthouse.ca/, www.oneofakindshow.com",
+						},
+					'start_date':{'label':'Start', 'type':'date',
+						'gtitle':'What is the first day of the event?',
+						},
+					'end_date':{'label':'End', 'type':'date',
+						'htext':'If the event is only one day, you can leave End blank.',
+						},
+					'times':{'label':'Hours', 'type':'text',
+						'htext':'If the event is multiple days, each with different hours, it is recommended to add the hours to the description and leave this blank.',
+						},
+					}}, 
+			'_categories':{'label':'Categories', 'aside':'yes', 'active':'no', 
+				'gstep':3,
+				'gtitle':'What are the categories for this event?',
+				'gmore':"Each event can be in multiple categories. To add a new category, press the <span class='icon'>+</span> button.",
+				'fields':{
+					'categories':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':[], 'hint':'Enter a new category: '},
+					}},
+			'_webcollections':{'label':'Web Collections', 'aside':'yes', 'active':'no', 
+				'gstep':4,
+				'gtitle':'Should this event be included in a collection?',
+				'fields':{
+					'webcollections':{'label':'', 'hidelabel':'yes', 'type':'collection'},
+					}},
+			'_registrations':{'label':'Registrations', 'aside':'yes', 'visible':'no', 
+				'gstep':5,
+				'gtitle':'Are you going to track registrations for this event?',
+				'fields':{
+					'reg_flags':{'label':'Options', 'active':'no', 'type':'flags', 'joined':'no', 'flags':this.regFlags},
+					'num_tickets':{'label':'Number of Tickets', 'active':'no', 'type':'text', 'size':'small'},
+					}},
+			'_description':{'label':'Synopsis', 
+				'gstep':6,
+				'gtitle':'Describe the event in 2 sentences:',
+				'gmore':'This is used when listing the event on your homepage. This should be short and just enough to get them to click for more information.',
+				'fields':{
+					'description':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'small', 'type':'textarea'},
+					}},
+			'_long_description':{'label':'Description', 
+				'gstep':7,
+				'gtitle':'What are the complete details of the event?',
+				'gmore':'The description should include some or all of the who, what, where and why about the event. Who is the event for? The general public, or only people with a specific interest. What is the event about? Where is the event and how do you get there? Why should people go to the event?',
+				'fields':{
+					'long_description':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'large', 'type':'textarea'},
+					}},
+			'_buttons':{'label':'', 
+				'gstep':8,
+				'gtext':function(p) { return (p.event_id>0?"Press the save button to save the changes you've made.":'Press the save button to add this event');},
+				'gmore':function(p) { return (p.event_id>0?"If you want to remove the event, press delete.":null);},
+				'buttons':{
+					'save':{'label':'Save', 'fn':'M.ciniki_events_main.saveEvent();'},
+					'delete':{'label':'Delete', 'fn':'M.ciniki_events_main.removeEvent();'},
+					}},
             };  
 		this.edit.fieldValue = function(s, i, d) { return this.data[i]; }
 		this.edit.fieldHistoryArgs = function(s, i) {
@@ -451,6 +495,8 @@ function ciniki_events_main() {
 		}
 
 		if( this.edit.event_id > 0 ) {
+			this.edit.reset();
+			this.edit.sections._buttons.buttons.delete.visible = 'yes';
 			M.api.getJSONCb('ciniki.events.eventGet', {'business_id':M.curBusinessID, 
 				'event_id':this.edit.event_id, 'webcollections':'yes', 'categories':'yes'}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
@@ -472,6 +518,7 @@ function ciniki_events_main() {
 			|| this.edit.sections._webcollections.active == 'yes' 
 			) {
 			this.edit.reset();
+			this.edit.sections._buttons.buttons.delete.visible = 'no';
 			this.edit.data = {};
 			// Get the list of collections
 			M.api.getJSONCb('ciniki.events.eventNew', {'business_id':M.curBusinessID,
@@ -494,24 +541,9 @@ function ciniki_events_main() {
 				p.refresh();
 				p.show(cb);
 			});
-//		} else if( this.edit.sections._webcollections.active == 'yes' ) {
-//			this.edit.reset();
-//			this.edit.data = {};
-//			// Get the list of collections
-//			M.api.getJSONCb('ciniki.web.collectionList', {'business_id':M.curBusinessID}, function(rsp) {
-//				if( rsp.stat != 'ok' ) {
-//					M.api.err(rsp);
-//					return false;
-//				}
-//				var p = M.ciniki_events_main.edit;
-//				p.data = {};
-//				if( rsp.collections != null ) {
-//					p.data['_webcollections'] = rsp.collections;
-//				}
-//				p.refresh();
-//				p.show(cb);
-//			});
 		} else {
+			this.edit.reset();
+			this.edit.sections._buttons.buttons.delete.visible = 'no';
 			this.edit.data = {};
 			this.edit.show(cb);
 		}
