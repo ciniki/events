@@ -99,7 +99,7 @@ function ciniki_events_objects($ciniki) {
 		'name'=>'Tag',
 		'sync'=>'yes',
 		'table'=>'ciniki_event_tags',
-			'fields'=>array(
+		'fields'=>array(
 			'event_id'=>array('ref'=>'ciniki.events.event'),
 			'tag_type'=>array(),
 			'tag_name'=>array(),
