@@ -33,9 +33,9 @@ function ciniki_events_eventDelete(&$ciniki) {
 	// Check access to business_id as owner
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-	$ac = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventDelete');
-	if( $ac['stat'] != 'ok' ) {
-		return $ac;
+	$rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventDelete');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
 	}
 
 	//

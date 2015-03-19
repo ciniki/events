@@ -55,9 +55,9 @@ function ciniki_events_eventAdd(&$ciniki) {
 	// Check access to business_id as owner
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-	$ac = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventAdd');
-	if( $ac['stat'] != 'ok' ) {
-		return $ac;
+	$rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventAdd');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
 	}
 
 	//

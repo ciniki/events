@@ -38,9 +38,9 @@ function ciniki_events_eventList($ciniki) {
     // Check access to business_id as owner, or sys admin. 
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $ac = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventList');
-    if( $ac['stat'] != 'ok' ) { 
-        return $ac;
+    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventList');
+    if( $rc['stat'] != 'ok' ) { 
+        return $rc;
     }   
 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');

@@ -31,11 +31,11 @@ function ciniki_events_registrationList($ciniki) {
     // Check access to business_id as owner, or sys admin. 
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $ac = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.registrationList');
-    if( $ac['stat'] != 'ok' ) { 
-        return $ac;
+    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.registrationList');
+    if( $rc['stat'] != 'ok' ) { 
+        return $rc;
     }   
-	$modules = $ac['modules'];
+	$modules = $rc['modules'];
 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
