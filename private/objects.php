@@ -28,6 +28,8 @@ function ciniki_events_objects($ciniki) {
 			'times'=>array(),
 			'primary_image_id'=>array('ref'=>'ciniki.images.image'),
 			'long_description'=>array(),
+			'object'=>array('default'=>''),
+			'object_id'=>array('default'=>''),
 			),
 		'history_table'=>'ciniki_event_history',
 		);

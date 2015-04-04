@@ -42,6 +42,8 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 		. "ciniki_events.num_tickets, "
 		. "ciniki_events.description AS short_description, "
 		. "ciniki_events.long_description, "
+		. "ciniki_events.object, "
+		. "ciniki_events.object_id, "
 		. "ciniki_events.primary_image_id, "
 		. "ciniki_event_images.image_id, "
 		. "ciniki_event_images.name AS image_name, "
@@ -65,7 +67,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 			'start_date', 'start_day', 'start_month', 'start_year', 
 			'end_date', 'end_day', 'end_month', 'end_year', 'times',
 			'reg_flags', 'num_tickets', 
-			'url', 'short_description', 'description'=>'long_description')),
+			'url', 'short_description', 'description'=>'long_description', 'object', 'object_id')),
 		array('container'=>'images', 'fname'=>'image_id', 
 			'fields'=>array('image_id', 'title'=>'image_name', 'permalink'=>'image_permalink',
 				'description'=>'image_description', 'url'=>'image_url',
@@ -198,6 +200,27 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 		}
 		if( isset($rc['sponsors']) ) {
 			$event['sponsors'] = $rc['sponsors'];
+		}
+	}
+
+	//
+	// Get any additional images from the linked object
+	//
+	if( isset($event['object']) && $event['object'] != '' && isset($event['object_id']) && $event['object_id'] != '' ) {
+		if( !isset($event['images']) ) {
+			$event['images'] = array();
+		}
+		list($pkg, $mod, $obj) = explode('.', $event['object']);
+		$rc = ciniki_core_loadMethod($ciniki, $pkg, $mod, 'web', 'eventImages');
+		if( $rc['stat'] == 'ok' ) {
+			$fn = $rc['function_call'];
+			$rc = $fn($ciniki, $settings, $business_id, array('object'=>$event['object'], 'object_id'=>$event['object_id']));
+			if( $rc['stat'] != 'ok' ) {
+				return $rc;
+			}
+			if( isset($rc['images']) ) {
+				$event['images'] = array_merge($event['images'], $rc['images']);
+			}
 		}
 	}
 

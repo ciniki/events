@@ -38,6 +38,9 @@ function ciniki_events_eventUpdate(&$ciniki) {
 		'times'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Times'), 
 		'primary_image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Image'), 
 		'long_description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Long Description'), 
+		'oidref'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Link'),
+		'object'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Object'), 
+		'object_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Object ID'), 
 		'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'),
 		'webcollections'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Web Collections'), 
         )); 
@@ -55,6 +58,16 @@ function ciniki_events_eventUpdate(&$ciniki) {
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
+
+	if( isset($args['oidref']) ) {
+		if( preg_match("/(.*):(.*)/", $args['oidref'], $m) ) {
+			$args['object'] = $m[1];
+			$args['object_id'] = $m[2];
+		} else {
+			$args['object'] = '';
+			$args['object_id'] = '';
+		}
+	}
 
 	//
 	// Get the existing event details

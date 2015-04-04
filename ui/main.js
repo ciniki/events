@@ -267,6 +267,7 @@ function ciniki_events_main() {
 					'times':{'label':'Hours', 'type':'text',
 						'htext':'If the event is multiple days, each with different hours, it is recommended to add the hours to the description and leave this blank.',
 						},
+					'oidref':{'label':'Exhibition', 'active':'no', 'type':'select', 'options':{}},
 					}}, 
 			'_categories':{'label':'Categories', 'aside':'yes', 'active':'no', 
 				'gstep':3,
@@ -353,6 +354,12 @@ function ciniki_events_main() {
 			this.event.sections.sponsors.visible = 'yes';
 		} else {
 			this.event.sections.sponsors.visible = 'no';
+		}
+
+		if( M.curBusiness.modules['ciniki.artcatalog'] != null ) {
+			this.edit.sections.general.fields.oidref.active = 'yes';
+		} else {
+			this.edit.sections.general.fields.oidref.active = 'no';
 		}
 
 		//
@@ -494,11 +501,12 @@ function ciniki_events_main() {
 			this.edit.sections._registrations.fields.num_tickets.active = 'no';
 		}
 
-		if( this.edit.event_id > 0 ) {
+		this.edit.sections._buttons.buttons.delete.visible = (this.edit.event_id>0?'yes':'no');
+//		if( this.edit.event_id > 0 ) {
 			this.edit.reset();
 			this.edit.sections._buttons.buttons.delete.visible = 'yes';
 			M.api.getJSONCb('ciniki.events.eventGet', {'business_id':M.curBusinessID, 
-				'event_id':this.edit.event_id, 'webcollections':'yes', 'categories':'yes'}, function(rsp) {
+				'event_id':this.edit.event_id, 'webcollections':'yes', 'categories':'yes', 'objects':'yes'}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
 						return false;
@@ -511,42 +519,53 @@ function ciniki_events_main() {
 							p.sections._categories.fields.categories.tags.push(rsp.categories[i].tag.name);
 						}
 					}
+					p.sections.general.fields.oidref.options = {'':'None'};
+					p.sections.general.fields.oidref.active = 'no';
+					if( M.curBusiness.modules['ciniki.artcatalog'] != null ) {
+						if( rsp.objects != null ) {
+							for(i in rsp.objects) {
+								p.sections.general.fields.oidref.options[rsp.objects[i].object.id] = rsp.objects[i].object.name;
+								p.sections.general.fields.oidref.active = 'yes';
+							}
+						}
+					}
 					p.refresh();
 					p.show(cb);
 				});
-		} else if( this.edit.sections._categories.active == 'yes' 
-			|| this.edit.sections._webcollections.active == 'yes' 
-			) {
-			this.edit.reset();
-			this.edit.sections._buttons.buttons.delete.visible = 'no';
-			this.edit.data = {};
-			// Get the list of collections
-			M.api.getJSONCb('ciniki.events.eventNew', {'business_id':M.curBusinessID,
-				'categories':'yes', 'webcollections':'yes'}, function(rsp) {
-				if( rsp.stat != 'ok' ) {
-					M.api.err(rsp);
-					return false;
-				}
-				var p = M.ciniki_events_main.edit;
-				p.data = {};
-				if( rsp.webcollections != null ) {
-					p.data['_webcollections'] = rsp.webcollections;
-				}
-				p.sections._categories.fields.categories.tags = [];
-				if( rsp.categories != null ) {
-					for(i in rsp.categories) {
-						p.sections._categories.fields.categories.tags.push(rsp.categories[i].tag.name);
-					}
-				}
-				p.refresh();
-				p.show(cb);
-			});
-		} else {
-			this.edit.reset();
-			this.edit.sections._buttons.buttons.delete.visible = 'no';
-			this.edit.data = {};
-			this.edit.show(cb);
-		}
+//		} else if( this.edit.sections._categories.active == 'yes' 
+//			|| this.edit.sections._webcollections.active == 'yes' 
+//			) {
+//			this.edit.reset();
+//			this.edit.sections._buttons.buttons.delete.visible = 'no';
+//			this.edit.data = {};
+//			// Get the list of collections
+//			M.api.getJSONCb('ciniki.events.eventNew', {'business_id':M.curBusinessID,
+//				'categories':'yes', 'webcollections':'yes', 'objects':'yes'}, function(rsp) {
+//				if( rsp.stat != 'ok' ) {
+//					M.api.err(rsp);
+//					return false;
+//				}
+//				var p = M.ciniki_events_main.edit;
+//				p.data = {};
+//				if( rsp.webcollections != null ) {
+//					p.data['_webcollections'] = rsp.webcollections;
+//				}
+//				p.sections._categories.fields.categories.tags = [];
+//				if( rsp.categories != null ) {
+//					for(i in rsp.categories) {
+//						p.sections._categories.fields.categories.tags.push(rsp.categories[i].tag.name);
+//					}
+//				}
+//
+//				p.refresh();
+//				p.show(cb);
+//			});
+//		} else {
+//			this.edit.reset();
+//			this.edit.sections._buttons.buttons.delete.visible = 'no';
+//			this.edit.data = {};
+//			this.edit.show(cb);
+//		}
 	};
 
 	this.saveEvent = function() {

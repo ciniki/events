@@ -1,0 +1,6 @@
+#
+# Add fields for event times
+#
+ALTER TABLE ciniki_events ADD COLUMN object varchar(250) not null AFTER long_description;
+ALTER TABLE ciniki_events ADD COLUMN object_id varchar(250) not null AFTER object;
+ALTER TABLE ciniki_events COMMENT='v1.06';
