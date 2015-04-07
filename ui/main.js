@@ -225,7 +225,7 @@ function ciniki_events_main() {
 			return 'M.startApp(\'ciniki.events.images\',null,\'M.ciniki_events_main.showEvent();\',\'mc\',{\'event_image_id\':\'' + d.image.id + '\'});';
 		};
 		this.event.addButton('edit', 'Edit', 'M.ciniki_events_main.showEdit(\'M.ciniki_events_main.showEvent();\',M.ciniki_events_main.event.event_id);');
-		this.event.addLeftButton('website', 'Website', 'M.showWebsite(\'/events/\'+M.ciniki_events_main.event.data.permalink);');
+		this.event.addLeftButton('website', 'Preview', 'M.showWebsite(\'/events/\'+M.ciniki_events_main.event.data.permalink);');
 		this.event.addClose('Back');
 
 		//
