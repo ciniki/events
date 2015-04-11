@@ -41,7 +41,8 @@ function ciniki_events_eventDelete(&$ciniki) {
 	//
 	// Get the uuid of the event to be deleted
 	//
-	$strsql = "SELECT uuid FROM ciniki_events "
+	$strsql = "SELECT uuid "
+		. "FROM ciniki_events "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
 		. "";
@@ -72,7 +73,8 @@ function ciniki_events_eventDelete(&$ciniki) {
 	//
 	// Remove the images
 	//
-	$strsql = "SELECT id, uuid, image_id FROM ciniki_event_images "
+	$strsql = "SELECT id, uuid, image_id "
+		. "FROM ciniki_event_images "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
 		. "";
@@ -247,11 +249,8 @@ function ciniki_events_eventDelete(&$ciniki) {
 	// Update the last_change date in the business modules
 	// Ignore the result, as we don't want to stop user updates if this fails.
 	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
-
-//	$ciniki['syncqueue'][] = array('push'=>'ciniki.events.event',
-//		'args'=>array('delete_uuid'=>$event_uuid, 'delete_id'=>$args['event_id']));
+//	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
+//	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
 
 	return array('stat'=>'ok');
 }
