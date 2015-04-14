@@ -104,7 +104,6 @@ function ciniki_events_web_eventList($ciniki, $settings, $business_id, $args) {
 	if( !isset($rc['events']) ) {
 		return array('stat'=>'ok', 'events'=>array());
 	}
-	print_r($strsql);
 	return array('stat'=>'ok', 'events'=>$rc['events']);
 }
 ?>
