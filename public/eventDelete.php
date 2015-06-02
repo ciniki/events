@@ -249,8 +249,8 @@ function ciniki_events_eventDelete(&$ciniki) {
 	// Update the last_change date in the business modules
 	// Ignore the result, as we don't want to stop user updates if this fails.
 	//
-//	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-//	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
+	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
 
 	return array('stat'=>'ok');
 }
