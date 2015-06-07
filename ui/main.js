@@ -78,7 +78,7 @@ function ciniki_events_main() {
 		this.event.data = {};
 		this.event.event_id = 0;
 		this.event.sections = {
-			'_image':{'label':'', 'aside':'yes', 'fields':{
+			'_image':{'label':'', 'aside':'yes', 'type':'imageform', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'history':'no'},
 				}},
 			'info':{'label':'', 'aside':'yes', 'list':{
@@ -237,7 +237,7 @@ function ciniki_events_main() {
 		this.edit.data = null;
 		this.edit.event_id = 0;
         this.edit.sections = { 
-			'_image':{'label':'Image', 'aside':'yes',
+			'_image':{'label':'Image', 'type':'imageform', 'aside':'yes',
 				'gstep':1,
 				'gtitle':function(p) { return (p.data.primary_image_id != null && p.data.primary_image_id > 0)?'Would you like to change the photo for this event?':'Do you have a photo for this event?';},
 				'gmore':function(p) { return (p.data.primary_image_id != null && p.data.primary_image_id > 0)?
