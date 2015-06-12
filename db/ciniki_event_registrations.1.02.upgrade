@@ -1,0 +1,6 @@
+#
+# This file will add the uuid to ciniki_events
+# which is required for the sync to work.
+#
+ALTER TABLE ciniki_event_registrations ADD COLUMN status tinyint unsigned not null AFTER invoice_id;
+ALTER TABLE ciniki_event_registrations COMMENT='v1.02';

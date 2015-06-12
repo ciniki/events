@@ -71,7 +71,7 @@ function ciniki_events_eventGet($ciniki) {
 	// Load event maps
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'maps');
-	$rc = ciniki_events_maps($ciniki, $modules);
+	$rc = ciniki_events_maps($ciniki);
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

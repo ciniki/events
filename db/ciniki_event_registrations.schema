@@ -27,6 +27,12 @@
 #					no invoice is attached to this registration.  The customer probably
 #					is a freebe and didn't need to pay.
 #
+# status:			The current status of the registration.
+#
+#					10 - Reserved
+#					20 - Confirmed
+#					30 - Paid
+#
 # customer_notes:	The notes left by the customer when they signed up online.
 # notes:			The notes for the business to use, customers won't see it.
 #
@@ -40,6 +46,7 @@ create table ciniki_event_registrations (
 	event_id int not null,
 	customer_id int not null,
 	invoice_id int not null,
+	status tinyint unsigned not null,
 	num_tickets int not null,
 	customer_notes varchar(6000) not null,
 	notes varchar(6000) not null,
@@ -48,4 +55,4 @@ create table ciniki_event_registrations (
 	primary key (id),
 	index (event_id, customer_id),
 	index business_uuid (business_id, uuid, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.01';
+) ENGINE='InnoDB', COMMENT='v1.02';

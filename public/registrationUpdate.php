@@ -23,6 +23,7 @@ function ciniki_events_registrationUpdate(&$ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'registration_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Registration'), 
 		'customer_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Customer'),
+		'status'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Status'),
 		'num_tickets'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Number of Tickets'),
         'customer_notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Customer Notes'), 
         'notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Notes'), 

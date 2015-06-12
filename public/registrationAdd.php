@@ -26,6 +26,7 @@ function ciniki_events_registrationAdd(&$ciniki) {
 		'customer_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Customer'),
 		'num_tickets'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Number of Tickets'),
 		'invoice_id'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Invoice'),
+		'status'=>array('required'=>'no', 'blank'=>'no', 'default'=>'10', 'name'=>'Status'),
         'customer_notes'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Customer Notes'), 
         'notes'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Notes'), 
         )); 

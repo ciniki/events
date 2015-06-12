@@ -41,6 +41,16 @@ function ciniki_events_registrationList($ciniki) {
 	$date_format = ciniki_users_dateFormat($ciniki);
 
 	//
+	// Load the status maps for the text description of each status
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'maps');
+	$rc = ciniki_events_maps($ciniki);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$maps = $rc['maps'];
+
+	//
 	// Build the query string to get the list of registrations
 	//
 	if( isset($modules['ciniki.sapos']) ) {
@@ -58,8 +68,11 @@ function ciniki_events_registrationList($ciniki) {
 		$strsql = "SELECT ciniki_event_registrations.id, "
 			. "ciniki_event_registrations.customer_id, "
 			. "IFNULL(ciniki_customers.display_name, '') AS customer_name, "
+			. "ciniki_event_registrations.status, "
+			. "ciniki_event_registrations.status AS status_text, "
 			. "ciniki_event_registrations.num_tickets, "
 			. "ciniki_event_registrations.invoice_id, "
+			. "ciniki_event_registrations.customer_notes, "
 			. "ciniki_sapos_invoices.payment_status AS invoice_status, "
 			. "IFNULL(ciniki_sapos_invoices.payment_status, 0) AS invoice_status_text "
 			. "FROM ciniki_event_registrations "
@@ -76,9 +89,9 @@ function ciniki_events_registrationList($ciniki) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
 			array('container'=>'registrations', 'fname'=>'id', 'name'=>'registration',
-				'fields'=>array('id', 'customer_id', 'customer_name', 'num_tickets', 
-					'invoice_id', 'invoice_status', 'invoice_status_text'),
-				'maps'=>array('invoice_status_text'=>$status_maps)),
+				'fields'=>array('id', 'customer_id', 'customer_name', 'status', 'status_text', 'num_tickets', 
+					'invoice_id', 'invoice_status', 'invoice_status_text', 'customer_notes'),
+				'maps'=>array('invoice_status_text'=>$status_maps, 'status_text'=>$maps['registration']['status'])),
 			));
 		if( $rc['stat'] != 'ok' ) {
 			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1364', 'msg'=>'Unable to get the list of registrations', 'err'=>$rc['err']));
@@ -92,8 +105,11 @@ function ciniki_events_registrationList($ciniki) {
 		$strsql = "SELECT ciniki_event_registrations.id, "
 			. "ciniki_event_registrations.customer_id, "
 			. "IFNULL(ciniki_customers.display_name, '') AS customer_name, "
+			. "ciniki_event_registrations.status, "
+			. "ciniki_event_registrations.status AS status_text, "
 			. "ciniki_event_registrations.num_tickets, "
-			. "ciniki_event_registrations.invoice_id "
+			. "ciniki_event_registrations.invoice_id, "
+			. "ciniki_event_registrations.customer_notes "
 			. "FROM ciniki_event_registrations "
 			. "LEFT JOIN ciniki_customers ON (ciniki_event_registrations.customer_id = ciniki_customers.id "
 				. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
@@ -105,7 +121,8 @@ function ciniki_events_registrationList($ciniki) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
 			array('container'=>'registrations', 'fname'=>'id', 'name'=>'registration',
-				'fields'=>array('id', 'customer_id', 'customer_name', 'num_tickets', 'invoice_id')),
+				'fields'=>array('id', 'customer_id', 'customer_name', 'status', 'status_text', 'num_tickets', 'invoice_id', 'customer_notes'),
+				'maps'=>array('status_text'=>$maps['registration']['status'])),
 			));
 		if( $rc['stat'] != 'ok' ) {
 			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1521', 'msg'=>'Unable to get the list of registrations', 'err'=>$rc['err']));

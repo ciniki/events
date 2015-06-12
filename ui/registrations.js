@@ -15,16 +15,28 @@ function ciniki_events_registrations() {
 			'registrations':{'label':'Registrations', 'type':'simplegrid', 'num_cols':3,
 				'sortable':'yes',
 				'sortTypes':['text', 'number', 'text'],
-				'cellClasses':['multiline', 'multiline', ''],
+				'cellClasses':['multiline', 'multiline', 'multiline'],
 				'addTxt':'Add Registration',
 				'addFn':'M.ciniki_events_registrations.showAdd(\'M.ciniki_events_registrations.showMenu();\',M.ciniki_events_registrations.menu.event_id);',
 				},
 			};
 		this.menu.cellValue = function(s, i, j, d) {
 			switch(j) {
-				case 0: return '<span class="maintext">' + d.registration.customer_name + '</span>';
+				case 0: return '<span class="maintext">' + d.registration.customer_name + '</span><span class="subtext">' + d.registration.customer_notes + '</span>';
 				case 1: return '<span class="maintext">' + d.registration.num_tickets + '</span>';
-				case 2: return '<span class="maintext">' + d.registration.invoice_status_text + '</span>';
+				case 2: 
+					var txt = '';
+					if( (M.curBusiness.modules['ciniki.events'].flags&0x04)>0 ) {
+						txt += '<span class="maintext">' + d.registration.status_text + '</span>';
+					} 
+					if( M.curBusiness.modules['ciniki.sapos'] != null ) {
+						if( txt != '' ) {
+							txt += '<span class="subtext">' + d.registration.invoice_status_text + '</span>';
+						} else {
+							txt += '<span class="maintext">' + d.registration.invoice_status_text + '</span>';
+						}
+					}
+					return txt;
 			}
 		};
 		this.menu.sectionData = function(s) {
@@ -60,6 +72,7 @@ function ciniki_events_registrations() {
 //				'addFn':'M.startApp(\'ciniki.sapos.invoice\',null,\'M.ciniki_events_registrations.showEdit();\',\'mc\',{\'customer_id\':M.ciniki_events_registrations.edit.customer_id});',
 				},
 			'registration':{'label':'Registration', 'fields':{
+				'status':{'label':'Status', 'active':'no', 'type':'toggle', 'default':'10', 'toggles':{'10':'Reserved', '20':'Confirmed', '30':'Paid'}},
 				'num_tickets':{'label':'Number of Tickets', 'type':'text', 'size':'small'},
 				}},
 			'_customer_notes':{'label':'Customer Notes', 'fields':{
@@ -136,9 +149,9 @@ function ciniki_events_registrations() {
 	//
 	this.start = function(cb, appPrefix, aG) {
 		args = {};
-		if( aG != null ) {
-			args = eval(aG);
-		}
+		if( aG != null ) { args = eval(aG); }
+
+		this.edit.sections.registration.fields.status.active = (M.curBusiness.modules['ciniki.events'].flags&0x04)>0?'yes':'no';
 
 		//
 		// Create the app container if it doesn't exist, and clear it out
@@ -166,11 +179,11 @@ function ciniki_events_registrations() {
 				}
 				M.ciniki_events_registrations.menu.data.registrations = rsp.registrations;
 				if( rsp.registrations.length > 0 ) {
-					M.ciniki_events_registrations.menu.sections.registrations.headerValues = ['Name', 'Tickets', 'Paid'];
+					M.ciniki_events_registrations.menu.sections.registrations.headerValues = ['Name', 'Tickets', 'Status'];
 				} else {
 					M.ciniki_events_registrations.menu.sections.registrations.headerValues = null;
 				}
-				if( M.curBusiness.modules['ciniki.sapos'] != null ) {
+				if( M.curBusiness.modules['ciniki.sapos'] != null || (M.curBusiness.modules['ciniki.events'].flags&0x04) > 0 ) {
 					M.ciniki_events_registrations.menu.sections.registrations.num_cols = 3;
 				} else {
 					M.ciniki_events_registrations.menu.sections.registrations.num_cols = 2;

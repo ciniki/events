@@ -91,6 +91,7 @@ function ciniki_events_objects($ciniki) {
 			'event_id'=>array('ref'=>'ciniki.events.event'),
 			'customer_id'=>array('ref'=>'ciniki.customers.customer'),
 			'invoice_id'=>array('ref'=>'ciniki.pos.invoice'),
+			'status'=>array('default'=>'10'),
 			'num_tickets'=>array(),
 			'customer_notes'=>array(),
 			'notes'=>array(),
