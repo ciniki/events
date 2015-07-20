@@ -124,8 +124,7 @@ function ciniki_events_links() {
 			var c = this.edit.serializeForm('yes');
 			if( c != '' ) {
 				M.api.postJSONCb('ciniki.events.linkAdd', 
-					{'business_id':M.curBusinessID, 'event_id':this.edit.event_id, 
-					'object':'ciniki.recipes.recipe'}, c, function(rsp) {
+					{'business_id':M.curBusinessID, 'event_id':this.edit.event_id}, c, function(rsp) {
 						if( rsp.stat != 'ok' ) {
 							M.api.err(rsp);
 							return false;
