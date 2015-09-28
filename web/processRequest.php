@@ -1,0 +1,287 @@
+<?php
+//
+// Description
+// -----------
+// This function will process a web request for the events module.
+//
+// Arguments
+// ---------
+// ciniki:
+// settings:		The web settings structure.
+// business_id:		The ID of the business to get events for.
+//
+// args:			The possible arguments for posts
+//
+//
+// Returns
+// -------
+//
+function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $args) {
+
+	//
+	// Check to make sure the module is enabled
+	//
+	if( !isset($ciniki['business']['modules']['ciniki.events']) ) {
+		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'2578', 'msg'=>"I'm sorry, the page you requested does not exist."));
+	}
+	$page = array(
+		'title'=>$args['page_title'],
+		'breadcrumbs'=>$args['breadcrumbs'],
+		'blocks'=>array(),
+		'submenu'=>array(),
+		);
+
+	//
+	// Check if a file was specified to be downloaded
+	//
+	$download_err = '';
+	if( isset($args['uri_split'][0]) && $args['uri_split'][0] != ''
+		&& isset($args['uri_split'][1]) && $args['uri_split'][1] == 'download'
+		&& isset($args['uri_split'][2]) && $args['uri_split'][2] != '' ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'web', 'fileDownload');
+		$rc = ciniki_events_web_fileDownload($ciniki, $ciniki['request']['business_id'], $args['uri_split'][0], $args['uri_split'][2]);
+		if( $rc['stat'] == 'ok' ) {
+			return array('stat'=>'ok', 'download'=>$rc['file']);
+		}
+		
+		//
+		// If there was an error locating the files, display generic error
+		//
+		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'2579', 'msg'=>'The file you requested does not exist.'));
+	}
+
+	//
+	// Setup titles
+	//
+	$module_title = ((isset($settings['page-events-title'])&&$settings['page-events-title']!='')?$settings['page-events-title']:'Events');
+	if( $page['title'] == '' ) {
+		$page['title'] = 'Upcoming ' . $module_title;
+	} else {
+		$page['title'] = 'Upcoming ' . $args['page_title'];
+	}
+	if( count($page['breadcrumbs']) == 0 ) {
+		$page['breadcrumbs'][] = array('name'=>$module_title, 'url'=>$args['base_url']);
+	}
+	$ciniki['response']['head']['og']['url'] = $ciniki['request']['domain_base_url'] . '/events';
+
+	//
+	// Setup the base url as the base url for this page. This may be altered below
+	// as the uri_split is processed, but we do not want to alter the original passed in.
+	//
+	$base_url = $args['base_url'];
+
+	//
+	// Parse the url to determine what was requested
+	//
+	$display = '';
+	$tag_type = 10;
+	$tag_permalink = '';
+
+	//
+	// Check if we are to display a category
+	//
+	if( isset($args['uri_split'][0]) && $args['uri_split'][0] == 'category' 
+		&& isset($args['uri_split'][1]) && $args['uri_split'][1] != '' 
+		) {
+		$display = 'list';
+		$tag_type = 10;
+		$tag_permalink = $args['uri_split'][1];
+	}
+
+	//
+	// Check if we are to display an image, from the gallery, or latest images
+	//
+	elseif( isset($args['uri_split'][0]) && $args['uri_split'][0] != '' ) {
+		$display = 'event';
+		$event_permalink = $args['uri_split'][0];
+
+		//
+		// Check if gallery image was requested
+		//
+		if( isset($args['uri_split'][1]) && $args['uri_split'][1] == 'gallery'
+			&& isset($args['uri_split'][2]) && $args['uri_split'][2] != '' 
+			) {
+			$image_permalink = $args['uri_split'][2];
+			$display = 'eventpic';
+		}
+		$ciniki['response']['head']['og']['url'] .= '/' . $event_permalink;
+		$base_url .= '/' . $event_permalink;
+	}
+
+	//
+	// Nothing selected, default to the event list
+	//
+	else {
+		$display = 'list';
+	}
+
+	
+	//
+	// Setup the event blocks for event or event picture
+	//
+	if( $display == 'event' || $display == 'eventpic' ) {
+		//
+		// Load the event to get all the details, and the list of images.
+		// It's one query, and we can find the requested image, and figure out next
+		// and prev from the list of images returned
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'web', 'eventDetails');
+		$rc = ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $event_permalink);
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		$event = $rc['event'];
+		
+		//
+		// Setup sharing information
+		//
+		if( isset($event['short_description']) && $event['short_description'] != '' ) {
+			$ciniki['response']['head']['og']['description'] = strip_tags($event['short_description']);
+		} elseif( isset($event['description']) && $event['description'] != '' ) {
+			$ciniki['response']['head']['og']['description'] = strip_tags($event['description']);
+		}
+
+		//
+		// Reset page title to be the event name
+		//
+		$page['title'] .= ($page['title']!=''?' - ':'') . $event['name'];
+
+//		if( isset($tag_permalink) && $tag_permalink != '' ) {
+//			$page['breadcrumbs'][] = array('name'=>$tag_types[$type_permalink]['name'], 'url'=>$args['base_url'] . '/' . $type_permalink);
+//			$page['breadcrumbs'][] = array('name'=>$tag_name, 'url'=>$args['base_url'] . '/' . $type_permalink . '/' . urlencode($tag_name));
+//		}
+		$page['breadcrumbs'][] = array('name'=>$event['name'], 'url'=>$base_url);
+	
+		//
+		// Setup the blocks to display the event gallery image
+		//
+		if( $display == 'eventpic' ) {
+			if( !isset($event['images']) || count($event['images']) < 1 ) {
+				$page['blocks'][] = array('type'=>'message', 'content'=>"I'm sorry, but we can't seem to find the image you requested.");
+			} else {
+				ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'galleryFindNextPrev');
+				$rc = ciniki_web_galleryFindNextPrev($ciniki, $event['images'], $image_permalink);
+				if( $rc['stat'] != 'ok' ) {
+					return $rc;
+				}
+				if( $rc['img'] == NULL ) {
+					$page['blocks'][] = array('type'=>'message', 'content'=>"I'm sorry, but we can't seem to find the image you requested.");
+				} else {
+					$page['breadcrumbs'][] = array('name'=>$rc['img']['title'], 'url'=>$base_url . '/gallery/' . $image_permalink);
+					if( $rc['img']['title'] != '' ) {
+						$page['title'] .= ' - ' . $rc['img']['title'];
+					}
+					$block = array('type'=>'image', 'primary'=>'yes', 'image'=>$rc['img']);
+					if( $rc['prev'] != null ) {
+						$block['prev'] = array('url'=>$base_url . '/gallery/' . $rc['prev']['permalink'], 'image_id'=>$rc['prev']['image_id']);
+					}
+					if( $rc['next'] != null ) {
+						$block['next'] = array('url'=>$base_url . '/gallery/' . $rc['next']['permalink'], 'image_id'=>$rc['next']['image_id']);
+					}
+					$page['blocks'][] = $block;
+				}
+			}
+		} 
+
+		//
+		// Setup the blocks to display the event
+		//
+		$page['meta_content'] = '';
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'processDateRange');
+		$rc = ciniki_core_processDateRange($ciniki, $event);
+		$page['article_meta'] = array();
+		$page['article_meta'][] = $rc['dates'];
+		if( isset($event['times']) && $event['times'] != '' ) {
+			$page['article_meta'][] = $event['times'];
+		}
+
+		//
+		// Add primary image
+		//
+		if( isset($event['image_id']) && $event['image_id'] > 0 ) {
+			$page['blocks'][] = array('type'=>'asideimage', 'primary'=>'yes', 'image_id'=>$event['image_id'], 'title'=>$event['name'], 'caption'=>'');
+		}
+
+		//
+		// Add description
+		//
+		$content = '';
+		if( isset($event['description']) && $event['description'] != '' ) {
+			$content = $event['description'];
+		} elseif( isset($event['short_description']) ) {
+			$content = $event['short_description'];
+		}
+
+		if( $url != '' ) {
+			$content .= "\n\nWebsite: $url";
+		}
+
+		$page['blocks'][] = array('type'=>'content', 'title'=>'', 'content'=>$content);
+
+		//
+		// Add prices, links, files, etc to the page blocks
+		//
+		if( isset($event['prices']) && count($event['prices']) > 0 ) {
+			$page['blocks'][] = array('type'=>'prices', 'title'=>'', 'prices'=>$event['prices']);
+		}
+		if( isset($event['links']) && count($event['links']) > 0 ) {
+			$page['blocks'][] = array('type'=>'links', 'title'=>'', 'links'=>$event['links']);
+		}
+		if( isset($event['files']) && count($event['files']) > 0 ) {
+			$page['blocks'][] = array('type'=>'files', 'title'=>'', 'base_url'=>$args['base_url'] . '/download/', 'files'=>$event['files']);
+		}
+		if( !isset($settings['page-events-share-buttons']) || $settings['page-events-share-buttons'] == 'yes' ) {
+			$tags = array();
+			$page['blocks'][] = array('type'=>'sharebuttons', 'title'=>$event['name'], 'tags'=>$tags);
+		}
+		if( isset($event['images']) && count($event['images']) > 0 ) {
+			$page['blocks'][] = array('type'=>'gallery', 'title'=>'Additional Images', 'base_url'=>$base_url . '/gallery', 'images'=>$event['images']);
+		}
+		if( isset($event['sponsors']) && count($event['sponsors']) > 0 ) {
+			$page['blocks'][] = array('type'=>'sponsors', 'title'=>'', 'sponsors'=>$event['sponsors']);
+		}
+	}
+
+	elseif( $display == 'list' ) {
+	
+		//
+		// Get the events
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'web', 'list');
+		$rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['business_id'], 
+			array('type'=>'upcoming', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		$events = $rc['events'];
+	
+		$page['blocks'][] = array('type'=>'cilist', 'title'=>'Upcoming ' . $module_title, 'base_url'=>$args['base_url'], 'categories'=>$events);
+
+
+	}
+
+
+	//
+	// Decide what items should be in the submenu
+	//
+	if( ($ciniki['business']['modules']['ciniki.events']['flags']&0x10) > 0 
+		&& isset($settings['page-events-categories-display']) && $settings['page-events-categories-display'] == 'submenu'
+		) {
+		if( !isset($categories) ) {
+			ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'web', 'tags');
+			$rc = ciniki_events_web_tags($ciniki, $settings, $ciniki['request']['business_id'], '10');
+			if( $rc['stat'] != 'ok' ) {
+				return $rc;
+			}
+			$categories = $rc['tags'];
+		}
+		if( count($categories) > 1 ) {
+			foreach($categories as $cid => $cat) {
+				$page['submenu'][$cid] = array('name'=>$cat['tag_name'], 'url'=>$args['base_url'] . "/category/" . $cat['permalink']);
+			}
+		}
+	}
+
+	return array('stat'=>'ok', 'page'=>$page);
+}
+?>
