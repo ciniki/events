@@ -52,18 +52,18 @@ function ciniki_events_hooks_webOptions(&$ciniki, $business_id, $args) {
 			),
 		));
 
-	$options[] = array('option'=>array(
-		'label'=>'Hide empty upcoming',
-		'setting'=>'page-events-upcoming-empty-hide', 
-		'type'=>'toggle',
-		'value'=>(isset($settings['page-events-upcoming-empty-hide'])?$settings['page-events-upcoming-empty-hide']:'no'),
-		'dependency'=>'page-events-past',
-		'dependency_value'=>'yes',
-		'toggles'=>array(
-			array('toggle'=>array('value'=>'no', 'label'=>'No')),
-			array('toggle'=>array('value'=>'yes', 'label'=>'Yes')),
-			),
-		));
+//	$options[] = array('option'=>array(
+//		'label'=>'Hide empty upcoming',
+//		'setting'=>'page-events-upcoming-empty-hide', 
+//		'type'=>'toggle',
+//		'value'=>(isset($settings['page-events-upcoming-empty-hide'])?$settings['page-events-upcoming-empty-hide']:'no'),
+//		'dependency'=>'page-events-past',
+//		'dependency_value'=>'yes',
+//		'toggles'=>array(
+//			array('toggle'=>array('value'=>'no', 'label'=>'No')),
+//			array('toggle'=>array('value'=>'yes', 'label'=>'Yes')),
+//			),
+//		));
 	
 	//
 	// Categories enabled

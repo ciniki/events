@@ -53,16 +53,15 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
 	//
 	// Setup titles
 	//
-	$module_title = ((isset($settings['page-events-title'])&&$settings['page-events-title']!='')?$settings['page-events-title']:'Events');
-	if( $page['title'] == '' ) {
-		$page['title'] = 'Upcoming ' . $module_title;
+	if( isset($settings['page-events-title']) && $settings['page-events-title'] !='' ) {
+		$module_title = $settings['page-events-title'];
+	} elseif( isset($args['page_title']) ) {
+		$module_title = $args['page_title'];
 	} else {
-		$page['title'] = 'Upcoming ' . $args['page_title'];
+		$module_title = 'Events';
 	}
-	if( count($page['breadcrumbs']) == 0 ) {
-		$page['breadcrumbs'][] = array('name'=>$module_title, 'url'=>$args['base_url']);
-	}
-	$ciniki['response']['head']['og']['url'] = $ciniki['request']['domain_base_url'] . '/events';
+
+	$ciniki['response']['head']['og']['url'] = $args['domain_base_url'];
 
 	//
 	// Setup the base url as the base url for this page. This may be altered below
@@ -86,6 +85,8 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
 		$display = 'list';
 		$tag_type = 10;
 		$tag_permalink = $args['uri_split'][1];
+		$page['title'] = 'Upcoming ' . $module_title;
+		$page['breadcrumbs'][] = array('name'=>'Upcoming ' . $module_title, 'url'=>$args['base_url']);
 	}
 
 	//
@@ -131,7 +132,10 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
 			return $rc;
 		}
 		$event = $rc['event'];
-		
+	
+		$page['title'] = $module_title;
+		$page['breadcrumbs'][] = array('name'=>$module_title, 'url'=>$args['base_url']);
+
 		//
 		// Setup sharing information
 		//
@@ -151,11 +155,24 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
 //			$page['breadcrumbs'][] = array('name'=>$tag_name, 'url'=>$args['base_url'] . '/' . $type_permalink . '/' . urlencode($tag_name));
 //		}
 		$page['breadcrumbs'][] = array('name'=>$event['name'], 'url'=>$base_url);
-	
+
+		//
+		// Meta content for under title
+		//
+		$page['meta_content'] = '';
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'processDateRange');
+		$rc = ciniki_core_processDateRange($ciniki, $event);
+		$page['article_meta'] = array();
+		$page['article_meta'][] = $rc['dates'];
+		if( isset($event['times']) && $event['times'] != '' ) {
+			$page['article_meta'][] = $event['times'];
+		}
+
 		//
 		// Setup the blocks to display the event gallery image
 		//
 		if( $display == 'eventpic' ) {
+			
 			if( !isset($event['images']) || count($event['images']) < 1 ) {
 				$page['blocks'][] = array('type'=>'message', 'content'=>"I'm sorry, but we can't seem to find the image you requested.");
 			} else {
@@ -186,63 +203,58 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
 		//
 		// Setup the blocks to display the event
 		//
-		$page['meta_content'] = '';
-		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'processDateRange');
-		$rc = ciniki_core_processDateRange($ciniki, $event);
-		$page['article_meta'] = array();
-		$page['article_meta'][] = $rc['dates'];
-		if( isset($event['times']) && $event['times'] != '' ) {
-			$page['article_meta'][] = $event['times'];
-		}
+		else {
+			//
+			// Add primary image
+			//
+			if( isset($event['image_id']) && $event['image_id'] > 0 ) {
+				$page['blocks'][] = array('type'=>'asideimage', 'primary'=>'yes', 'image_id'=>$event['image_id'], 'title'=>$event['name'], 'caption'=>'');
+			}
 
-		//
-		// Add primary image
-		//
-		if( isset($event['image_id']) && $event['image_id'] > 0 ) {
-			$page['blocks'][] = array('type'=>'asideimage', 'primary'=>'yes', 'image_id'=>$event['image_id'], 'title'=>$event['name'], 'caption'=>'');
-		}
+			//
+			// Add description
+			//
+			$content = '';
+			if( isset($event['description']) && $event['description'] != '' ) {
+				$content = $event['description'];
+			} elseif( isset($event['short_description']) ) {
+				$content = $event['short_description'];
+			}
 
-		//
-		// Add description
-		//
-		$content = '';
-		if( isset($event['description']) && $event['description'] != '' ) {
-			$content = $event['description'];
-		} elseif( isset($event['short_description']) ) {
-			$content = $event['short_description'];
-		}
+			if( $url != '' ) {
+				$content .= "\n\nWebsite: $url";
+			}
 
-		if( $url != '' ) {
-			$content .= "\n\nWebsite: $url";
-		}
+			$page['blocks'][] = array('type'=>'content', 'title'=>'', 'content'=>$content);
 
-		$page['blocks'][] = array('type'=>'content', 'title'=>'', 'content'=>$content);
-
-		//
-		// Add prices, links, files, etc to the page blocks
-		//
-		if( isset($event['prices']) && count($event['prices']) > 0 ) {
-			$page['blocks'][] = array('type'=>'prices', 'title'=>'', 'prices'=>$event['prices']);
-		}
-		if( isset($event['links']) && count($event['links']) > 0 ) {
-			$page['blocks'][] = array('type'=>'links', 'title'=>'', 'links'=>$event['links']);
-		}
-		if( isset($event['files']) && count($event['files']) > 0 ) {
-			$page['blocks'][] = array('type'=>'files', 'title'=>'', 'base_url'=>$args['base_url'] . '/download/', 'files'=>$event['files']);
-		}
-		if( !isset($settings['page-events-share-buttons']) || $settings['page-events-share-buttons'] == 'yes' ) {
-			$tags = array();
-			$page['blocks'][] = array('type'=>'sharebuttons', 'title'=>$event['name'], 'tags'=>$tags);
-		}
-		if( isset($event['images']) && count($event['images']) > 0 ) {
-			$page['blocks'][] = array('type'=>'gallery', 'title'=>'Additional Images', 'base_url'=>$base_url . '/gallery', 'images'=>$event['images']);
-		}
-		if( isset($event['sponsors']) && count($event['sponsors']) > 0 ) {
-			$page['blocks'][] = array('type'=>'sponsors', 'title'=>'', 'sponsors'=>$event['sponsors']);
+			//
+			// Add prices, links, files, etc to the page blocks
+			//
+			if( isset($event['prices']) && count($event['prices']) > 0 ) {
+				$page['blocks'][] = array('type'=>'prices', 'title'=>'', 'prices'=>$event['prices']);
+			}
+			if( isset($event['links']) && count($event['links']) > 0 ) {
+				$page['blocks'][] = array('type'=>'links', 'title'=>'', 'links'=>$event['links']);
+			}
+			if( isset($event['files']) && count($event['files']) > 0 ) {
+				$page['blocks'][] = array('type'=>'files', 'title'=>'', 'base_url'=>$base_url . '/download/', 'files'=>$event['files']);
+			}
+			if( !isset($settings['page-events-share-buttons']) || $settings['page-events-share-buttons'] == 'yes' ) {
+				$tags = array();
+				$page['blocks'][] = array('type'=>'sharebuttons', 'title'=>$event['name'], 'tags'=>$tags);
+			}
+			if( isset($event['images']) && count($event['images']) > 0 ) {
+				$page['blocks'][] = array('type'=>'gallery', 'title'=>'Additional Images', 'base_url'=>$base_url . '/gallery', 'images'=>$event['images']);
+			}
+			if( isset($event['sponsors']) && count($event['sponsors']) > 0 ) {
+				$page['blocks'][] = array('type'=>'sponsors', 'title'=>'', 'sponsors'=>$event['sponsors']);
+			}
 		}
 	}
 
 	elseif( $display == 'list' ) {
+		$page['title'] = 'Upcoming ' . $module_title;
+		$page['breadcrumbs'][] = array('name'=>'Upcoming ' . $module_title, 'url'=>$args['base_url']);
 	
 		//
 		// Get the events
@@ -253,13 +265,29 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
 		}
-		$events = $rc['events'];
+		if( isset($rc['events']) && count($rc['events']) > 0 ) {
+			$page['blocks'][] = array('type'=>'cilist', 'title'=>'', 'base_url'=>$args['base_url'], 'categories'=>$rc['events']);
+		} else {
+			$page['blocks'][] = array('type'=>'message', 'content'=>"Currently no " . strtolower($module_title) . ".");
+		}
 	
-		$page['blocks'][] = array('type'=>'cilist', 'title'=>'Upcoming ' . $module_title, 'base_url'=>$args['base_url'], 'categories'=>$events);
-
-
+		//
+		// Past events
+		//
+		if( isset($settings['page-events-past']) && $settings['page-events-past'] == 'yes' ) {
+			ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'web', 'list');
+			$rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['business_id'], 
+				array('type'=>'past', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink));
+			if( $rc['stat'] != 'ok' ) {
+				return $rc;
+			}
+			if( isset($rc['events']) && count($rc['events']) > 0 ) {
+				$page['blocks'][] = array('type'=>'cilist', 'title'=>'Past ' . $module_title, 'base_url'=>$args['base_url'], 'categories'=>$rc['events']);
+			} else {
+				$page['blocks'][] = array('type'=>'message', 'content'=>"No past " . strtolower($module_title) . ".");
+			}
+		}
 	}
-
 
 	//
 	// Decide what items should be in the submenu
