@@ -58,6 +58,16 @@ function ciniki_events_eventPriceList($ciniki) {
 	$date_format = ciniki_users_dateFormat($ciniki);
 
 	//
+	// Load the status maps for the text description of each status
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'maps');
+	$rc = ciniki_events_maps($ciniki);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$maps = $rc['maps'];
+
+	//
 	// Get the price list for the event
 	//
 	$strsql = "SELECT ciniki_event_prices.id, "

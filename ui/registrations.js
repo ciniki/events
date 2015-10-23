@@ -381,11 +381,14 @@ function ciniki_events_registrations() {
 		// Find the price selected
 		for(i in prices) {
 			if( prices[i].price.id == price_id ) {
+				items[0].price_id = prices[i].price.id;
+				items[0].code = '';
 				items[0].description = prices[i].price.event_name + (prices[i].price.name!=''?' - '+prices[i].price.name:'');
 				items[0].unit_amount = prices[i].price.unit_amount;
 				items[0].unit_discount_amount = prices[i].price.unit_discount_amount;
 				items[0].unit_discount_percentage = prices[i].price.unit_discount_percentage;
 				items[0].taxtype_id = prices[i].price.taxtype_id;
+				items[0].flags = 0x20;
 			}
 		}
 		M.startApp('ciniki.sapos.invoice',null,this.newinvoice.cb,'mc',{'customer_id':this.newinvoice.customer_id,'items':items});
