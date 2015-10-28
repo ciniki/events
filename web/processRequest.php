@@ -188,7 +188,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
 					if( $rc['img']['title'] != '' ) {
 						$page['title'] .= ' - ' . $rc['img']['title'];
 					}
-					$block = array('type'=>'image', 'primary'=>'yes', 'image'=>$rc['img']);
+					$block = array('type'=>'galleryimage', 'primary'=>'yes', 'image'=>$rc['img']);
 					if( $rc['prev'] != null ) {
 						$block['prev'] = array('url'=>$base_url . '/gallery/' . $rc['prev']['permalink'], 'image_id'=>$rc['prev']['image_id']);
 					}
