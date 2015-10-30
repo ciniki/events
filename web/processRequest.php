@@ -241,7 +241,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
 			}
 			if( !isset($settings['page-events-share-buttons']) || $settings['page-events-share-buttons'] == 'yes' ) {
 				$tags = array();
-				$page['blocks'][] = array('type'=>'sharebuttons', 'title'=>$event['name'], 'tags'=>$tags);
+				$page['blocks'][] = array('type'=>'sharebuttons', 'pagetitle'=>$event['name'], 'tags'=>$tags);
 			}
 			if( isset($event['images']) && count($event['images']) > 0 ) {
 				$page['blocks'][] = array('type'=>'gallery', 'title'=>'Additional Images', 'base_url'=>$base_url . '/gallery', 'images'=>$event['images']);
