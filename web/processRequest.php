@@ -221,8 +221,8 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
 				$content = $event['short_description'];
 			}
 
-			if( $url != '' ) {
-				$content .= "\n\nWebsite: $url";
+			if( $event['url'] != '' ) {
+				$content .= "\n\nWebsite: " . $event['url'];
 			}
 
 			$page['blocks'][] = array('type'=>'content', 'title'=>'', 'content'=>$content);
