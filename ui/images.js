@@ -16,7 +16,7 @@ function ciniki_events_images() {
 		this.edit.data = {};
 		this.edit.event_id = 0;
 		this.edit.sections = {
-			'_image':{'label':'Image', 
+			'_image':{'label':'Image', 'type':'imageform',
 				'gstep':1,
 				'gtitle':function(p) { return (p.data.image_id != null && p.data.image_id > 0)?'Would you like to change this photo?':'Do you have an additional photo to add?';},
 				'gmore':function(p) { return (p.data.image_id != null && p.data.image_id > 0)?

@@ -34,7 +34,7 @@ function ciniki_events_tags() {
 		this.tag.tag_type = 10;
 		this.tag.tag_permalink = '';
 		this.tag.sections = {
-			'_image':{'label':'', 'aside':'yes', 'fields':{
+			'_image':{'label':'', 'aside':'yes', 'fields':{'type':'imageform',
 				'image-id':{'label':'', 'hidelabel':'yes', 'type':'image_id', 'controls':'all', 'history':'no'},
 				}},
 			'_synopsis':{'label':'Synopsis', 'fields':{
