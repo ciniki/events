@@ -84,8 +84,8 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 	//
 	// If registrations online enabled, check the available tickets
 	//
+	$event['tickets_sold'] = 0;
 	if( ($event['reg_flags']&0x02) > 0 ) {
-		$event['tickets_sold'] = 0;
 		$strsql = "SELECT 'num_tickets', SUM(num_tickets) AS num_tickets "
 			. "FROM ciniki_event_registrations "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
