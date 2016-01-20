@@ -81,6 +81,8 @@ function ciniki_events_hooks_webOptions(&$ciniki, $business_id, $args) {
 			));
 	}
 
-	return array('stat'=>'ok', 'options'=>$options);
+	$pages['ciniki.events'] = array('name'=>'Events', 'options'=>$options);
+
+	return array('stat'=>'ok', 'pages'=>$pages);
 }
 ?>
