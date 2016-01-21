@@ -41,16 +41,38 @@ function ciniki_events_hooks_webOptions(&$ciniki, $business_id, $args) {
 
 
 	$options = array();
-	$options[] = array('option'=>array(
+	$options[] = array(
+		'label'=>'Display Format',
+		'setting'=>'page-events-display-format', 
+		'type'=>'toggle',
+		'value'=>(isset($settings['page-events-display-format'])?$settings['page-events-display-format']:'cilist'),
+		'toggles'=>array(
+			array('value'=>'cilist', 'label'=>'Date List'),
+			array('value'=>'imagelist', 'label'=>'Image List'),
+			),
+		);
+
+	$options[] = array(
 		'label'=>'Include Past Events',
 		'setting'=>'page-events-past', 
 		'type'=>'toggle',
 		'value'=>(isset($settings['page-events-past'])?$settings['page-events-past']:'no'),
 		'toggles'=>array(
-			array('toggle'=>array('value'=>'no', 'label'=>'No')),
-			array('toggle'=>array('value'=>'yes', 'label'=>'Yes')),
+			array('value'=>'no', 'label'=>'No'),
+			array('value'=>'yes', 'label'=>'Yes'),
 			),
-		));
+		);
+
+	$options[] = array(
+		'label'=>'Single List',
+		'setting'=>'page-events-single-list', 
+		'type'=>'toggle',
+		'value'=>(isset($settings['page-events-single-list'])?$settings['page-events-single-list']:'no'),
+		'toggles'=>array(
+			array('value'=>'no', 'label'=>'No'),
+			array('value'=>'yes', 'label'=>'Yes'),
+			),
+		);
 
 //	$options[] = array('option'=>array(
 //		'label'=>'Hide empty upcoming',
@@ -69,16 +91,16 @@ function ciniki_events_hooks_webOptions(&$ciniki, $business_id, $args) {
 	// Categories enabled
 	//
 	if( ($ciniki['business']['modules']['ciniki.events']['flags']&0x10) > 0 ) {
-		$options[] = array('option'=>array(
+		$options[] = array(
 			'label'=>'Display Categories',
 			'setting'=>'page-events-categories-display', 
 			'type'=>'toggle',
 			'value'=>(isset($settings['page-events-categories-display'])?$settings['page-events-categories-display']:'off'),
 			'toggles'=>array(
-				array('toggle'=>array('value'=>'off', 'label'=>'Off')),
-				array('toggle'=>array('value'=>'submenu', 'label'=>'Menu')),
+				array('value'=>'off', 'label'=>'Off'),
+				array('value'=>'submenu', 'label'=>'Menu'),
 				),
-			));
+			);
 	}
 
 	$pages['ciniki.events'] = array('name'=>'Events', 'options'=>$options);

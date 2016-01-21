@@ -16,6 +16,8 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
 		$type_strsql .= "AND ((ciniki_events.end_date > ciniki_events.start_date AND ciniki_events.end_date < DATE(NOW())) "
 				. "OR (ciniki_events.end_date <= ciniki_events.start_date AND ciniki_events.start_date < DATE(NOW())) "
 				. ") ";
+	} elseif( isset($args['type']) && $args['type'] == 'all' ) {
+
 	} else {
 		$type_strsql .= "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) ";
 	}
@@ -81,6 +83,10 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
 		$strsql .= "GROUP BY ciniki_events.id "
 			. "ORDER BY ciniki_events.start_date DESC "
 			. "";
+	} elseif( isset($args['type']) && $args['type'] == 'all' ) {
+		$strsql .= "GROUP BY ciniki_events.id "
+			. "ORDER BY ciniki_events.start_date DESC "
+			. "";
 	} else {
 		$strsql .= "GROUP BY ciniki_events.id "
 			. "ORDER BY ciniki_events.start_date ASC "
@@ -93,7 +99,7 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
 		array('container'=>'events', 'fname'=>'id', 
-			'fields'=>array('id', 'name', 'image_id'=>'primary_image_id', 'isdetails', 
+			'fields'=>array('id', 'name', 'title'=>'name', 'image_id'=>'primary_image_id', 'isdetails', 
 				'start_month', 'start_day', 'start_year', 'end_month', 'end_day', 'end_year', 
 				'start_date', 'end_date', 'times',
 				'permalink', 'synopsis', 'url', 'num_images', 'num_files')),
@@ -111,17 +117,28 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
 			if( isset($rc['dates']) ) {
 				$dates = $rc['dates'];
 			}
-			$events[] = array(
-				'name'=>$dates,
-				'subname'=>$event['times'],
-				'list'=>array(
-					'0'=>array(
-						'title'=>$event['name'],
-						'image_id'=>$event['image_id'],
-						'synopsis'=>$event['synopsis'],
-						'permalink'=>$event['permalink'],
-						'is_details'=>(($event['isdetails']=='yes'||$event['num_images']>0)?'yes':'no'),
-				)));
+            if( isset($args['format']) && $args['format'] == 'imagelist' ) {
+                $events[] = array(
+                    'title'=>$event['name'], 
+                    'subtitle'=>$dates . ' ' . $event['times'],
+                    'image_id'=>$event['image_id'],
+                    'synopsis'=>$event['synopsis'],
+                    'permalink'=>$event['permalink'],
+                    'is_details'=>(($event['isdetails']=='yes'||$event['num_images']>0)?'yes':'no'),
+                    );
+            } else {
+                $events[] = array(
+                    'name'=>$dates,
+                    'subname'=>$event['times'],
+                    'list'=>array(
+                        '0'=>array(
+                            'title'=>$event['name'],
+                            'image_id'=>$event['image_id'],
+                            'synopsis'=>$event['synopsis'],
+                            'permalink'=>$event['permalink'],
+                            'is_details'=>(($event['isdetails']=='yes'||$event['num_images']>0)?'yes':'no'),
+                    )));
+           }
 		}
 	}
 	return array('stat'=>'ok', 'events'=>$events);

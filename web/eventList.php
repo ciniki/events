@@ -93,7 +93,7 @@ function ciniki_events_web_eventList($ciniki, $settings, $business_id, $args) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
 		array('container'=>'events', 'fname'=>'id', 
-			'fields'=>array('id', 'name', 'image_id'=>'primary_image_id', 'isdetails', 
+			'fields'=>array('id', 'name', 'title'=>'name', 'image_id'=>'primary_image_id', 'isdetails', 
 				'start_month', 'start_day', 'start_year', 'end_month', 'end_day', 'end_year', 
 				'start_date', 'end_date', 'times',
 				'permalink', 'description', 'url', 'num_images', 'num_files')),
