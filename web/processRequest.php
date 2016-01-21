@@ -272,7 +272,6 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
 		if( isset($settings['page-events-past']) && $settings['page-events-past'] == 'yes' 
 		    && isset($settings['page-events-single-list']) && $settings['page-events-single-list'] == 'yes' 
             ) {
-                error_log('test');
             $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['business_id'], 
                 array('type'=>'all', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink, 'format'=>$display_format));
         } else {
