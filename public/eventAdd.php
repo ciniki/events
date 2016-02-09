@@ -48,6 +48,15 @@ function ciniki_events_eventAdd(&$ciniki) {
 	}
 	$args = $rc['args'];
 	
+	//
+	// Check access to business_id as owner
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
+	$rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventAdd');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+
 	if( !isset($args['permalink']) || $args['permalink'] == '' ) {	
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
 		$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
@@ -56,15 +65,6 @@ function ciniki_events_eventAdd(&$ciniki) {
 	if( isset($args['oidref']) && $args['oidref'] != '' && preg_match("/(.*):(.*)/", $args['oidref'], $m) ) {
 		$args['object'] = $m[1];
 		$args['object_id'] = $m[2];
-	}
-
-	//
-	// Check access to business_id as owner
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-	$rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventAdd');
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
 	}
 
 	//
