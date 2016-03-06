@@ -119,7 +119,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 		. "";
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
 		array('container'=>'prices', 'fname'=>'id',
-			'fields'=>array('id', 'name', 'available_to', 'unit_amount')),
+			'fields'=>array('price_id'=>'id', 'name', 'available_to', 'unit_amount')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

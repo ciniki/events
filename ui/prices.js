@@ -6,11 +6,11 @@ function ciniki_events_prices() {
 		'1':{'name':'Hidden'},
 		};
 	this.availableToFlags = {
-		'1':{'name':'Customers'},
+		'1':{'name':'Public'},
 		'2':{'name':'Private'},
-		'5':{'name':'Members'},
-		'6':{'name':'Dealers'},
-		'7':{'name':'Distributors'},
+		'6':{'name':'Members'},
+		'7':{'name':'Dealers'},
+		'8':{'name':'Distributors'},
 		};
 	this.init = function() {
 		//
@@ -89,19 +89,19 @@ function ciniki_events_prices() {
 		//
 		// Setup the available_to flags and webflags
 		//
-		this.edit.sections.price.fields.available_to.flags = {'1':{'name':'Customers'}};
+		this.edit.sections.price.fields.available_to.flags = {'1':{'name':'Public'}};
 		this.edit.sections.price.fields.webflags.flags = {'1':{'name':'Hidden'}};
 		if( (M.curBusiness.modules['ciniki.customers'].flags&0x02) > 0 ) {
-			this.edit.sections.price.fields.available_to.flags['5'] = {'name':'Members'};
-			this.edit.sections.price.fields.webflags.flags['5'] = {'name':'Show Members Price'};
+			this.edit.sections.price.fields.available_to.flags['6'] = {'name':'Members'};
+			this.edit.sections.price.fields.webflags.flags['6'] = {'name':'Show Members Price'};
 		}
 		if( (M.curBusiness.modules['ciniki.customers'].flags&0x10) > 0 ) {
-			this.edit.sections.price.fields.available_to.flags['6'] = {'name':'Dealers'};
-			this.edit.sections.price.fields.webflags.flags['6'] = {'name':'Show Dealers Price'};
+			this.edit.sections.price.fields.available_to.flags['7'] = {'name':'Dealers'};
+			this.edit.sections.price.fields.webflags.flags['7'] = {'name':'Show Dealers Price'};
 		}
 		if( (M.curBusiness.modules['ciniki.customers'].flags&0x100) > 0 ) {
-			this.edit.sections.price.fields.available_to.flags['7'] = {'name':'Distributors'};
-			this.edit.sections.price.fields.webflags.flags['7'] = {'name':'Show Distributors Price'};
+			this.edit.sections.price.fields.available_to.flags['8'] = {'name':'Distributors'};
+			this.edit.sections.price.fields.webflags.flags['8'] = {'name':'Show Distributors Price'};
 		}
 		this.showEdit(cb, args.price_id, args.event_id);
 	}
