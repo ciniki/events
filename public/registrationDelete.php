@@ -35,9 +35,10 @@ function ciniki_events_registrationDelete(&$ciniki) {
     }   
 
 	//
-	// Get the existing image information
+	// Get the existing registration information
 	//
-	$strsql = "SELECT id, uuid FROM ciniki_event_registrations "
+	$strsql = "SELECT id, uuid, invoice_id "
+        . "FROM ciniki_event_registrations "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['registration_id']) . "' "
 		. "";
@@ -64,12 +65,26 @@ function ciniki_events_registrationDelete(&$ciniki) {
 		return $rc;
 	}   
 
+    //
+    // Remove from the invoice
+    //
+    if( $item['invoice_id'] > 0 ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'hooks', 'invoiceItemDelete');
+        $rc = ciniki_sapos_hooks_invoiceItemDelete($ciniki, $args['business_id'], array(
+            'invoice_id'=>$item['invoice_id'],
+            'object'=>'ciniki.events.registration',
+            'object_id'=>$item['id'],
+            ));
+        if( $rc['stat'] != 'ok' ) {
+            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3220', 'msg'=>'Unable to remove registration.', 'err'=>$rc['err']));
+        }
+    }
+
 	//
 	// Delete the object
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'registrationDelete');
-	$args['registration_uuid'] = $item['uuid'];
-	$rc = ciniki_events__registrationDelete($ciniki, $args['business_id'], $item['id'], $item['uuid']);
+    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.registration', $item['id'], $item['uuid'], 0x04);
 	if( $rc['stat'] != 'ok' ) {
 		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
 		return $rc;

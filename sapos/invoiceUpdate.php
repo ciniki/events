@@ -56,8 +56,7 @@ function ciniki_events_sapos_invoiceUpdate($ciniki, $business_id, $invoice_id, $
 		//
 		if( $registration['customer_id'] != $invoice['customer_id'] ) {
 			$reg_args = array('customer_id'=>$invoice['customer_id']);
-			$rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.events.registration', 
-				$registration['id'], $reg_args, 0x04);
+			$rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.events.registration', $registration['id'], $reg_args, 0x04);
 			if( $rc['stat'] != 'ok' ) {
 				return $rc;
 			}

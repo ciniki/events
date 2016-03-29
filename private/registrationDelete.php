@@ -13,6 +13,10 @@ function ciniki_events__registrationDelete($ciniki, $business_id, $id, $uuid) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
 
+    //
+    // Remove the registration from the invoice
+    //
+
 	//
 	// FIXME: Get the list of answers for this registration
 	//
