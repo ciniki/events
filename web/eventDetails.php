@@ -31,6 +31,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 		. "ciniki_events.url, "
 		. "DATE_FORMAT(ciniki_events.start_date, '%a %b %e, %Y') AS start_date, "
 		. "DATE_FORMAT(ciniki_events.end_date, '%a %b %e, %Y') AS end_date, "
+		. "UNIX_TIMESTAMP(ciniki_events.start_date) AS start_date_ts, "
 		. "DATE_FORMAT(ciniki_events.start_date, '%M') AS start_month, "
 		. "DATE_FORMAT(ciniki_events.start_date, '%D') AS start_day, "
 		. "DATE_FORMAT(ciniki_events.start_date, '%Y') AS start_year, "
@@ -64,7 +65,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artclub', array(
 		array('container'=>'events', 'fname'=>'id', 
 			'fields'=>array('id', 'name', 'permalink', 'image_id'=>'primary_image_id', 
-			'start_date', 'start_day', 'start_month', 'start_year', 
+			'start_date', 'start_date_ts', 'start_day', 'start_month', 'start_year', 
 			'end_date', 'end_day', 'end_month', 'end_year', 'times',
 			'reg_flags', 'num_tickets', 
 			'url', 'short_description', 'description'=>'long_description', 'object', 'object_id')),
@@ -106,6 +107,17 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
 	//
 	if( isset($ciniki['session']['customer']['price_flags']) ) {
 		$price_flags = $ciniki['session']['customer']['price_flags'];
+        //
+        // Check to make sure at least one class is before the membership expiration date, if member flag is set
+        //
+        if( isset($ciniki['session']['customer']['membership_expiration']) && ($price_flags&0x20) == 0x20 ) {
+            //
+            // Remove price flags if event starts after membership expiration
+            //
+            if( $event['start_date_ts'] > $ciniki['session']['customer']['membership_expiration'] ) {
+                $price_flags = $price_flags &~ 0x20;
+            }
+        }
 	} else {
 		$price_flags = 0x01;
 	}
