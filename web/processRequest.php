@@ -239,7 +239,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
 				$page['blocks'][] = array('type'=>'links', 'section'=>'links', 'title'=>'', 'links'=>$event['links']);
 			}
 			if( isset($event['files']) && count($event['files']) > 0 ) {
-				$page['blocks'][] = array('type'=>'files', 'section'=>'files', 'title'=>'', 'base_url'=>$base_url . '/download/', 'files'=>$event['files']);
+				$page['blocks'][] = array('type'=>'files', 'section'=>'files', 'title'=>'', 'base_url'=>$base_url . '/download', 'files'=>$event['files']);
 			}
 			if( !isset($settings['page-events-share-buttons']) || $settings['page-events-share-buttons'] == 'yes' ) {
 				$tags = array();
