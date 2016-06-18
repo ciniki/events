@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:		The ID of the business to get the list from.
+// business_id:     The ID of the business to get the list from.
 // 
 // Returns
 // -------
@@ -38,30 +38,30 @@ function ciniki_events_tagGet($ciniki) {
         return $rc;
     }   
 
-	//
-	// Get the settings for the events
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');	
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
-	$rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_event_settings', 
-		'business_id', $args['business_id'], 'ciniki.events', 'settings', 
-		"tag-" . $args['tag_type'] . '-' . $args['tag_permalink']);
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-	if( isset($rc['settings']) ) {
-		$settings = $rc['settings'];
-	} else {
-		$settings = array();
-	}
+    //
+    // Get the settings for the events
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash'); 
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_event_settings', 
+        'business_id', $args['business_id'], 'ciniki.events', 'settings', 
+        "tag-" . $args['tag_type'] . '-' . $args['tag_permalink']);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( isset($rc['settings']) ) {
+        $settings = $rc['settings'];
+    } else {
+        $settings = array();
+    }
 
-	$details = array();
-	foreach($settings as $setting => $value) {
-		$setting = str_replace('tag-' . $args['tag_type'] . '-' . $args['tag_permalink'] . '-', '', $setting);
-		$details[$setting] = $value;
-	}
-	
-	return array('stat'=>'ok', 'details'=>$details);
+    $details = array();
+    foreach($settings as $setting => $value) {
+        $setting = str_replace('tag-' . $args['tag_type'] . '-' . $args['tag_permalink'] . '-', '', $setting);
+        $details[$setting] = $value;
+    }
+    
+    return array('stat'=>'ok', 'details'=>$details);
 }
 ?>

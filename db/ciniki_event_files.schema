@@ -6,51 +6,51 @@
 #
 # Fields
 # ------
-# id:				The file ID.
-# uuid:				The Universal Unique ID for the file.
-# business_id:		The business the file is for.
+# id:               The file ID.
+# uuid:             The Universal Unique ID for the file.
+# business_id:      The business the file is for.
 #
-# event_id:			The ID of the event the file is attached to
+# event_id:         The ID of the event the file is attached to
 #                   **future** 0 if attached to all events
 #
-# extension:		The extension from the uploaded file. (.doc, .xls, .pdf, etc)
+# extension:        The extension from the uploaded file. (.doc, .xls, .pdf, etc)
 #
-# name:				The name of the file, given by the user.
+# name:             The name of the file, given by the user.
 #
-# permalink:		The url safe version of the file name.  This is automatically created
-#					when a file is uploaded, or the name changed.
+# permalink:        The url safe version of the file name.  This is automatically created
+#                   when a file is uploaded, or the name changed.
 #
-# webflags:			Flags for displaying the file on the website.
+# webflags:         Flags for displaying the file on the website.
 #
-#					0x01 - Hidden, Do now show the file on the website
+#                   0x01 - Hidden, Do now show the file on the website
 #
-# description:		The file description, for display in the list.
-# org_filename:		The filename as specified on the remote system uploading the file.
+# description:      The file description, for display in the list.
+# org_filename:     The filename as specified on the remote system uploading the file.
 #
-# publish_date:		The date the file was published, used for newsletters to sort them by date.
+# publish_date:     The date the file was published, used for newsletters to sort them by date.
 #
-# binary_content:	The contents of the uploaded file.
+# binary_content:   The contents of the uploaded file.
 #
-# date_added:		The UTC date and time the file was added.
-# last_updated:		The UTC date and time the file was last updated.
+# date_added:       The UTC date and time the file was added.
+# last_updated:     The UTC date and time the file was last updated.
 #
 create table ciniki_event_files (
-	id int not null auto_increment,
-	uuid char(36) not null,
-	business_id int not null,
-	event_id int not null,
-	extension varchar(10) not null,
-	name varchar(200) not null,
-	permalink varchar(250) not null,
-	webflags tinyint unsigned not null,
-	description varchar(6000) not null,
-	org_filename varchar(250) not null,
-	publish_date date not null,
-	binary_content longblob,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (id),
-	unique index (business_id, event_id, permalink), 
-	index (name),
-	index uuid (uuid, last_updated)
+    id int not null auto_increment,
+    uuid char(36) not null,
+    business_id int not null,
+    event_id int not null,
+    extension varchar(10) not null,
+    name varchar(200) not null,
+    permalink varchar(250) not null,
+    webflags tinyint unsigned not null,
+    description varchar(6000) not null,
+    org_filename varchar(250) not null,
+    publish_date date not null,
+    binary_content longblob,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (business_id, event_id, permalink), 
+    index (name),
+    index uuid (uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.02';

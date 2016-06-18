@@ -6,61 +6,61 @@
 #
 # Fields
 # ------
-# id:						The file ID.
-# uuid:						The Universal Unique ID for the file.
-# business_id:				The business the file is for.
+# id:                       The file ID.
+# uuid:                     The Universal Unique ID for the file.
+# business_id:              The business the file is for.
 #
-# event_id:					The ID of the event the price is attached to
+# event_id:                 The ID of the event the price is attached to
 #
-# name:						The name for the price. (Member/Non-Member/etc)
+# name:                     The name for the price. (Member/Non-Member/etc)
 #
-# available_to:				The flags that control who the price is for.
+# available_to:             The flags that control who the price is for.
 #
-#							0x01 - Public - unregistered customers, registered customers, etc.
-#							0x02 - Private (internal UI use only)
-#							0x04 -
-#							0x08 - 
-#							0x10 - Customers - must already exist in the database
-#							0x20 - Members - must be member_status = 10 in customers
-#							0x40 - Dealers - must be dealer_status = 10 in customers
-#							0x80 - Distributors - must be distributor_status = 10 in customers
+#                           0x01 - Public - unregistered customers, registered customers, etc.
+#                           0x02 - Private (internal UI use only)
+#                           0x04 -
+#                           0x08 - 
+#                           0x10 - Customers - must already exist in the database
+#                           0x20 - Members - must be member_status = 10 in customers
+#                           0x40 - Dealers - must be dealer_status = 10 in customers
+#                           0x80 - Distributors - must be distributor_status = 10 in customers
 #
-# valid_from:				The UTC date and time the price is valid from.
-# valid_to:					The UTC date and time the price is valid until.
+# valid_from:               The UTC date and time the price is valid from.
+# valid_to:                 The UTC date and time the price is valid until.
 #
-# unit_amount:				The price for single person for the event.
-# unit_discount_amount:		The discount amount for a single unit.
-# unit_discount_percentage:	The percentage discount for a single unit.
+# unit_amount:              The price for single person for the event.
+# unit_discount_amount:     The discount amount for a single unit.
+# unit_discount_percentage: The percentage discount for a single unit.
 #
-# taxtype_id:				The ciniki.taxes to be applied for this price.
+# taxtype_id:               The ciniki.taxes to be applied for this price.
 #
-# webflags:					Flags for displaying the file on the website.
+# webflags:                 Flags for displaying the file on the website.
 #
-#							0x01 - Hidden, Do now show the file on the website
-#							0x10 - Show Members price to the public.
-#							0x20 - Show Dealers price to the public.
-#							0x40 - Show Distributors price to the public.
+#                           0x01 - Hidden, Do now show the file on the website
+#                           0x10 - Show Members price to the public.
+#                           0x20 - Show Dealers price to the public.
+#                           0x40 - Show Distributors price to the public.
 #
-# date_added:				The UTC date and time the price was added.
-# last_updated:				The UTC date and time the price was last updated.
+# date_added:               The UTC date and time the price was added.
+# last_updated:             The UTC date and time the price was last updated.
 #
 create table ciniki_event_prices (
-	id int not null auto_increment,
-	uuid char(36) not null,
-	business_id int not null,
-	event_id int not null,
-	name varchar(100) not null,
-	available_to tinyint unsigned not null,
-	valid_from datetime not null,
-	valid_to datetime not null,
-	unit_amount decimal(19,4) not null,
-	unit_discount_amount decimal(19,4) not null,
-	unit_discount_percentage decimal(19,4) not null,
-	taxtype_id int not null,
-	webflags tinyint unsigned not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (id),
-	index (event_id, name),
-	index sync (uuid, business_id, last_updated)
+    id int not null auto_increment,
+    uuid char(36) not null,
+    business_id int not null,
+    event_id int not null,
+    name varchar(100) not null,
+    available_to tinyint unsigned not null,
+    valid_from datetime not null,
+    valid_to datetime not null,
+    unit_amount decimal(19,4) not null,
+    unit_discount_amount decimal(19,4) not null,
+    unit_discount_percentage decimal(19,4) not null,
+    taxtype_id int not null,
+    webflags tinyint unsigned not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    index (event_id, name),
+    index sync (uuid, business_id, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.02';

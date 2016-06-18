@@ -7,37 +7,37 @@
 #
 # Fields
 # ------
-# id:				The ID assigned to the cost option.
-# uuid:				The Universal Unique ID.
-# business_id:		The business the event is attached to.
-# event_id:			The ID of the event the cost option is for.
+# id:               The ID assigned to the cost option.
+# uuid:             The Universal Unique ID.
+# business_id:      The business the event is attached to.
+# event_id:         The ID of the event the cost option is for.
 #
-# name:				The name of the cost option
-# price:			The price of the option.
-# valid_from:		The UTC date and time the price is valid from.
-# valid_to:			The UTC date and time the price is valid until.
+# name:             The name of the cost option
+# price:            The price of the option.
+# valid_from:       The UTC date and time the price is valid from.
+# valid_to:         The UTC date and time the price is valid until.
 #
-# webflags:			The flags for displaying the costs on the website.  Some
-#					might be cheaper hidden options which are only available in admin.
+# webflags:         The flags for displaying the costs on the website.  Some
+#                   might be cheaper hidden options which are only available in admin.
 #
-#					0x01 - hidden
+#                   0x01 - hidden
 #
-# date_added:		The UTC date and time the record was added.
-# last_updated:		The UTC date and time the record was last updated.
+# date_added:       The UTC date and time the record was added.
+# last_updated:     The UTC date and time the record was last updated.
 #
 create table ciniki_event_costs (
-	id int not null auto_increment,
-	uuid char(36) not null,
-	business_id int not null,
-	event_id int not null,
-	name varchar(200) not null,
-	price decimal(10,2) not null,
-	valid_from datetime not null,
-	valid_to datetime not null,
-	webflags tinyint unsigned not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (id),
-	unique index (event_id, name),
-	index business_uuid (business_id, uuid, last_updated)
+    id int not null auto_increment,
+    uuid char(36) not null,
+    business_id int not null,
+    event_id int not null,
+    name varchar(200) not null,
+    price decimal(10,2) not null,
+    valid_from datetime not null,
+    valid_to datetime not null,
+    webflags tinyint unsigned not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (event_id, name),
+    index business_uuid (business_id, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

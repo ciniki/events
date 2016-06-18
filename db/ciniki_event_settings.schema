@@ -4,24 +4,24 @@
 # This table stores the settings for events.
 #
 # Category Descriptions
-# tag-10-{permalink}-image:			The ID of the primary image for the category.
-# tag-10-{permalink}-synopsis:		The synopsis of the category for listings.
-# tag-10-{permalink}-content:		The full content of the category description for website.
+# tag-10-{permalink}-image:         The ID of the primary image for the category.
+# tag-10-{permalink}-synopsis:      The synopsis of the category for listings.
+# tag-10-{permalink}-content:       The full content of the category description for website.
 #
 # Fields
 # ------
-# business_id:	The id of the business the detail is for.
-# detail_key:	The unique key for the detail.
-# detail_value:	The value stored for this key.
-# date_added:	The date and time the entry was created in the database.
-# last_updated:	The date and time the entry was last updated.
+# business_id:  The id of the business the detail is for.
+# detail_key:   The unique key for the detail.
+# detail_value: The value stored for this key.
+# date_added:   The date and time the entry was created in the database.
+# last_updated: The date and time the entry was last updated.
 #
 create table ciniki_event_settings (
-	business_id int not null,
-	detail_key varchar(100) not null,
-	detail_value varchar(20000) not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (business_id, detail_key),
-	index (last_updated)
+    business_id int not null,
+    detail_key varchar(100) not null,
+    detail_value varchar(20000) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (business_id, detail_key),
+    index (last_updated)
 ) ENGINE=InnoDB, COMMENT='v1.01';

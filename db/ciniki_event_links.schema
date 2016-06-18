@@ -6,34 +6,34 @@
 #
 # Fields
 # ------
-# id: 					The id for each event link.
+# id:                   The id for each event link.
 #
-# uuid:					The Universal Unique ID for each event link.
+# uuid:                 The Universal Unique ID for each event link.
 #
-# business_id:			The business the event link is attached to.
+# business_id:          The business the event link is attached to.
 #
-# event_id:				The ID of the event to which the related_id is
-#						related to.
+# event_id:             The ID of the event to which the related_id is
+#                       related to.
 # 
-# name:					The name for the link.
-# url:					The url for the link.
+# name:                 The name for the link.
+# url:                  The url for the link.
 #
-# description:			The description of the link to be used in the list of links.
+# description:          The description of the link to be used in the list of links.
 #
-# date_added:			The UTC date and time the record was added.
-# last_updated:			The UTC date and time the record was last updated.
+# date_added:           The UTC date and time the record was added.
+# last_updated:         The UTC date and time the record was last updated.
 #
 create table ciniki_event_links (
-	id int not null auto_increment,
-	uuid char(36) not null,
-	business_id int not null,
-	event_id int not null,
-	name varchar(150) not null,
-	url varchar(255) not null,
-	description varchar(6000) not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (id),
-	unique index (business_id, event_id, url),
-	index sync (business_id, uuid, last_updated)
+    id int not null auto_increment,
+    uuid char(36) not null,
+    business_id int not null,
+    event_id int not null,
+    name varchar(150) not null,
+    url varchar(255) not null,
+    description varchar(6000) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (business_id, event_id, url),
+    index sync (business_id, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';
