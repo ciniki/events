@@ -318,7 +318,7 @@ function ciniki_events_main() {
             }},
         '_buttons':{'label':'', 'buttons':{
             'save':{'label':'Save', 'fn':'M.ciniki_events_main.edit.save();'},
-            'delete':{'label':'Delete', 'fn':'M.ciniki_events_main.event.remove();'},
+            'delete':{'label':'Delete', 'fn':'M.ciniki_events_main.edit.remove();'},
             }},
         };  
     this.edit.fieldValue = function(s, i, d) { return this.data[i]; }
@@ -412,9 +412,9 @@ function ciniki_events_main() {
             }
         }
     };
-    this.event.remove = function() {
-        if( confirm("Are you sure you want to remove '" + this.event.data.name + "' as an event ?") ) {
-            M.api.getJSONCb('ciniki.events.eventDelete', {'business_id':M.curBusinessID, 'event_id':M.ciniki_events_main.event.event_id}, function(rsp) {
+    this.edit.remove = function() {
+        if( confirm("Are you sure you want to remove '" + this.data.name + "' as an event ?") ) {
+            M.api.getJSONCb('ciniki.events.eventDelete', {'business_id':M.curBusinessID, 'event_id':this.event_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
