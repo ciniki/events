@@ -16,6 +16,10 @@ function ciniki_events_registrations() {
             'addTxt':'Add Registration',
             'addFn':'M.ciniki_events_registrations.edit.addCustomer(\'M.ciniki_events_registrations.menu.open();\',M.ciniki_events_registrations.menu.event_id);',
             },
+        '_buttons':{'label':'', 'buttons':{
+//            'registrationspdf':{'label':'Class List (PDF)', 'fn':'M.ciniki_courses_registrations.offeringRegistrationsPDF(M.ciniki_courses_registrations.menu.offering_id);'},
+            'registrationsexcel':{'label':'Class List (Excel)', 'fn':'M.ciniki_events_registrations.menu.excel();'},
+            }},
         };
     this.menu.cellValue = function(s, i, j, d) {
         switch(j) {
@@ -65,6 +69,9 @@ function ciniki_events_registrations() {
             M.ciniki_events_registrations.menu.show(cb);
         });
     };
+    this.menu.excel = function() {
+        M.api.openFile('ciniki.events.eventRegistrations', {'business_id':M.curBusinessID, 'output':'excel', 'event_id':this.event_id});
+    }
     this.menu.addButton('add', 'Add', 'M.ciniki_events_registrations.edit.addCustomer(\'M.ciniki_events_registrations.menu.open();\',M.ciniki_events_registrations.menu.event_id);');
     this.menu.addClose('Back');
 
