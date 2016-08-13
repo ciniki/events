@@ -53,6 +53,16 @@ function ciniki_events_hooks_webOptions(&$ciniki, $business_id, $args) {
         );
 
     $options[] = array(
+        'label'=>'Separate Current Events',
+        'setting'=>'page-events-current', 
+        'type'=>'toggle',
+        'value'=>(isset($settings['page-events-current'])?$settings['page-events-current']:'no'),
+        'toggles'=>array(
+            array('value'=>'no', 'label'=>'No'),
+            array('value'=>'yes', 'label'=>'Yes'),
+            ),
+        );
+    $options[] = array(
         'label'=>'Include Past Events',
         'setting'=>'page-events-past', 
         'type'=>'toggle',

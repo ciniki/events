@@ -18,6 +18,10 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
                 . ") ";
     } elseif( isset($args['type']) && $args['type'] == 'all' ) {
 
+    } elseif( isset($args['type']) && $args['type'] == 'current' ) {
+        $type_strsql .= "AND (ciniki_events.start_date = DATE(NOW()) OR (ciniki_events.start_date < DATE(NOW()) AND ciniki_events.end_date >= DATE(NOW()))) ";
+    } elseif( isset($args['type']) && $args['type'] == 'future' ) {
+        $type_strsql .= "AND ciniki_events.start_date > DATE(NOW()) ";
     } else {
         $type_strsql .= "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) ";
     }
