@@ -34,7 +34,7 @@ function ciniki_events_hooks_uiSettings($ciniki, $business_id, $args) {
             'label'=>'Events', 
             'edit'=>array('app'=>'ciniki.events.main'),
             );
-        $menu[] = $menu_item;
+        $rsp['menu_items'][] = $menu_item;
     } 
 
     return $rsp;
