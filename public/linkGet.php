@@ -62,7 +62,7 @@ function ciniki_events_linkGet($ciniki) {
         return $rc;
     }
     if( !isset($rc['links']) ) {
-        return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'2161', 'msg'=>'Unable to find link'));
+        return array('stat'=>'ok', 'err'=>array('code'=>'ciniki.events.33', 'msg'=>'Unable to find link'));
     }
     $link = $rc['links'][0]['link'];
     

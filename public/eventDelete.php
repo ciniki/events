@@ -52,7 +52,7 @@ function ciniki_events_eventDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['event']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'888', 'msg'=>'The event does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.7', 'msg'=>'The event does not exist'));
     }
     $event_uuid = $rc['event']['uuid'];
 

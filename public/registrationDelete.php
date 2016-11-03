@@ -47,7 +47,7 @@ function ciniki_events_registrationDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['item']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1286', 'msg'=>'Event registration does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.37', 'msg'=>'Event registration does not exist'));
     }
     $item = $rc['item'];
 
@@ -76,7 +76,7 @@ function ciniki_events_registrationDelete(&$ciniki) {
             'object_id'=>$item['id'],
             ));
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3220', 'msg'=>'Unable to remove registration.', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.38', 'msg'=>'Unable to remove registration.', 'err'=>$rc['err']));
         }
     }
 

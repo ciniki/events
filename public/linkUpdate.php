@@ -54,7 +54,7 @@ function ciniki_events_linkUpdate(&$ciniki) {
             return $rc;
         }
         if( !isset($rc['link']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2164', 'msg'=>'The event link does not exist'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.34', 'msg'=>'The event link does not exist'));
         }
         $link = $rc['link'];
 
@@ -73,7 +73,7 @@ function ciniki_events_linkUpdate(&$ciniki) {
             return $rc;
         }
         if( isset($rc['link']) || (isset($rc['rows']) && count($rc['rows']) > 0) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1927', 'msg'=>'You already have a event link with that url, please choose another'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.35', 'msg'=>'You already have a event link with that url, please choose another'));
         }
     }
 

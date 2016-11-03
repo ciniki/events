@@ -30,7 +30,7 @@ function ciniki_events_sapos_itemAdd($ciniki, $business_id, $invoice_id, $item) 
             return $rc;
         }
         if( !isset($rc['event']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1966', 'msg'=>'Unable to find event'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.53', 'msg'=>'Unable to find event'));
         }
         $event = $rc['event'];
 
@@ -47,7 +47,7 @@ function ciniki_events_sapos_itemAdd($ciniki, $business_id, $invoice_id, $item) 
             return $rc;
         }
         if( !isset($rc['invoice']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1967', 'msg'=>'Unable to find invoice'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.54', 'msg'=>'Unable to find invoice'));
         }
         $invoice = $rc['invoice'];
         
@@ -87,7 +87,7 @@ function ciniki_events_sapos_itemAdd($ciniki, $business_id, $invoice_id, $item) 
             return $rc;
         }
         if( !isset($rc['registration']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1968', 'msg'=>'Unable to find event registration'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.55', 'msg'=>'Unable to find event registration'));
         }
         $registration = $rc['registration'];
     

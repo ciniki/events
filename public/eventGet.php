@@ -146,7 +146,7 @@ function ciniki_events_eventGet($ciniki) {
                 return $rc;
             }
             if( !isset($rc['events']) || !isset($rc['events'][0]) ) {
-                return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1330', 'msg'=>'Unable to find event'));
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.8', 'msg'=>'Unable to find event'));
             }
             $event = $rc['events'][0]['event'];
             ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'private', 'loadCacheThumbnail');
@@ -172,7 +172,7 @@ function ciniki_events_eventGet($ciniki) {
                 return $rc;
             }
             if( !isset($rc['events']) || !isset($rc['events'][0]) ) {
-                return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1331', 'msg'=>'Unable to find event'));
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.9', 'msg'=>'Unable to find event'));
             }
             $event = $rc['events'][0]['event'];
         }
@@ -330,7 +330,7 @@ function ciniki_events_eventGet($ciniki) {
         $rc = ciniki_core_tagsList($ciniki, 'ciniki.events', $args['business_id'], 
             'ciniki_event_tags', 10);
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2165', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.10', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
         }
         if( isset($rc['tags']) ) {
             $rsp['categories'] = $rc['tags'];

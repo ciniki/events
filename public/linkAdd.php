@@ -51,7 +51,7 @@ function ciniki_events_linkAdd(&$ciniki) {
         return $rc;
     }
     if( isset($rc['link']) || (isset($rc['rows']) && count($rc['rows']) > 0) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2157', 'msg'=>'You already have a event link with that url, please choose another'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.31', 'msg'=>'You already have a event link with that url, please choose another'));
     }
 
     //

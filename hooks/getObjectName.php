@@ -32,6 +32,6 @@ function ciniki_events_hooks_getObjectName($ciniki, $business_id, $args) {
         }
     }
     
-    return array('stat'=>'noexist', 'err'=>array('pkg'=>'ciniki', 'code'=>'2045', 'msg'=>'Could not find event'));
+    return array('stat'=>'noexist', 'err'=>array('code'=>'ciniki.events.1', 'msg'=>'Could not find event'));
 }
 ?>

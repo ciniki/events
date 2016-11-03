@@ -22,7 +22,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
     // Check to make sure the module is enabled
     //
     if( !isset($ciniki['business']['modules']['ciniki.events']) ) {
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'2578', 'msg'=>"I'm sorry, the page you requested does not exist."));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.events.63', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
     $page = array(
         'title'=>$args['page_title'],
@@ -47,7 +47,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
         //
         // If there was an error locating the files, display generic error
         //
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'2579', 'msg'=>'The file you requested does not exist.'));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.events.64', 'msg'=>'The file you requested does not exist.'));
     }
 
     //

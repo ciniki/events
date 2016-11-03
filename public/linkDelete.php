@@ -48,7 +48,7 @@ function ciniki_events_linkDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['item']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2159', 'msg'=>'Post link does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.32', 'msg'=>'Post link does not exist'));
     }
     $item = $rc['item'];
 

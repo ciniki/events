@@ -56,7 +56,7 @@ function ciniki_events_registrationUpdate(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['registration']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1515', 'msg'=>'Registration does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.42', 'msg'=>'Registration does not exist'));
     }
     $registration = $rc['registration'];
 

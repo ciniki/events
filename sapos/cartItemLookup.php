@@ -15,7 +15,7 @@ function ciniki_events_sapos_cartItemLookup($ciniki, $business_id, $customer, $a
 
     if( !isset($args['object']) || $args['object'] == '' 
         || !isset($args['object_id']) || $args['object_id'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3160', 'msg'=>'No event specified.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.43', 'msg'=>'No event specified.'));
     }
 
     //
@@ -53,7 +53,7 @@ function ciniki_events_sapos_cartItemLookup($ciniki, $business_id, $customer, $a
             return $rc;
         }
         if( !isset($rc['events']) || count($rc['events']) < 1 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3162', 'msg'=>'No event found.'));      
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.44', 'msg'=>'No event found.'));      
         }
         $item = array_pop($rc['events']);
         if( isset($item['price_name']) && $item['price_name'] != '' ) {
@@ -65,7 +65,7 @@ function ciniki_events_sapos_cartItemLookup($ciniki, $business_id, $customer, $a
         //
         if( ($item['available_to']|0xF0) > 0 ) {
             if( ($item['available_to']&$customer['price_flags']) == 0 ) {
-                return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3163', 'msg'=>"I'm sorry, but this product is not available to you."));
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.45', 'msg'=>"I'm sorry, but this product is not available to you."));
             }
         }
 
@@ -94,6 +94,6 @@ function ciniki_events_sapos_cartItemLookup($ciniki, $business_id, $customer, $a
         return array('stat'=>'ok', 'item'=>$item);
     }
 
-    return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3161', 'msg'=>'No event specified.'));
+    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.46', 'msg'=>'No event specified.'));
 }
 ?>

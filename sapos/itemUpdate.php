@@ -30,7 +30,7 @@ function ciniki_events_sapos_itemUpdate($ciniki, $business_id, $invoice_id, $ite
             return $rc;
         }
         if( !isset($rc['registration']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1969', 'msg'=>'Unable to find event registration'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.58', 'msg'=>'Unable to find event registration'));
         }
         $registration = $rc['registration'];
 

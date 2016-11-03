@@ -14,14 +14,14 @@ function ciniki_events_sapos_cartItemPaymentReceived($ciniki, $business_id, $cus
 
     if( !isset($args['object']) || $args['object'] == '' 
         || !isset($args['object_id']) || $args['object_id'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3216', 'msg'=>'No event specified.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.47', 'msg'=>'No event specified.'));
     }
 
     if( !isset($args['price_id']) || $args['price_id'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3217', 'msg'=>'No event specified.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.48', 'msg'=>'No event specified.'));
     }
     if( !isset($args['invoice_id']) || $args['invoice_id'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3219', 'msg'=>'No event specified.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.49', 'msg'=>'No event specified.'));
     }
 
     if( $args['object'] == 'ciniki.events.event' ) {
@@ -59,7 +59,7 @@ function ciniki_events_sapos_cartItemPaymentReceived($ciniki, $business_id, $cus
             return $rc;
         }
         if( !isset($rc['events']) || count($rc['events']) < 1 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3218', 'msg'=>'No event found.'));      
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.50', 'msg'=>'No event found.'));      
         }
         $event = array_pop($rc['events']);
         

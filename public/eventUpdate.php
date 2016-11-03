@@ -81,7 +81,7 @@ function ciniki_events_eventUpdate(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['event']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1298', 'msg'=>'Event not found'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.12', 'msg'=>'Event not found'));
     }
     $event = $rc['event'];
 
@@ -102,7 +102,7 @@ function ciniki_events_eventUpdate(&$ciniki) {
             return $rc;
         }
         if( $rc['num_rows'] > 0 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1299', 'msg'=>'You already have an event with this name, please choose another name'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.13', 'msg'=>'You already have an event with this name, please choose another name'));
         }
     }
 
