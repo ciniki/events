@@ -21,6 +21,7 @@ function ciniki_events_web_fileDownload($ciniki, $business_id, $event_permalink,
         . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
         . "AND ciniki_events.permalink = '" . ciniki_core_dbQuote($ciniki, $event_permalink) . "' "
         . "AND ciniki_events.id = ciniki_event_files.event_id "
+        . "AND (ciniki_events.flags&0x01) = 0x01 "
         . "AND ciniki_event_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
         . "AND CONCAT_WS('.', ciniki_event_files.permalink, ciniki_event_files.extension) = '" . ciniki_core_dbQuote($ciniki, $file_permalink) . "' "
         . "AND (ciniki_event_files.webflags&0x01) = 0 "     // Make sure file is to be visible

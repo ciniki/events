@@ -19,6 +19,7 @@ function ciniki_events_objects($ciniki) {
         'fields'=>array(
             'name'=>array(),
             'permalink'=>array(),
+            'flags'=>array('name'=>'Options', 'default'=>1),
             'url'=>array(),
             'description'=>array(),
             'reg_flags'=>array(),

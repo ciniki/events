@@ -29,6 +29,7 @@ function ciniki_events_eventUpdate(&$ciniki) {
         'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event'), 
         'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'), 
         'permalink'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Permalink'), 
+        'flags'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Flags'), 
         'url'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'URL'), 
         'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'), 
         'num_tickets'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Number of Tickets'),
@@ -72,7 +73,8 @@ function ciniki_events_eventUpdate(&$ciniki) {
     //
     // Get the existing event details
     //
-    $strsql = "SELECT uuid FROM ciniki_events "
+    $strsql = "SELECT uuid "
+        . "FROM ciniki_events "
         . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
         . "";

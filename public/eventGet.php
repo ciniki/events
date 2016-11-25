@@ -80,6 +80,7 @@ function ciniki_events_eventGet($ciniki) {
     if( $args['event_id'] == 0 ) {
         $event = array('id'=>0,
             'name'=>'',
+            'flags'=>'1',
             'url'=>'',
             'description'=>'',
             'num_tickets'=>0,
@@ -99,6 +100,7 @@ function ciniki_events_eventGet($ciniki) {
         $strsql = "SELECT ciniki_events.id, "
             . "ciniki_events.name, "
             . "ciniki_events.permalink, "
+            . "ciniki_events.flags, "
             . "ciniki_events.url, "
             . "ciniki_events.description, "
             . "ciniki_events.num_tickets, "
@@ -135,7 +137,7 @@ function ciniki_events_eventGet($ciniki) {
         if( isset($args['images']) && $args['images'] == 'yes' ) {
             $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
                 array('container'=>'events', 'fname'=>'id', 'name'=>'event',
-                    'fields'=>array('id', 'name', 'permalink', 'url', 'primary_image_id', 
+                    'fields'=>array('id', 'name', 'permalink', 'flags', 'url', 'primary_image_id', 
                         'start_date', 'end_date', 'times', 'description', 
                         'num_tickets', 'reg_flags', 'long_description', 'oidref', 'object', 'object_id')),
                 array('container'=>'images', 'fname'=>'img_id', 'name'=>'image',
@@ -164,7 +166,7 @@ function ciniki_events_eventGet($ciniki) {
         } else {
             $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
                 array('container'=>'events', 'fname'=>'id', 'name'=>'event',
-                    'fields'=>array('id', 'name', 'permalink', 'url', 'primary_image_id', 
+                    'fields'=>array('id', 'name', 'permalink', 'flags', 'url', 'primary_image_id', 
                         'start_date', 'end_date', 'times',
                         'description', 'num_tickets', 'reg_flags', 'long_description', 'oidref', 'object', 'object_id')),
             ));

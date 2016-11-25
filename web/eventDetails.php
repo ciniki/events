@@ -28,6 +28,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
     $strsql = "SELECT ciniki_events.id, "
         . "ciniki_events.name, "
         . "ciniki_events.permalink, "
+        . "ciniki_events.flags, "
         . "ciniki_events.url, "
         . "DATE_FORMAT(ciniki_events.start_date, '%a %b %e, %Y') AS start_date, "
         . "DATE_FORMAT(ciniki_events.end_date, '%a %b %e, %Y') AS end_date, "
@@ -60,11 +61,12 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
             . ") "
         . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
         . "AND ciniki_events.permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' "
+        . "AND (ciniki_events.flags&0x01) = 0x01 "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artclub', array(
         array('container'=>'events', 'fname'=>'id', 
-            'fields'=>array('id', 'name', 'permalink', 'image_id'=>'primary_image_id', 
+            'fields'=>array('id', 'name', 'permalink', 'flags', 'image_id'=>'primary_image_id', 
             'start_date', 'start_date_ts', 'start_day', 'start_month', 'start_year', 
             'end_date', 'end_day', 'end_month', 'end_year', 'times',
             'reg_flags', 'num_tickets', 

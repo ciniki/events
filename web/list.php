@@ -51,6 +51,7 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
             . "LEFT JOIN ciniki_events ON ("
                 . "ciniki_event_tags.event_id = ciniki_events.id "
                 . "AND ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND (ciniki_events.flags&0x01) = 0x01 "
                 . $type_strsql
                 . ") "
             . "LEFT JOIN ciniki_event_images ON ("
@@ -80,6 +81,7 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
                 . "AND (ciniki_event_files.webflags&0x01) = 0 " // public files
                 . ") "
             . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND (ciniki_events.flags&0x01) = 0x01 "
             . $type_strsql
             . "";
     }

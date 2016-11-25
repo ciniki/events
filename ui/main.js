@@ -299,6 +299,7 @@ function ciniki_events_main() {
             'end_date':{'label':'End', 'type':'date'},
             'times':{'label':'Hours', 'type':'text'},
             'oidref':{'label':'Exhibition', 'active':'no', 'type':'select', 'options':{}},
+            'flags':{'label':'Options', 'type':'flags', 'flags':{'1':{'name':'Visible'}}},
             }}, 
         '_categories':{'label':'Categories', 'aside':'yes', 'active':'no', 'fields':{
             'categories':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':[], 'hint':'Enter a new category: '},

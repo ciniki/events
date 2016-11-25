@@ -1,0 +1,6 @@
+#
+# Add the flags field
+#
+ALTER TABLE ciniki_events ADD COLUMN flags tinyint unsigned not null AFTER permalink;
+UPDATE ciniki_events SET flags = 1;
+ALTER TABLE ciniki_events COMMENT='v1.07';

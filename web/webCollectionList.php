@@ -33,6 +33,7 @@ function ciniki_events_web_webCollectionList($ciniki, $settings, $business_id, $
         . "INNER JOIN ciniki_events ON ("
             . "ciniki_web_collection_objrefs.object_id = ciniki_events.id "
             . "AND ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND (ciniki_events.flags&0x01) = 0x01 "
             . "";
             if( isset($args['type']) && $args['type'] == 'past' ) {
                 $strsql .= "AND ((ciniki_events.end_date > ciniki_events.start_date AND ciniki_events.end_date < DATE(NOW())) "
