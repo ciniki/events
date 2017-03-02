@@ -77,6 +77,18 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
     $base_url = $args['base_url'];
 
     //
+    // Check for image format
+    //
+    $thumbnail_format = 'square-cropped';
+    $thumbnail_padding_color = '#ffffff';
+    if( isset($settings['page-events-thumbnail-format']) && $settings['page-events-thumbnail-format'] == 'square-padded' ) {
+        $thumbnail_format = $settings['page-events-thumbnail-format'];
+        if( isset($settings['page-events-thumbnail-padding-color']) && $settings['page-events-thumbnail-padding-color'] != '' ) {
+            $thumbnail_padding_color = $settings['page-events-thumbnail-padding-color'];
+        } 
+    }
+
+    //
     // Parse the url to determine what was requested
     //
     $display = '';
@@ -290,9 +302,11 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
                 $num_current = count($rc['events']);
                 if( $display_format == 'imagelist' ) {
                     // $page['blocks'][] = array('type'=>'imagelist', 'section'=>'current-events', 'noimage'=>'yes', 'title'=>'Current ' . $module_title, 'base_url'=>$args['base_url'], 'list'=>$rc['events']);
-                    $page['blocks'][] = array('type'=>'imagelist', 'section'=>'current-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'list'=>$rc['events']);
+                    $page['blocks'][] = array('type'=>'imagelist', 'section'=>'current-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'list'=>$rc['events'],
+                        'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                 } else {
-                    $page['blocks'][] = array('type'=>'cilist', 'section'=>'current-events', 'base_url'=>$args['base_url'], 'categories'=>$rc['events']);
+                    $page['blocks'][] = array('type'=>'cilist', 'section'=>'current-events', 'base_url'=>$args['base_url'], 'categories'=>$rc['events'],
+                        'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                 }
             } else {
                 $num_current = 0;
@@ -326,10 +340,12 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
             }
             if( $display_format == 'imagelist' ) {
                 // $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'title'=>'Upcoming ' . $module_title, 'base_url'=>$args['base_url'], 'list'=>$rc['events']);
-                $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'list'=>$rc['events']);
+                $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'list'=>$rc['events'],
+                    'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
             } else {
                 // $page['blocks'][] = array('type'=>'cilist', 'section'=>'upcoming-events', 'title'=>'Upcoming ' . $module_title, 'base_url'=>$args['base_url'], 'categories'=>$rc['events']);
-                $page['blocks'][] = array('type'=>'cilist', 'section'=>'upcoming-events', 'base_url'=>$args['base_url'], 'categories'=>$rc['events']);
+                $page['blocks'][] = array('type'=>'cilist', 'section'=>'upcoming-events', 'base_url'=>$args['base_url'], 'categories'=>$rc['events'],
+                    'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
             }
         } elseif( isset($settings['page-events-single-list']) && $settings['page-events-single-list'] == 'yes' ) {
             $page['blocks'][] = array('type'=>'message', 'section'=>'upcoming-events', 'content'=>"Currently no " . strtolower($module_title) . ".");
@@ -379,9 +395,11 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
             }
             if( isset($rc['events']) && count($rc['events']) > 0 ) {
                 if( $display_format == 'imagelist' ) {
-                    $page['blocks'][] = array('type'=>'imagelist', 'section'=>'past-events', 'noimage'=>'yes', 'title'=>'Past ' . $module_title, 'base_url'=>$args['base_url'], 'list'=>$rc['events']);
+                    $page['blocks'][] = array('type'=>'imagelist', 'section'=>'past-events', 'noimage'=>'yes', 'title'=>'Past ' . $module_title, 'base_url'=>$args['base_url'], 'list'=>$rc['events'],
+                        'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                 } else {
-                    $page['blocks'][] = array('type'=>'cilist', 'section'=>'past-events', 'title'=>'Past ' . $module_title, 'base_url'=>$args['base_url'], 'categories'=>$rc['events']);
+                    $page['blocks'][] = array('type'=>'cilist', 'section'=>'past-events', 'title'=>'Past ' . $module_title, 'base_url'=>$args['base_url'], 'categories'=>$rc['events'],
+                        'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                 }
             } else {
                 $page['blocks'][] = array('type'=>'message', 'section'=>'past-events', 'content'=>"No past " . strtolower($module_title) . ".");
