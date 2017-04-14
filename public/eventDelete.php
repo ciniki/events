@@ -135,11 +135,9 @@ function ciniki_events_eventDelete(&$ciniki) {
         return $rc;
     }
     if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'priceDelete');
         $prices = $rc['rows'];
         foreach($prices as $rid => $price) {
-            $rc = ciniki_core__priceDelete($ciniki, $args['business_id'], 
-                $price['id'],$price['uuid']);
+            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.price', $price['id'], $price['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
                 return $rc;
