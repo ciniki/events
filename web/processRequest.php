@@ -28,7 +28,6 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
         'title'=>$args['page_title'],
         'breadcrumbs'=>$args['breadcrumbs'],
         'blocks'=>array(),
-        'submenu'=>array(),
         );
 
     //
@@ -422,6 +421,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
             $categories = $rc['tags'];
         }
         if( count($categories) > 1 ) {
+            $page['submenu'] = array();
             foreach($categories as $cid => $cat) {
                 $page['submenu'][$cid] = array('name'=>$cat['tag_name'], 'url'=>$args['base_url'] . "/category/" . $cat['permalink']);
             }
