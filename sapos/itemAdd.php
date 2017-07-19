@@ -2,7 +2,7 @@
 //
 // Description
 // ===========
-// This function will be a callback when an item is added to ciniki.sapos.
+// This function will be a callback when an item is added to ciniki.sapos.invoice
 //
 // Arguments
 // =========
