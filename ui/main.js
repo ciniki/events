@@ -42,7 +42,7 @@ function ciniki_events_main() {
     this.menu.noData = function(s) { return this.sections[s].noData; }
     this.menu.cellValue = function(s, i, j, d) {
         if( j == 0 ) {
-            if( d.event.end_date != '' && d.event.end_date != null ) {
+            if( d.event.start_date != null && d.event.start_date != '' && d.event.end_date != null && d.event.end_date != '' ) {
                 return '<span class="maintext">' + d.event.start_date.replace(' ', '&nbsp;') + '</span>'
                     + '<span class="subtext">' + d.event.end_date + '</span>';
             }
