@@ -87,15 +87,15 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
     }
     if( isset($args['type']) && $args['type'] == 'past' ) {
         $strsql .= "GROUP BY ciniki_events.id "
-            . "ORDER BY ciniki_events.start_date DESC "
+            . "ORDER BY ciniki_events.start_date DESC, ciniki_events.name "
             . "";
     } elseif( isset($args['type']) && $args['type'] == 'all' ) {
         $strsql .= "GROUP BY ciniki_events.id "
-            . "ORDER BY ciniki_events.start_date DESC "
+            . "ORDER BY ciniki_events.start_date DESC, ciniki_events.name "
             . "";
     } else {
         $strsql .= "GROUP BY ciniki_events.id "
-            . "ORDER BY ciniki_events.start_date ASC "
+            . "ORDER BY ciniki_events.start_date ASC, ciniki_events.name "
             . "";
     }
     if( isset($args['limit']) && $args['limit'] != '' && $args['limit'] > 0 && is_int($args['limit']) ) {
