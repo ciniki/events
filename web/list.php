@@ -44,7 +44,7 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
         . "COUNT(ciniki_event_images.id) AS num_images, "
         . "COUNT(ciniki_event_files.id) AS num_files "
         . "";
-    $strsql_count = "SELECT 'events', COUNT(id) AS events ";
+    $strsql_count = "SELECT 'events', COUNT(ciniki_events.id) AS events ";
     if( isset($args['tag_type']) && $args['tag_type'] != '' 
         && isset($args['tag_permalink']) && $args['tag_permalink'] != '' 
         ) {
