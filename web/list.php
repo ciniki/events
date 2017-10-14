@@ -44,6 +44,7 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
         . "COUNT(ciniki_event_images.id) AS num_images, "
         . "COUNT(ciniki_event_files.id) AS num_files "
         . "";
+    $strsql_count = "SELECT 'events', COUNT(id) AS events ";
     if( isset($args['tag_type']) && $args['tag_type'] != '' 
         && isset($args['tag_permalink']) && $args['tag_permalink'] != '' 
         ) {
@@ -68,6 +69,17 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
             . "AND ciniki_event_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
             . "AND ciniki_event_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['tag_permalink']) . "' "
             . "";
+        $strsql_count .= "FROM ciniki_event_tags "
+            . "LEFT JOIN ciniki_events ON ("
+                . "ciniki_event_tags.event_id = ciniki_events.id "
+                . "AND ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND (ciniki_events.flags&0x01) = 0x01 "
+                . $type_strsql
+                . ") "
+            . "WHERE ciniki_event_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_event_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
+            . "AND ciniki_event_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['tag_permalink']) . "' "
+            . "";
     } else {
         $strsql .= "FROM ciniki_events "
             . "LEFT JOIN ciniki_event_images ON ("
@@ -80,6 +92,11 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
                 . "AND ciniki_event_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
                 . "AND (ciniki_event_files.webflags&0x01) = 0 " // public files
                 . ") "
+            . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND (ciniki_events.flags&0x01) = 0x01 "
+            . $type_strsql
+            . "";
+        $strsql_count .= "FROM ciniki_events "
             . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
             . "AND (ciniki_events.flags&0x01) = 0x01 "
             . $type_strsql
@@ -98,7 +115,9 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
             . "ORDER BY ciniki_events.start_date ASC, ciniki_events.name "
             . "";
     }
-    if( isset($args['limit']) && $args['limit'] != '' && $args['limit'] > 0 && is_int($args['limit']) ) {
+    if( isset($args['offset']) && $args['offset'] > 0 && isset($args['limit']) && $args['limit'] > 0 ) {
+        $strsql .= "LIMIT " . $args['offset'] . ', ' . $args['limit'] . " ";
+    } elseif( isset($args['limit']) && $args['limit'] != '' && $args['limit'] > 0 && is_int($args['limit']) ) {
         $strsql .= "LIMIT " . $args['limit'] . " ";
     }
 
@@ -147,6 +166,21 @@ function ciniki_events_web_list($ciniki, $settings, $business_id, $args) {
            }
         }
     }
-    return array('stat'=>'ok', 'events'=>$events);
+    
+    //
+    // Get the total number of past posts
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbCount');
+    $rc = ciniki_core_dbCount($ciniki, $strsql_count, 'ciniki.events', 'num');
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( isset($rc['num']['events']) ) {
+        $num_items = $rc['num']['events'];
+    } else {
+        $num_items = 0;
+    }
+
+    return array('stat'=>'ok', 'events'=>$events, 'total_num_items'=>$num_items);
 }
 ?>

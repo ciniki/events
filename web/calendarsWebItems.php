@@ -23,8 +23,24 @@ function ciniki_events_web_calendarsWebItems($ciniki, $settings, $business_id, $
 
     if( isset($ciniki['business']['module_pages']['ciniki.events']['base_url']) ) {
         $base_url = $ciniki['business']['module_pages']['ciniki.events']['base_url'];
+    } elseif( isset($ciniki['business']['module_pages']['ciniki.events.upcoming']['base_url']) ) {
+        $base_url = $ciniki['business']['module_pages']['ciniki.events.upcoming']['base_url'];
     } else {
         $base_url = '/events';
+    }
+
+    //
+    // Check if colours specified
+    //
+    $style = '';
+    if( isset($settings['ciniki-events-colour-background']) && $settings['ciniki-events-colour-background'] != '' ) {
+        $style .= ($style != '' ? ' ':'') . 'background: ' . $settings['ciniki-events-colour-background'] . ';';
+    }
+    if( isset($settings['ciniki-events-colour-border']) && $settings['ciniki-events-colour-border'] != '' ) {
+        $style .= ($style != '' ? ' ':'') . ' border: 1px solid ' . $settings['ciniki-events-colour-border'] . ';';
+    }
+    if( isset($settings['ciniki-events-colour-font']) && $settings['ciniki-events-colour-font'] != '' ) {
+        $style .= ($style != '' ? ' ':'') . ' color: ' . $settings['ciniki-events-colour-font'] . ';';
     }
 
     //
@@ -74,6 +90,7 @@ function ciniki_events_web_calendarsWebItems($ciniki, $settings, $business_id, $
             $item = array(
                 'title'=>$event['title'],
                 'time_text'=>'',
+                'style'=>$style,
                 'url'=>$base_url . '/' . $event['permalink'],
                 'classes'=>array('events'),
                 );

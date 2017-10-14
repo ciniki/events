@@ -115,6 +115,23 @@ function ciniki_events_hooks_webOptions(&$ciniki, $business_id, $args) {
 
     $pages['ciniki.events'] = array('name'=>'Events', 'options'=>$options);
 
+    //
+    // For specific pages, no as many options are required
+    //
+    $options = array();
+    $options[] = array(
+        'label'=>'Display Format',
+        'setting'=>'page-events-display-format', 
+        'type'=>'toggle',
+        'value'=>(isset($settings['page-events-display-format'])?$settings['page-events-display-format']:'cilist'),
+        'toggles'=>array(
+            array('value'=>'cilist', 'label'=>'Date List'),
+            array('value'=>'imagelist', 'label'=>'Image List'),
+            ),
+        );
+    $pages['ciniki.events.upcoming'] = array('name'=>'Events - Upcoming', 'options'=>$options);
+    $pages['ciniki.events.past'] = array('name'=>'Events - Past', 'options'=>$options);
+
     return array('stat'=>'ok', 'pages'=>$pages);
 }
 ?>

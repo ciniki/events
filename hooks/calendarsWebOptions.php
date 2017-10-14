@@ -37,7 +37,25 @@ function ciniki_events_hooks_calendarsWebOptions(&$ciniki, $business_id, $args) 
             array('value'=>'no', 'label'=>'No'),
             array('value'=>'yes', 'label'=>'Yes'),
             ),
-    );
+        );
+    $options[] = array(
+        'label'=>'Events Background Colour',
+        'setting'=>'ciniki-events-colour-background', 
+        'type'=>'colour',
+        'value'=>(isset($settings['ciniki-events-colour-background'])?$settings['ciniki-events-colour-background']:'no'),
+        );
+    $options[] = array(
+        'label'=>'Events Border Colour',
+        'setting'=>'ciniki-events-colour-border', 
+        'type'=>'colour',
+        'value'=>(isset($settings['ciniki-events-colour-border'])?$settings['ciniki-events-colour-border']:'no'),
+        );
+    $options[] = array(
+        'label'=>'Events Font Colour',
+        'setting'=>'ciniki-events-colour-font', 
+        'type'=>'colour',
+        'value'=>(isset($settings['ciniki-events-colour-font'])?$settings['ciniki-events-colour-font']:'no'),
+        );
 
     return array('stat'=>'ok', 'options'=>$options);
 }
