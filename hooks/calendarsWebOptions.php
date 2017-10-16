@@ -29,6 +29,18 @@ function ciniki_events_hooks_calendarsWebOptions(&$ciniki, $business_id, $args) 
 
     $options = array();
     $options[] = array(
+        'label'=>'Event Title Prefix',
+        'setting'=>'ciniki-events-prefix',
+        'type'=>'text',
+        'value'=>(isset($settings['ciniki-events-prefix'])?$settings['ciniki-events-prefix']:''),
+        );
+    $options[] = array(
+        'label'=>'Event Legend Name',
+        'setting'=>'ciniki-events-legend-title',
+        'type'=>'text',
+        'value'=>(isset($settings['ciniki-events-legend-title'])?$settings['ciniki-events-legend-title']:''),
+        );
+    $options[] = array(
         'label'=>'Events Display Times',
         'setting'=>'ciniki-events-display-times',
         'type'=>'toggle',

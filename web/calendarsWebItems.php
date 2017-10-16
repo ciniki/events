@@ -44,6 +44,17 @@ function ciniki_events_web_calendarsWebItems($ciniki, $settings, $business_id, $
     }
 
     //
+    // Setup the legend
+    //
+    if( isset($settings['ciniki-events-legend-title']) && $settings['ciniki-events-legend-title'] != '' ) {
+        $legend = array(
+            array('title'=>$settings['ciniki-events-legend-title'], 'style'=>$style)
+            );
+    } else {
+        $legend = array();
+    }
+
+    //
     // FIXME: Add the ability to select the tags for an event and turn tags into classes
     //
 
@@ -84,17 +95,22 @@ function ciniki_events_web_calendarsWebItems($ciniki, $settings, $business_id, $
         return $rc;
     }
 
+    $prefix = '';
+    if( isset($settings['ciniki-events-prefix']) ) {
+        $prefix = $settings['ciniki-events-prefix'];
+    }
+
     $items = array();
     if( isset($rc['events']) ) {
         foreach($rc['events'] as $event) {
             $item = array(
-                'title'=>$event['title'],
+                'title'=>$prefix . $event['title'],
                 'time_text'=>'',
                 'style'=>$style,
                 'url'=>$base_url . '/' . $event['permalink'],
                 'classes'=>array('events'),
                 );
-            if( !isset($settings['ciniki-events-display-times']) || $settings['ciniki-events-display-times'] == 'yes' ) {
+            if( isset($settings['ciniki-events-display-times']) && $settings['ciniki-events-display-times'] == 'yes' ) {
                 $item['time_text'] = $event['times'];
             }
             if( $event['end_date'] != '' && $event['start_date'] != $event['end_date'] ) {
@@ -126,6 +142,6 @@ function ciniki_events_web_calendarsWebItems($ciniki, $settings, $business_id, $
         }
     }
 
-    return array('stat'=>'ok', 'items'=>$items);
+    return array('stat'=>'ok', 'items'=>$items, 'legend'=>$legend);
 }
 ?>
