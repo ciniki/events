@@ -16,7 +16,7 @@ function ciniki_events_linkAdd(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Post'),
         'name'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Name'), 
         'url'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'URL'),
@@ -29,10 +29,10 @@ function ciniki_events_linkAdd(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.linkAdd'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['tnid'], 'ciniki.events.linkAdd'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
@@ -42,7 +42,7 @@ function ciniki_events_linkAdd(&$ciniki) {
     //
     $strsql = "SELECT id "
         . "FROM ciniki_event_links "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND url = '" . ciniki_core_dbQuote($ciniki, $args['url']) . "' "
         . "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
         . "";
@@ -58,7 +58,7 @@ function ciniki_events_linkAdd(&$ciniki) {
     // Add the event link
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.events.link', $args, 0x07);
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.events.link', $args, 0x07);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }

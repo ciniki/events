@@ -10,18 +10,18 @@
 #
 # Fields
 # ------
-# business_id:  The id of the business the detail is for.
+# tnid:         The id of the tenant the detail is for.
 # detail_key:   The unique key for the detail.
 # detail_value: The value stored for this key.
 # date_added:   The date and time the entry was created in the database.
 # last_updated: The date and time the entry was last updated.
 #
 create table ciniki_event_settings (
-    business_id int not null,
+    tnid int not null,
     detail_key varchar(100) not null,
     detail_value varchar(20000) not null,
     date_added datetime not null,
     last_updated datetime not null,
-    primary key (business_id, detail_key),
+    primary key (tnid, detail_key),
     index (last_updated)
 ) ENGINE=InnoDB, COMMENT='v1.01';

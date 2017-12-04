@@ -9,7 +9,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to the item is a part of.
+// tnid:     The ID of the tenant to the item is a part of.
 // old_tag: The name of the old tag.
 // new_tag: The new name for the tag.
 //
@@ -23,7 +23,7 @@ function ciniki_events_tagUpdate(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'tag_type'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Type'),
         'tag_permalink'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Permalink'),
         'image-id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Image'), 
@@ -37,10 +37,10 @@ function ciniki_events_tagUpdate(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.tagUpdate'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['tnid'], 'ciniki.events.tagUpdate'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -54,7 +54,7 @@ function ciniki_events_tagUpdate(&$ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash'); 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
     $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_event_settings', 
-        'business_id', $args['business_id'], 'ciniki.events', 'settings', "tag-$tag_type-$tag_permalink");
+        'tnid', $args['tnid'], 'ciniki.events', 'settings', "tag-$tag_type-$tag_permalink");
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -88,9 +88,9 @@ function ciniki_events_tagUpdate(&$ciniki) {
             // If existing setting doesn't exist, then update
             //
             if( !isset($settings[$detail_key]) ) {
-                $strsql = "INSERT INTO ciniki_event_settings (business_id, detail_key, detail_value, "
+                $strsql = "INSERT INTO ciniki_event_settings (tnid, detail_key, detail_value, "
                     . "date_added, last_updated) VALUES ("
-                    . "' " . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                    . "' " . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                     . ", '" . ciniki_core_dbQuote($ciniki, $detail_key) . "' "
                     . ", '" . ciniki_core_dbQuote($ciniki, $args[$f]) . "' "
                     . ", UTC_TIMESTAMP(), UTC_TIMESTAMP()) "
@@ -100,7 +100,7 @@ function ciniki_events_tagUpdate(&$ciniki) {
                     return $rc;
                 }
                 ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.events', 
-                    'ciniki_event_history', $args['business_id'], 
+                    'ciniki_event_history', $args['tnid'], 
                     1, 'ciniki_event_settings', $detail_key, 'detail_value', $args[$f]);
                 $ciniki['syncqueue'][] = array('push'=>'ciniki.events.setting',
                     'args'=>array('id'=>$detail_key));
@@ -114,7 +114,7 @@ function ciniki_events_tagUpdate(&$ciniki) {
                 $strsql = "UPDATE ciniki_event_settings "
                     . "SET detail_value = '" . ciniki_core_dbQuote($ciniki, $args[$f]) . "', "
                     . "last_updated = UTC_TIMESTAMP() "
-                    . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                    . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                     . "AND detail_key = '" . ciniki_core_dbQuote($ciniki, $detail_key) . "' "
                     . "";
                 $rc = ciniki_core_dbUpdate($ciniki, $strsql, 'ciniki.events');
@@ -122,7 +122,7 @@ function ciniki_events_tagUpdate(&$ciniki) {
                     return $rc;
                 }
                 ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.events', 
-                    'ciniki_event_history', $args['business_id'], 
+                    'ciniki_event_history', $args['tnid'], 
                     2, 'ciniki_event_settings', $detail_key, 'detail_value', $args[$f]);
                 $ciniki['syncqueue'][] = array('push'=>'ciniki.events.setting',
                     'args'=>array('id'=>$detail_key));
@@ -140,12 +140,12 @@ function ciniki_events_tagUpdate(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
     if( $updated > 0 ) {
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-        ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+        ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'events');
     }
 
     return array('stat'=>'ok');

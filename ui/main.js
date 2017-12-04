@@ -1,5 +1,5 @@
 //
-// This app will handle the listing, additions and deletions of events.  These are associated business.
+// This app will handle the listing, additions and deletions of events.  These are associated tenant.
 //
 function ciniki_events_main() {
     //
@@ -70,8 +70,8 @@ function ciniki_events_main() {
             this.tag_permalink = cat;
         }
         if( this.rightbuttons.edit != null ) { delete(this.rightbuttons.edit); }
-        if( (M.curBusiness.modules['ciniki.events'].flags&0x10) > 0 ) {
-            M.api.getJSONCb('ciniki.events.eventList', {'business_id':M.curBusinessID, 'categories':'yes', 
+        if( (M.curTenant.modules['ciniki.events'].flags&0x10) > 0 ) {
+            M.api.getJSONCb('ciniki.events.eventList', {'tnid':M.curTenantID, 'categories':'yes', 
                 'tag_type':this.tag_type, 'tag_permalink':this.tag_permalink}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -90,7 +90,7 @@ function ciniki_events_main() {
                     p.show(cb);
                 });
         } else {
-            M.api.getJSONCb('ciniki.events.eventList', {'business_id':M.curBusinessID}, function(rsp) {
+            M.api.getJSONCb('ciniki.events.eventList', {'tnid':M.curTenantID}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -166,7 +166,7 @@ function ciniki_events_main() {
     };
     this.event.addDropImage = function(iid) {
         var rsp = M.api.getJSON('ciniki.events.imageAdd',
-            {'business_id':M.curBusinessID, 'image_id':iid, 'event_id':M.ciniki_events_main.event.event_id});
+            {'tnid':M.curTenantID, 'image_id':iid, 'event_id':M.ciniki_events_main.event.event_id});
         if( rsp.stat != 'ok' ) {
             M.api.err(rsp);
             return false;
@@ -175,7 +175,7 @@ function ciniki_events_main() {
     };
     this.event.addDropImageRefresh = function() {
         if( M.ciniki_events_main.event.event_id > 0 ) {
-            M.api.getJSONCb('ciniki.events.eventGet', {'business_id':M.curBusinessID, 'event_id':M.ciniki_events_main.event.event_id, 'images':'yes'}, function(rsp) {
+            M.api.getJSONCb('ciniki.events.eventGet', {'tnid':M.curTenantID, 'event_id':M.ciniki_events_main.event.event_id, 'images':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -246,7 +246,7 @@ function ciniki_events_main() {
     this.event.open = function(cb, eid) {
         this.reset();
         if( eid != null ) { this.event_id = eid; }
-        M.api.getJSONCb('ciniki.events.eventGet', {'business_id':M.curBusinessID, 
+        M.api.getJSONCb('ciniki.events.eventGet', {'tnid':M.curTenantID, 
             'event_id':this.event_id, 'images':'yes', 'files':'yes', 'prices':'yes', 
             'sponsors':'yes', 'webcollections':'yes', 'categories':'yes', 'links':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
@@ -324,7 +324,7 @@ function ciniki_events_main() {
         };  
     this.edit.fieldValue = function(s, i, d) { return this.data[i]; }
     this.edit.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.events.eventHistory', 'args':{'business_id':M.curBusinessID, 'event_id':this.event_id, 'field':i}};
+        return {'method':'ciniki.events.eventHistory', 'args':{'tnid':M.curTenantID, 'event_id':this.event_id, 'field':i}};
     }
     this.edit.addDropImage = function(iid) {
         M.ciniki_events_main.edit.setFieldValue('primary_image_id', iid, null, null);
@@ -337,7 +337,7 @@ function ciniki_events_main() {
     this.edit.open = function(cb, eid) {
         this.reset();
         if( eid != null ) { this.event_id = eid; }
-        if( (M.curBusiness.modules['ciniki.events'].flags&0x03) > 0 ) {
+        if( (M.curTenant.modules['ciniki.events'].flags&0x03) > 0 ) {
             this.sections._registrations.visible = 'yes';
             this.sections._registrations.fields.reg_flags.active = 'yes';
             this.sections._registrations.fields.num_tickets.active = 'yes';
@@ -350,7 +350,7 @@ function ciniki_events_main() {
         this.sections._buttons.buttons.delete.visible = (this.event_id>0?'yes':'no');
         this.reset();
         this.sections._buttons.buttons.delete.visible = 'yes';
-        M.api.getJSONCb('ciniki.events.eventGet', {'business_id':M.curBusinessID, 
+        M.api.getJSONCb('ciniki.events.eventGet', {'tnid':M.curTenantID, 
             'event_id':this.event_id, 'webcollections':'yes', 'categories':'yes', 'objects':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -366,7 +366,7 @@ function ciniki_events_main() {
                 }
                 p.sections.general.fields.oidref.options = {'':'None'};
                 p.sections.general.fields.oidref.active = 'no';
-                if( M.curBusiness.modules['ciniki.artcatalog'] != null ) {
+                if( M.curTenant.modules['ciniki.artcatalog'] != null ) {
                     if( rsp.objects != null ) {
                         for(i in rsp.objects) {
                             p.sections.general.fields.oidref.options[rsp.objects[i].object.id] = rsp.objects[i].object.name;
@@ -382,7 +382,7 @@ function ciniki_events_main() {
         if( this.event_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.events.eventUpdate', {'business_id':M.curBusinessID, 'event_id':M.ciniki_events_main.edit.event_id}, c, function(rsp) {
+                M.api.postJSONCb('ciniki.events.eventUpdate', {'tnid':M.curTenantID, 'event_id':M.ciniki_events_main.edit.event_id}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -395,7 +395,7 @@ function ciniki_events_main() {
         } else {
             var c = this.serializeForm('yes');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.events.eventAdd', {'business_id':M.curBusinessID}, c, function(rsp) {
+                M.api.postJSONCb('ciniki.events.eventAdd', {'tnid':M.curTenantID}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -415,7 +415,7 @@ function ciniki_events_main() {
     };
     this.edit.remove = function() {
         if( confirm("Are you sure you want to remove '" + this.data.name + "' as an event ?") ) {
-            M.api.getJSONCb('ciniki.events.eventDelete', {'business_id':M.curBusinessID, 'event_id':this.event_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.events.eventDelete', {'tnid':M.curTenantID, 'event_id':this.event_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -445,14 +445,14 @@ function ciniki_events_main() {
             return false;
         } 
 
-        if( M.curBusiness.modules['ciniki.sponsors'] != null 
-            && (M.curBusiness.modules['ciniki.sponsors'].flags&0x02) ) {
+        if( M.curTenant.modules['ciniki.sponsors'] != null 
+            && (M.curTenant.modules['ciniki.sponsors'].flags&0x02) ) {
             this.event.sections.sponsors.visible = 'yes';
         } else {
             this.event.sections.sponsors.visible = 'no';
         }
 
-        if( M.curBusiness.modules['ciniki.artcatalog'] != null ) {
+        if( M.curTenant.modules['ciniki.artcatalog'] != null ) {
             this.edit.sections.general.fields.oidref.active = 'yes';
         } else {
             this.edit.sections.general.fields.oidref.active = 'no';
@@ -461,8 +461,8 @@ function ciniki_events_main() {
         //
         // Check if event categories is enabled
         //
-        if( M.curBusiness.modules['ciniki.events'] != null 
-            && (M.curBusiness.modules['ciniki.events'].flags&0x10) ) {
+        if( M.curTenant.modules['ciniki.events'] != null 
+            && (M.curTenant.modules['ciniki.events'].flags&0x10) ) {
             this.menu.size = 'medium narrowaside';
             this.menu.sections.categories.visible = 'yes';
             this.event.sections.info.list.categories_text.visible = 'yes';
@@ -476,7 +476,7 @@ function ciniki_events_main() {
         //
         // Check if accounting is enabled
         //
-        if( M.curBusiness.modules['ciniki.sapos'] != null ) {
+        if( M.curTenant.modules['ciniki.sapos'] != null ) {
             this.event.sections.prices.visible = 'yes';
         } else {
             this.event.sections.prices.visible = 'no';
@@ -485,7 +485,7 @@ function ciniki_events_main() {
         //
         // Check if web collections are enabled
         //
-        if( M.curBusiness.modules['ciniki.web'] != null && (M.curBusiness.modules['ciniki.web'].flags&0x08) ) {
+        if( M.curTenant.modules['ciniki.web'] != null && (M.curTenant.modules['ciniki.web'].flags&0x08) ) {
             this.event.sections.info.list.webcollections_text.visible = 'yes';
             this.edit.sections._webcollections.active = 'yes';
         } else {

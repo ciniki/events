@@ -2,5 +2,5 @@
 # This file will add the uuid to ciniki_events
 # which is required for the sync to work.
 #
-CREATE INDEX business_uuid ON ciniki_events (business_id, uuid, last_updated);
+CREATE INDEX tenant_uuid ON ciniki_events (tnid, uuid, last_updated);
 ALTER TABLE ciniki_events COMMENT='v1.02';

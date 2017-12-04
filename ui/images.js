@@ -35,7 +35,7 @@ function ciniki_events_images() {
         return ''; 
     };
     this.edit.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.events.imageHistory', 'args':{'business_id':M.curBusinessID, 'event_image_id':this.event_image_id, 'field':i}};
+        return {'method':'ciniki.events.imageHistory', 'args':{'tnid':M.curTenantID, 'event_image_id':this.event_image_id, 'field':i}};
     };
     this.edit.addDropImage = function(iid) {
         M.ciniki_events_images.edit.setFieldValue('image_id', iid, null, null);
@@ -47,7 +47,7 @@ function ciniki_events_images() {
         if( this.event_image_id > 0 ) {
             this.reset();
             this.sections._buttons.buttons.delete.visible = 'yes';
-            M.api.getJSONCb('ciniki.events.imageGet', {'business_id':M.curBusinessID, 'event_image_id':this.event_image_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.events.imageGet', {'tnid':M.curTenantID, 'event_image_id':this.event_image_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -69,7 +69,7 @@ function ciniki_events_images() {
         if( this.event_image_id > 0 ) {
             var c = this.serializeFormData('no');
             if( c != '' ) {
-                M.api.postJSONFormData('ciniki.events.imageUpdate', {'business_id':M.curBusinessID, 'event_image_id':this.event_image_id}, c, function(rsp) {
+                M.api.postJSONFormData('ciniki.events.imageUpdate', {'tnid':M.curTenantID, 'event_image_id':this.event_image_id}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -82,7 +82,7 @@ function ciniki_events_images() {
             }
         } else {
             var c = this.serializeFormData('yes');
-            M.api.postJSONFormData('ciniki.events.imageAdd', {'business_id':M.curBusinessID, 'event_id':this.event_id}, c, function(rsp) {
+            M.api.postJSONFormData('ciniki.events.imageAdd', {'tnid':M.curTenantID, 'event_id':this.event_id}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -94,7 +94,7 @@ function ciniki_events_images() {
     };
     this.edit.remove = function() {
         if( confirm('Are you sure you want to delete this image?') ) {
-            M.api.getJSONCb('ciniki.events.imageDelete', {'business_id':M.curBusinessID, 'event_image_id':this.event_image_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.events.imageDelete', {'tnid':M.curTenantID, 'event_image_id':this.event_image_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;

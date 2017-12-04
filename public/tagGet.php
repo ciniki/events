@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to get the list from.
+// tnid:     The ID of the tenant to get the list from.
 // 
 // Returns
 // -------
@@ -19,7 +19,7 @@ function ciniki_events_tagGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'tag_type'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Type'),
         'tag_permalink'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Permalink'),
         )); 
@@ -30,10 +30,10 @@ function ciniki_events_tagGet($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.tagGet'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['tnid'], 'ciniki.events.tagGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -45,7 +45,7 @@ function ciniki_events_tagGet($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash'); 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
     $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_event_settings', 
-        'business_id', $args['business_id'], 'ciniki.events', 'settings', 
+        'tnid', $args['tnid'], 'ciniki.events', 'settings', 
         "tag-" . $args['tag_type'] . '-' . $args['tag_permalink']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;

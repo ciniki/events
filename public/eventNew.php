@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business the event is attached to.
+// tnid:     The ID of the tenant the event is attached to.
 // event_id:        The ID of the event to get the details for.
 // 
 // Returns
@@ -23,7 +23,7 @@ function ciniki_events_eventNew($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'categories'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Categories'),
         'webcollections'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Web Collections'),
         )); 
@@ -34,10 +34,10 @@ function ciniki_events_eventNew($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventNew'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['tnid'], 'ciniki.events.eventNew'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -47,14 +47,14 @@ function ciniki_events_eventNew($ciniki) {
     // Check if all tags should be returned
     //
     $categories = array();
-    if( ($ciniki['business']['modules']['ciniki.events']['flags']&0x10) > 0
+    if( ($ciniki['tenant']['modules']['ciniki.events']['flags']&0x10) > 0
         && isset($args['categories']) && $args['categories'] == 'yes' 
         ) {
         //
         // Get the available tags
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
-        $rc = ciniki_core_tagsList($ciniki, 'ciniki.events', $args['business_id'], 
+        $rc = ciniki_core_tagsList($ciniki, 'ciniki.events', $args['tnid'], 
             'ciniki_event_tags', 10);
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.11', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
@@ -69,11 +69,11 @@ function ciniki_events_eventNew($ciniki) {
     //
     $webcollections = array();
     if( isset($args['webcollections']) && $args['webcollections'] == 'yes'
-        && isset($ciniki['business']['modules']['ciniki.web']) 
-        && ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+        && isset($ciniki['tenant']['modules']['ciniki.web']) 
+        && ($ciniki['tenant']['modules']['ciniki.web']['flags']&0x08) == 0x08
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionList');
-        $rc = ciniki_web_hooks_webCollectionList($ciniki, $args['business_id'],
+        $rc = ciniki_web_hooks_webCollectionList($ciniki, $args['tnid'],
             array());
         if( $rc['stat'] != 'ok' ) { 
             return $rc;

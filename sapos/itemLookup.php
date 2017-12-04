@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_events_sapos_itemLookup($ciniki, $business_id, $args) {
+function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
 
     if( !isset($args['object']) || $args['object'] == ''
         || !isset($args['object_id']) || $args['object_id'] == '' 
@@ -26,7 +26,7 @@ function ciniki_events_sapos_itemLookup($ciniki, $business_id, $args) {
     if( $args['object'] == 'ciniki.events.event' ) {
         $strsql = "SELECT id, name, reg_flags, num_tickets "
             . "FROM ciniki_events "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'event');
@@ -50,7 +50,7 @@ function ciniki_events_sapos_itemLookup($ciniki, $business_id, $args) {
             $event['tickets_sold'] = 0;
             $strsql = "SELECT 'num_tickets', SUM(num_tickets) AS num_tickets "
                 . "FROM ciniki_event_registrations "
-                . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND ciniki_event_registrations.event_id = '" . ciniki_core_dbQuote($ciniki, $event['id']) . "' "
                 . "";
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbCount');

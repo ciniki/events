@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method will delete a event from the business.
+// This method will delete a event from the tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the event is attached to.
+// tnid:         The ID of the tenant the event is attached to.
 // event_id:            The ID of the event to be removed.
 //
 // Returns
@@ -21,7 +21,7 @@ function ciniki_events_eventDelete(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'event_id'=>array('required'=>'yes', 'default'=>'', 'blank'=>'yes', 'name'=>'Event'), 
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -30,10 +30,10 @@ function ciniki_events_eventDelete(&$ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id as owner
+    // Check access to tnid as owner
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventDelete');
+    $rc = ciniki_events_checkAccess($ciniki, $args['tnid'], 'ciniki.events.eventDelete');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -43,7 +43,7 @@ function ciniki_events_eventDelete(&$ciniki) {
     //
     $strsql = "SELECT uuid "
         . "FROM ciniki_events "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
@@ -75,7 +75,7 @@ function ciniki_events_eventDelete(&$ciniki) {
     //
     $strsql = "SELECT id, uuid, image_id "
         . "FROM ciniki_event_images "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'image');
@@ -87,7 +87,7 @@ function ciniki_events_eventDelete(&$ciniki) {
         $images = $rc['rows'];
         
         foreach($images as $iid => $image) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.image', 
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.events.image', 
                 $image['id'], $image['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
@@ -101,7 +101,7 @@ function ciniki_events_eventDelete(&$ciniki) {
     //
     $strsql = "SELECT id, uuid "
         . "FROM ciniki_event_files "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'file');
@@ -112,7 +112,7 @@ function ciniki_events_eventDelete(&$ciniki) {
     if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
         $files = $rc['rows'];
         foreach($files as $fid => $file) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.file', 
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.events.file', 
                 $file['id'], $file['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
@@ -126,7 +126,7 @@ function ciniki_events_eventDelete(&$ciniki) {
     //
     $strsql = "SELECT id, uuid "
         . "FROM ciniki_event_prices "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'price');
@@ -137,7 +137,7 @@ function ciniki_events_eventDelete(&$ciniki) {
     if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
         $prices = $rc['rows'];
         foreach($prices as $rid => $price) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.price', $price['id'], $price['uuid'], 0x04);
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.events.price', $price['id'], $price['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
                 return $rc;
@@ -150,7 +150,7 @@ function ciniki_events_eventDelete(&$ciniki) {
     //
     $strsql = "SELECT id, uuid "
         . "FROM ciniki_event_registrations "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'registration');
@@ -162,7 +162,7 @@ function ciniki_events_eventDelete(&$ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'registrationDelete');
         $registrations = $rc['rows'];
         foreach($registrations as $rid => $registration) {
-            $rc = ciniki_core__registrationDelete($ciniki, $args['business_id'], 
+            $rc = ciniki_core__registrationDelete($ciniki, $args['tnid'], 
                 $registration['id'],$registration['uuid']);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
@@ -176,7 +176,7 @@ function ciniki_events_eventDelete(&$ciniki) {
     //
 /*  $strsql = "SELECT id, uuid "
         . "FROM ciniki_event_registration_questions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'question');
@@ -188,7 +188,7 @@ function ciniki_events_eventDelete(&$ciniki) {
         $questions = $rc['rows'];
         foreach($questions as $qid => $question) {
             $rc = ciniki_core_objectDelete($ciniki, 'ciniki.events.question', $question['id'], $question['uuid'],
-                array('business_id'=>$args['business_id']), 0x04);
+                array('tnid'=>$args['tnid']), 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
                 return $rc; 
@@ -200,9 +200,9 @@ function ciniki_events_eventDelete(&$ciniki) {
     //
     // Remove any tags
     //
-    if( ($ciniki['business']['modules']['ciniki.events']['flags']&0x10) > 0 ) {
+    if( ($ciniki['tenant']['modules']['ciniki.events']['flags']&0x10) > 0 ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsDelete');
-        $rc = ciniki_core_tagsDelete($ciniki, 'ciniki.events', 'tag', $args['business_id'],
+        $rc = ciniki_core_tagsDelete($ciniki, 'ciniki.events', 'tag', $args['tnid'],
             'ciniki_event_tags', 'ciniki_event_history', 'event_id', $args['event_id']);
         if( $rc['stat'] != 'ok' ) {
             ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
@@ -213,11 +213,11 @@ function ciniki_events_eventDelete(&$ciniki) {
     //
     // Remove the event from any web collections
     //
-    if( isset($ciniki['business']['modules']['ciniki.web']) 
-        && ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+    if( isset($ciniki['tenant']['modules']['ciniki.web']) 
+        && ($ciniki['tenant']['modules']['ciniki.web']['flags']&0x08) == 0x08
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionDeleteObjRef');
-        $rc = ciniki_web_hooks_webCollectionDeleteObjRef($ciniki, $args['business_id'],
+        $rc = ciniki_web_hooks_webCollectionDeleteObjRef($ciniki, $args['tnid'],
             array('object'=>'ciniki.events.event', 'object_id'=>$args['event_id']));
         if( $rc['stat'] != 'ok' ) { 
             ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
@@ -228,7 +228,7 @@ function ciniki_events_eventDelete(&$ciniki) {
     //
     // Remove the event
     //
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.events.event', 
+    $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.events.event', 
         $args['event_id'], $event_uuid, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
@@ -244,11 +244,11 @@ function ciniki_events_eventDelete(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'events');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'events');
 
     return array('stat'=>'ok');
 }

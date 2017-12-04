@@ -9,15 +9,15 @@
 // Returns
 // -------
 //
-function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $permalink) {
+function ciniki_events_web_eventDetails($ciniki, $settings, $tnid, $permalink) {
 
     
 //  print "<pre>" . print_r($ciniki, true) . "</pre>";
     //
     // Load INTL settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $business_id);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -59,7 +59,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
             . "AND ciniki_event_images.image_id > 0 "
             . "AND (ciniki_event_images.webflags&0x01) = 0 "
             . ") "
-        . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_events.permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' "
         . "AND (ciniki_events.flags&0x01) = 0x01 "
         . "";
@@ -91,7 +91,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
     if( ($event['reg_flags']&0x02) > 0 ) {
         $strsql = "SELECT 'num_tickets', SUM(num_tickets) AS num_tickets "
             . "FROM ciniki_event_registrations "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_event_registrations.event_id = '" . ciniki_core_dbQuote($ciniki, $event['id']) . "' "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbCount');
@@ -126,7 +126,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
     $strsql = "SELECT id, name, available_to, unit_amount "
         . "FROM ciniki_event_prices "
         . "WHERE ciniki_event_prices.event_id = '" . ciniki_core_dbQuote($ciniki, $event['id']) . "' "
-        . "AND ciniki_event_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND ciniki_event_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND (ciniki_event_prices.webflags&0x01) = 0 "
         . "AND ((ciniki_event_prices.available_to&$price_flags) > 0 OR (webflags&available_to&0xF0) > 0) "
         . "ORDER BY ciniki_event_prices.name "
@@ -165,7 +165,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
     //
     $strsql = "SELECT id, name, url, description "
         . "FROM ciniki_event_links "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_event_links.event_id = '" . ciniki_core_dbQuote($ciniki, $event['id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
@@ -186,7 +186,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
     //
     $strsql = "SELECT id, name, extension, permalink, description "
         . "FROM ciniki_event_files "
-        . "WHERE ciniki_event_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_event_files.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_event_files.event_id = '" . ciniki_core_dbQuote($ciniki, $event['id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
@@ -203,11 +203,11 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
     //
     // Get any sponsors for this event, and that references for sponsors is enabled
     //
-    if( isset($ciniki['business']['modules']['ciniki.sponsors']) 
-        && ($ciniki['business']['modules']['ciniki.sponsors']['flags']&0x02) == 0x02
+    if( isset($ciniki['tenant']['modules']['ciniki.sponsors']) 
+        && ($ciniki['tenant']['modules']['ciniki.sponsors']['flags']&0x02) == 0x02
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'sponsors', 'web', 'sponsorRefList');
-        $rc = ciniki_sponsors_web_sponsorRefList($ciniki, $settings, $business_id, 
+        $rc = ciniki_sponsors_web_sponsorRefList($ciniki, $settings, $tnid, 
             'ciniki.events.event', $event['id']);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
@@ -228,7 +228,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $perma
         $rc = ciniki_core_loadMethod($ciniki, $pkg, $mod, 'web', 'eventImages');
         if( $rc['stat'] == 'ok' ) {
             $fn = $rc['function_call'];
-            $rc = $fn($ciniki, $settings, $business_id, array('object'=>$event['object'], 'object_id'=>$event['object_id']));
+            $rc = $fn($ciniki, $settings, $tnid, array('object'=>$event['object'], 'object_id'=>$event['object_id']));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }

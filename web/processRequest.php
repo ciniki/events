@@ -8,7 +8,7 @@
 // ---------
 // ciniki:
 // settings:        The web settings structure.
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // args:            The possible arguments for posts
 //
@@ -16,12 +16,12 @@
 // Returns
 // -------
 //
-function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $args) {
+function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
 
     //
     // Check to make sure the module is enabled
     //
-    if( !isset($ciniki['business']['modules']['ciniki.events']) ) {
+    if( !isset($ciniki['tenant']['modules']['ciniki.events']) ) {
         return array('stat'=>'404', 'err'=>array('code'=>'ciniki.events.63', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
     $page = array(
@@ -38,7 +38,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
         && isset($args['uri_split'][1]) && $args['uri_split'][1] == 'download'
         && isset($args['uri_split'][2]) && $args['uri_split'][2] != '' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'web', 'fileDownload');
-        $rc = ciniki_events_web_fileDownload($ciniki, $ciniki['request']['business_id'], $args['uri_split'][0], $args['uri_split'][2]);
+        $rc = ciniki_events_web_fileDownload($ciniki, $ciniki['request']['tnid'], $args['uri_split'][0], $args['uri_split'][2]);
         if( $rc['stat'] == 'ok' ) {
             return array('stat'=>'ok', 'download'=>$rc['file']);
         }
@@ -182,7 +182,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
         // and prev from the list of images returned
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'web', 'eventDetails');
-        $rc = ciniki_events_web_eventDetails($ciniki, $settings, $business_id, $event_permalink);
+        $rc = ciniki_events_web_eventDetails($ciniki, $settings, $tnid, $event_permalink);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -315,7 +315,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
         // Get any current events
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'web', 'list');
-        $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['business_id'], 
+        $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['tnid'], 
             array('tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink, 'format'=>$display_format));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
@@ -344,7 +344,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
     //
     elseif( $display == 'past' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'web', 'list');
-        $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['business_id'], 
+        $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['tnid'], 
             array('type'=>'past', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink, 'format'=>$display_format,
                 'offset'=>(($page_nav_cur-1)*$page_nav_limit), 
                 'limit'=>$page_nav_limit+1,
@@ -390,7 +390,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
         if( isset($settings['page-events-current']) && $settings['page-events-current'] == 'yes' 
             && (!isset($settings['page-events-single-list']) || $settings['page-events-single-list'] != 'yes')
             ) {
-            $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['business_id'], 
+            $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['tnid'], 
                 array('type'=>'current', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink, 'format'=>$display_format));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
@@ -416,14 +416,14 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
         if( isset($settings['page-events-past']) && $settings['page-events-past'] == 'yes' 
             && isset($settings['page-events-single-list']) && $settings['page-events-single-list'] == 'yes' 
             ) {
-            $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['business_id'], 
+            $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['tnid'], 
                 array('type'=>'all', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink, 'format'=>$display_format));
         } else {
             if( isset($settings['page-events-current']) && $settings['page-events-current'] == 'yes' ) {
-                $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['business_id'], 
+                $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['tnid'], 
                     array('type'=>'future', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink, 'format'=>$display_format));
             } else {
-                $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['business_id'], 
+                $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['tnid'], 
                     array('type'=>'upcoming', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink, 'format'=>$display_format));
             }
         }
@@ -485,7 +485,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
         if( isset($settings['page-events-past']) && $settings['page-events-past'] == 'yes' 
             && (!isset($settings['page-events-single-list']) || $settings['page-events-single-list'] != 'yes')
             ) {
-            $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['business_id'], 
+            $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['tnid'], 
                 array('type'=>'past', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink, 'format'=>$display_format));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
@@ -507,12 +507,12 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $business_id, $ar
     //
     // Decide what items should be in the submenu
     //
-    if( ($ciniki['business']['modules']['ciniki.events']['flags']&0x10) > 0 
+    if( ($ciniki['tenant']['modules']['ciniki.events']['flags']&0x10) > 0 
         && isset($settings['page-events-categories-display']) && $settings['page-events-categories-display'] == 'submenu'
         ) {
         if( !isset($categories) ) {
             ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'web', 'tags');
-            $rc = ciniki_events_web_tags($ciniki, $settings, $ciniki['request']['business_id'], '10');
+            $rc = ciniki_events_web_tags($ciniki, $settings, $ciniki['request']['tnid'], '10');
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }

@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_events_sapos_itemDelete($ciniki, $business_id, $invoice_id, $item) {
+function ciniki_events_sapos_itemDelete($ciniki, $tnid, $invoice_id, $item) {
 
     //
     // An event was added to an invoice item, get the details and see if we need to 
@@ -22,7 +22,7 @@ function ciniki_events_sapos_itemDelete($ciniki, $business_id, $invoice_id, $ite
         //
         $strsql = "SELECT id, uuid, event_id, customer_id, num_tickets "
             . "FROM ciniki_event_registrations "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND id = '" . ciniki_core_dbQuote($ciniki, $item['object_id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'registration');
@@ -39,7 +39,7 @@ function ciniki_events_sapos_itemDelete($ciniki, $business_id, $invoice_id, $ite
         // Remove the invoice from the registration, don't delete it
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-        $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.events.registration', 
+        $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.events.registration', 
             $registration['id'], array('invoice_id'=>'0'), 0x04);
         if( $rc['stat'] != 'ok' ) {
             return $rc;

@@ -7,7 +7,7 @@
 // Returns
 // -------
 //
-function ciniki_events_web_fileDownload($ciniki, $business_id, $event_permalink, $file_permalink) {
+function ciniki_events_web_fileDownload($ciniki, $tnid, $event_permalink, $file_permalink) {
 
     //
     // Get the file details
@@ -18,11 +18,11 @@ function ciniki_events_web_fileDownload($ciniki, $business_id, $event_permalink,
         . "ciniki_event_files.extension, "
         . "ciniki_event_files.binary_content "
         . "FROM ciniki_events, ciniki_event_files "
-        . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_events.permalink = '" . ciniki_core_dbQuote($ciniki, $event_permalink) . "' "
         . "AND ciniki_events.id = ciniki_event_files.event_id "
         . "AND (ciniki_events.flags&0x01) = 0x01 "
-        . "AND ciniki_event_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND ciniki_event_files.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND CONCAT_WS('.', ciniki_event_files.permalink, ciniki_event_files.extension) = '" . ciniki_core_dbQuote($ciniki, $file_permalink) . "' "
         . "AND (ciniki_event_files.webflags&0x01) = 0 "     // Make sure file is to be visible
         . "";

@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_events_sapos_itemSearch($ciniki, $business_id, $args) {
+function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
 
     if( $args['start_needle'] == '' ) {
         return array('stat'=>'ok', 'items'=>array());
@@ -23,7 +23,7 @@ function ciniki_events_sapos_itemSearch($ciniki, $business_id, $args) {
     // FIXME: Query for the taxes for events
     //
 //  ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-//  $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_event_settings', 'business_id', $business_id,
+//  $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_event_settings', 'tnid', $tnid,
 //      'ciniki.artcatalog', 'taxes', 'taxes');
 //  if( $rc['stat'] != 'ok' ) {
 //      return $rc;
@@ -56,9 +56,9 @@ function ciniki_events_sapos_itemSearch($ciniki, $business_id, $args) {
         . "ciniki_event_prices.taxtype_id "
         . "FROM ciniki_events "
         . "LEFT JOIN ciniki_event_prices ON (ciniki_events.id = ciniki_event_prices.event_id "
-            . "AND ciniki_event_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_event_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
-        . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND (ciniki_events.reg_flags&0x03) > 0 "
         . "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
         . "AND (ciniki_events.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "

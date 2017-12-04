@@ -8,7 +8,7 @@
 // ---------
 // ciniki:
 // settings:        The web settings structure.
-// business_id:     The ID of the business to get exhibitions for.
+// tnid:     The ID of the tenant to get exhibitions for.
 //
 // args:            The possible arguments for posts
 //
@@ -16,12 +16,12 @@
 // Returns
 // -------
 //
-function ciniki_events_hooks_calendarsWebOptions(&$ciniki, $business_id, $args) {
+function ciniki_events_hooks_calendarsWebOptions(&$ciniki, $tnid, $args) {
 
     //
     // Check to make sure the module is enabled
     //
-    if( !isset($ciniki['business']['modules']['ciniki.events']) ) {
+    if( !isset($ciniki['tenant']['modules']['ciniki.events']) ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.67', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
 

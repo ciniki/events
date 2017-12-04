@@ -21,7 +21,7 @@ function ciniki_events_tags() {
         return 'M.ciniki_events_tags.tag.open(\'M.ciniki_events_tags.menu.open();\',\'' + d.tag.type + '\',\'' + escape(d.tag.name) + '\');';
     };
     this.menu.open = function(cb) {
-        M.api.getJSONCb('ciniki.events.tagList', {'business_id':M.curBusinessID, 'tag_type':'10'}, function(rsp) {
+        M.api.getJSONCb('ciniki.events.tagList', {'tnid':M.curTenantID, 'tag_type':'10'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -71,7 +71,7 @@ function ciniki_events_tags() {
     this.tag.open = function(cb, type, permalink) {
         if( type != null ) { this.tag_type = type; }
         if( permalink != null ) { this.tag_permalink = permalink; }
-        M.api.getJSONCb('ciniki.events.tagGet', {'business_id':M.curBusinessID, 'tag_type':this.tag_type, 'tag_permalink':this.tag_permalink}, function(rsp) {
+        M.api.getJSONCb('ciniki.events.tagGet', {'tnid':M.curTenantID, 'tag_type':this.tag_type, 'tag_permalink':this.tag_permalink}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -85,7 +85,7 @@ function ciniki_events_tags() {
     this.tag.save = function() {
         var c = this.serializeFormData('no');
         if( c != '' ) {
-            M.api.postJSONFormData('ciniki.events.tagUpdate', {'business_id':M.curBusinessID, 'tag_type':this.tag_type, 'tag_permalink':this.tag_permalink}, c, function(rsp) {
+            M.api.postJSONFormData('ciniki.events.tagUpdate', {'tnid':M.curTenantID, 'tag_type':this.tag_type, 'tag_permalink':this.tag_permalink}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;

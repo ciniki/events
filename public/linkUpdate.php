@@ -16,7 +16,7 @@ function ciniki_events_linkUpdate(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'link_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Link'),
         'name'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Name'), 
         'url'=>array('required'=>'no', 'blank'=>'no', 'name'=>'URL'),
@@ -29,10 +29,10 @@ function ciniki_events_linkUpdate(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.linkUpdate'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['tnid'], 'ciniki.events.linkUpdate'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
@@ -47,7 +47,7 @@ function ciniki_events_linkUpdate(&$ciniki) {
         $strsql = "SELECT id, event_id, name, url, description "
             . "FROM ciniki_event_links "
             . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['link_id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'link');
         if( $rc['stat'] != 'ok' ) {
@@ -63,7 +63,7 @@ function ciniki_events_linkUpdate(&$ciniki) {
         //
         $strsql = "SELECT id "
             . "FROM ciniki_event_links "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND url = '" . ciniki_core_dbQuote($ciniki, $args['url']) . "' "
             . "AND event_id = '" . ciniki_core_dbQuote($ciniki, $link['event_id']) . "' "
             . "AND id <> '" . ciniki_core_dbQuote($ciniki, $link['id']) . "' "
@@ -81,7 +81,7 @@ function ciniki_events_linkUpdate(&$ciniki) {
     // Upate the event link
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-    $rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.events.link', 
+    $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.events.link', 
         $args['link_id'], $args, 0x07);
     if( $rc['stat'] != 'ok' ) {
         return $rc;

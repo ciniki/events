@@ -21,7 +21,7 @@ function ciniki_events_links() {
         };
     this.edit.fieldValue = function(s, i, d) { return this.data[i]; }
     this.edit.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.events.linkHistory', 'args':{'business_id':M.curBusinessID, 'link_id':this.link_id, 'field':i}};
+        return {'method':'ciniki.events.linkHistory', 'args':{'tnid':M.curTenantID, 'link_id':this.link_id, 'field':i}};
     };
     this.edit.open = function(cb, pid, lid) {
         if( pid != null ) { this.event_id = pid; }
@@ -29,7 +29,7 @@ function ciniki_events_links() {
         if( this.link_id > 0 ) {
             this.reset();
             this.sections._buttons.buttons.delete.visible = 'yes';
-            M.api.getJSONCb('ciniki.events.linkGet', {'business_id':M.curBusinessID, 'link_id':this.link_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.events.linkGet', {'tnid':M.curTenantID, 'link_id':this.link_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -51,7 +51,7 @@ function ciniki_events_links() {
         if( this.link_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.events.linkUpdate', {'business_id':M.curBusinessID, 'link_id':this.link_id}, c, function(rsp) {
+                M.api.postJSONCb('ciniki.events.linkUpdate', {'tnid':M.curTenantID, 'link_id':this.link_id}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -64,7 +64,7 @@ function ciniki_events_links() {
         } else {
             var c = this.serializeForm('yes');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.events.linkAdd', {'business_id':M.curBusinessID, 'event_id':this.event_id}, c, function(rsp) {
+                M.api.postJSONCb('ciniki.events.linkAdd', {'tnid':M.curTenantID, 'event_id':this.event_id}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -78,7 +78,7 @@ function ciniki_events_links() {
     };
     this.edit.remove = function() {
         if( confirm("Are you sure you want to remove this link?") ) {
-            M.api.getJSONCb('ciniki.events.linkDelete', {'business_id':M.curBusinessID, 'link_id':this.link_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.events.linkDelete', {'tnid':M.curTenantID, 'link_id':this.link_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;

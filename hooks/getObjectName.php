@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_events_hooks_getObjectName($ciniki, $business_id, $args) {
+function ciniki_events_hooks_getObjectName($ciniki, $tnid, $args) {
 
     // Set the default to not used
     $used = 'no';
@@ -21,7 +21,7 @@ function ciniki_events_hooks_getObjectName($ciniki, $business_id, $args) {
         $strsql = "SELECT name "
             . "FROM ciniki_events "
             . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'event');
         if( $rc['stat'] != 'ok' ) {

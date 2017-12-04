@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_events_web_tagDetails($ciniki, $settings, $business_id, $tag_type, $tag_permalink) {
+function ciniki_events_web_tagDetails($ciniki, $settings, $tnid, $tag_type, $tag_permalink) {
 
     $tag = array('title'=>$tag_permalink);
 
@@ -18,7 +18,7 @@ function ciniki_events_web_tagDetails($ciniki, $settings, $business_id, $tag_typ
     //
     $strsql = "SELECT tag_name "
         . "FROM ciniki_event_tags "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND tag_type = '" . ciniki_core_dbQuote($ciniki, $tag_type) . "' "
         . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $tag_permalink) . "' "
         . "LIMIT 1"
@@ -32,7 +32,7 @@ function ciniki_events_web_tagDetails($ciniki, $settings, $business_id, $tag_typ
     // Get the settings for the tag, synopsis, image, description, etc
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_event_settings', 'business_id', $business_id,
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_event_settings', 'tnid', $tnid,
         'ciniki.events', 'settings', 'tag-' . $tag_type . '-' . $tag_permalink);
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'ok', 'tag'=>array());

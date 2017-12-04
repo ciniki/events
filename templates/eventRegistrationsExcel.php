@@ -11,7 +11,7 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_events_templates_eventRegistrationsExcel(&$ciniki, $business_id, $event_id, $business_details, $events_settings) {
+function ciniki_events_templates_eventRegistrationsExcel(&$ciniki, $tnid, $event_id, $tenant_details, $events_settings) {
 
     //
     // Load event maps
@@ -42,7 +42,7 @@ function ciniki_events_templates_eventRegistrationsExcel(&$ciniki, $business_id,
         . "ciniki_events.object, "
         . "ciniki_events.object_id "
         . "FROM ciniki_events "
-        . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_events.id = '" . ciniki_core_dbQuote($ciniki, $event_id) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
@@ -67,10 +67,10 @@ function ciniki_events_templates_eventRegistrationsExcel(&$ciniki, $business_id,
         . "FROM ciniki_event_registrations "
         . "LEFT JOIN ciniki_customers ON ("
             . "ciniki_event_registrations.customer_id = ciniki_customers.id "
-            . "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
         . "WHERE ciniki_event_registrations.event_id = '" . ciniki_core_dbQuote($ciniki, $event_id) . "' "
-        . "AND ciniki_event_registrations.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND ciniki_event_registrations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "ORDER BY ciniki_customers.last, ciniki_customers.first "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
@@ -111,7 +111,7 @@ function ciniki_events_templates_eventRegistrationsExcel(&$ciniki, $business_id,
         // Get the student information, so it can be added to the form and verified
         //
         if( $reg['customer_id'] > 0 ) {
-            $rc = ciniki_customers_hooks_customerDetails($ciniki, $business_id, 
+            $rc = ciniki_customers_hooks_customerDetails($ciniki, $tnid, 
                 array('customer_id'=>$reg['customer_id'], 'addresses'=>'yes', 'phones'=>'yes', 'emails'=>'yes'));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;

@@ -28,7 +28,7 @@ function ciniki_events_prices() {
         };  
     this.edit.fieldValue = function(s, i, d) { return this.data[i]; }
     this.edit.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.events.priceHistory', 'args':{'business_id':M.curBusinessID, 'price_id':this.price_id, 'event_id':this.event_id, 'field':i}};
+        return {'method':'ciniki.events.priceHistory', 'args':{'tnid':M.curTenantID, 'price_id':this.price_id, 'event_id':this.event_id, 'field':i}};
     }
     this.edit.sectionData = function(s) {
         return this.data[s];
@@ -42,7 +42,7 @@ function ciniki_events_prices() {
         // Check if this is editing a existing price or adding a new one
         if( this.price_id > 0 ) {
             this.sections._buttons.buttons.delete.visible = 'yes';
-            M.api.getJSONCb('ciniki.events.priceGet', {'business_id':M.curBusinessID, 'price_id':this.price_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.events.priceGet', {'tnid':M.curTenantID, 'price_id':this.price_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -64,7 +64,7 @@ function ciniki_events_prices() {
         if( this.price_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.events.priceUpdate', {'business_id':M.curBusinessID, 'price_id':M.ciniki_events_prices.edit.price_id}, c, function(rsp) {
+                M.api.postJSONCb('ciniki.events.priceUpdate', {'tnid':M.curTenantID, 'price_id':M.ciniki_events_prices.edit.price_id}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -76,7 +76,7 @@ function ciniki_events_prices() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.events.priceAdd', {'business_id':M.curBusinessID, 'event_id':this.event_id}, c, function(rsp) {
+            M.api.postJSONCb('ciniki.events.priceAdd', {'tnid':M.curTenantID, 'event_id':this.event_id}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -87,7 +87,7 @@ function ciniki_events_prices() {
     };
     this.edit.remove = function() {
         if( confirm("Are you sure you want to remove this price?") ) {
-            M.api.getJSONCb('ciniki.events.priceDelete', {'business_id':M.curBusinessID, 'price_id':this.price_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.events.priceDelete', {'tnid':M.curTenantID, 'price_id':this.price_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -120,12 +120,12 @@ function ciniki_events_prices() {
         //
         // Setup the tax types
         //
-        if( M.curBusiness.modules['ciniki.taxes'] != null ) {
+        if( M.curTenant.modules['ciniki.taxes'] != null ) {
             this.edit.sections.price.fields.taxtype_id.active = 'yes';
             this.edit.sections.price.fields.taxtype_id.options = {'0':'No Taxes'};
-            if( M.curBusiness.taxes != null && M.curBusiness.taxes.settings.types != null ) {
-                for(i in M.curBusiness.taxes.settings.types) {
-                    this.edit.sections.price.fields.taxtype_id.options[M.curBusiness.taxes.settings.types[i].type.id] = M.curBusiness.taxes.settings.types[i].type.name;
+            if( M.curTenant.taxes != null && M.curTenant.taxes.settings.types != null ) {
+                for(i in M.curTenant.taxes.settings.types) {
+                    this.edit.sections.price.fields.taxtype_id.options[M.curTenant.taxes.settings.types[i].type.id] = M.curTenant.taxes.settings.types[i].type.name;
                 }
             }
         } else {
@@ -138,15 +138,15 @@ function ciniki_events_prices() {
         //
         this.edit.sections.price.fields.available_to.flags = {'1':{'name':'Public'}};
         this.edit.sections.price.fields.webflags.flags = {'1':{'name':'Hidden'}};
-        if( (M.curBusiness.modules['ciniki.customers'].flags&0x02) > 0 ) {
+        if( (M.curTenant.modules['ciniki.customers'].flags&0x02) > 0 ) {
             this.edit.sections.price.fields.available_to.flags['6'] = {'name':'Members'};
             this.edit.sections.price.fields.webflags.flags['6'] = {'name':'Show Members Price'};
         }
-        if( (M.curBusiness.modules['ciniki.customers'].flags&0x10) > 0 ) {
+        if( (M.curTenant.modules['ciniki.customers'].flags&0x10) > 0 ) {
             this.edit.sections.price.fields.available_to.flags['7'] = {'name':'Dealers'};
             this.edit.sections.price.fields.webflags.flags['7'] = {'name':'Show Dealers Price'};
         }
-        if( (M.curBusiness.modules['ciniki.customers'].flags&0x100) > 0 ) {
+        if( (M.curTenant.modules['ciniki.customers'].flags&0x100) > 0 ) {
             this.edit.sections.price.fields.available_to.flags['8'] = {'name':'Distributors'};
             this.edit.sections.price.fields.webflags.flags['8'] = {'name':'Show Distributors Price'};
         }

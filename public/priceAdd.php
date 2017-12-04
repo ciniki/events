@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to add the file to.
+// tnid:         The ID of the tenant to add the file to.
 // event_id:            The ID of the event the file is attached to.
 // 
 // Returns
@@ -21,7 +21,7 @@ function ciniki_events_priceAdd(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event'),
         'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'),
         'available_to'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'1', 'name'=>'Available To'),
@@ -44,10 +44,10 @@ function ciniki_events_priceAdd(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.priceAdd'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['tnid'], 'ciniki.events.priceAdd'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -56,6 +56,6 @@ function ciniki_events_priceAdd(&$ciniki) {
     // Add the price to the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    return ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.events.price', $args);
+    return ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.events.price', $args);
 }
 ?>

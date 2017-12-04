@@ -27,10 +27,10 @@ function ciniki_events_registrations() {
             case 1: return '<span class="maintext">' + d.registration.num_tickets + '</span>';
             case 2: 
                 var txt = '';
-                if( (M.curBusiness.modules['ciniki.events'].flags&0x04)>0 ) {
+                if( (M.curTenant.modules['ciniki.events'].flags&0x04)>0 ) {
                     txt += '<span class="maintext">' + d.registration.status_text + '</span>';
                 } 
-                if( M.curBusiness.modules['ciniki.sapos'] != null ) {
+                if( M.curTenant.modules['ciniki.sapos'] != null ) {
                     if( txt != '' ) {
                         txt += '<span class="subtext">' + d.registration.invoice_status_text + '</span>';
                     } else {
@@ -49,7 +49,7 @@ function ciniki_events_registrations() {
     this.menu.open = function(cb, eid) {
         this.data = {};
         if( eid != null ) { this.event_id = eid; }
-        M.api.getJSONCb('ciniki.events.registrationList', {'business_id':M.curBusinessID, 'event_id':this.event_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.events.registrationList', {'tnid':M.curTenantID, 'event_id':this.event_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -60,7 +60,7 @@ function ciniki_events_registrations() {
             } else {
                 M.ciniki_events_registrations.menu.sections.registrations.headerValues = null;
             }
-            if( M.curBusiness.modules['ciniki.sapos'] != null || (M.curBusiness.modules['ciniki.events'].flags&0x04) > 0 ) {
+            if( M.curTenant.modules['ciniki.sapos'] != null || (M.curTenant.modules['ciniki.events'].flags&0x04) > 0 ) {
                 M.ciniki_events_registrations.menu.sections.registrations.num_cols = 3;
             } else {
                 M.ciniki_events_registrations.menu.sections.registrations.num_cols = 2;
@@ -70,7 +70,7 @@ function ciniki_events_registrations() {
         });
     };
     this.menu.excel = function() {
-        M.api.openFile('ciniki.events.eventRegistrations', {'business_id':M.curBusinessID, 'output':'excel', 'event_id':this.event_id});
+        M.api.openFile('ciniki.events.eventRegistrations', {'tnid':M.curTenantID, 'output':'excel', 'event_id':this.event_id});
     }
     this.menu.addButton('add', 'Add', 'M.ciniki_events_registrations.edit.addCustomer(\'M.ciniki_events_registrations.menu.open();\',M.ciniki_events_registrations.menu.event_id);');
     this.menu.addClose('Back');
@@ -114,7 +114,7 @@ function ciniki_events_registrations() {
         };  
     this.edit.fieldValue = function(s, i, d) { return this.data[i]; }
     this.edit.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.events.registrationHistory', 'args':{'business_id':M.curBusinessID, 
+        return {'method':'ciniki.events.registrationHistory', 'args':{'tnid':M.curTenantID, 
             'registration_id':this.registration_id, 'event_id':this.event_id, 'field':i}};
     }
     this.edit.sectionData = function(s) {
@@ -151,7 +151,7 @@ function ciniki_events_registrations() {
         // Check if this is editing a existing registration or adding a new one
         if( this.registration_id > 0 ) {
             this.sections._buttons.buttons.delete.visible = 'yes';
-            M.api.getJSONCb('ciniki.events.registrationGet', {'business_id':M.curBusinessID, 
+            M.api.getJSONCb('ciniki.events.registrationGet', {'tnid':M.curTenantID, 
                 'registration_id':this.registration_id, 'customer':'yes', 'invoice':'yes'}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -161,15 +161,15 @@ function ciniki_events_registrations() {
                     p.data = rsp.registration;
                     p.event_id = rsp.registration.event_id;
                     p.customer_id = rsp.registration.customer_id;
-                    p.sections.invoice.visible=(M.curBusiness.modules['ciniki.sapos']!=null)?'yes':'no';
-                    p.sections._buttons.buttons.saveandinvoice.visible=(M.curBusiness.modules['ciniki.sapos']!=null&&rsp.registration.invoice_id==0)?'yes':'no';
+                    p.sections.invoice.visible=(M.curTenant.modules['ciniki.sapos']!=null)?'yes':'no';
+                    p.sections._buttons.buttons.saveandinvoice.visible=(M.curTenant.modules['ciniki.sapos']!=null&&rsp.registration.invoice_id==0)?'yes':'no';
                     p.event_id = rsp.registration.event_id;
                     p.refresh();
                     p.show(cb);
                 });
         } else if( this.customer_id > 0 ) {
             this.sections._buttons.buttons.delete.visible = 'no';
-            M.api.getJSONCb('ciniki.customers.customerDetails', {'business_id':M.curBusinessID, 
+            M.api.getJSONCb('ciniki.customers.customerDetails', {'tnid':M.curTenantID, 
                 'customer_id':this.customer_id, 'phones':'yes', 'emails':'yes'}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -177,7 +177,7 @@ function ciniki_events_registrations() {
                     }
                     var p = M.ciniki_events_registrations.edit;
                     p.data = {'customer_details':rsp.details};
-                    p.sections._buttons.buttons.saveandinvoice.visible = (M.curBusiness.modules['ciniki.sapos']!=null)?'yes':'no';
+                    p.sections._buttons.buttons.saveandinvoice.visible = (M.curTenant.modules['ciniki.sapos']!=null)?'yes':'no';
                     p.refresh();
                     p.show(cb);
                 });
@@ -192,7 +192,7 @@ function ciniki_events_registrations() {
             }
             if( c != '' ) {
                 M.api.postJSONCb('ciniki.events.registrationUpdate', 
-                    {'business_id':M.curBusinessID, 
+                    {'tnid':M.curTenantID, 
                     'registration_id':M.ciniki_events_registrations.edit.registration_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
@@ -216,7 +216,7 @@ function ciniki_events_registrations() {
         } else {
             var c = this.serializeForm('yes');
             M.api.postJSONCb('ciniki.events.registrationAdd', 
-                {'business_id':M.curBusinessID, 'event_id':this.event_id,
+                {'tnid':M.curTenantID, 'event_id':this.event_id,
                     'customer_id':this.customer_id}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -233,7 +233,7 @@ function ciniki_events_registrations() {
     };
     this.edit.remove = function() {
         if( confirm("Are you sure you want to remove this registration?") ) {
-            M.api.getJSONCb('ciniki.events.registrationDelete', {'business_id':M.curBusinessID, 'registration_id':this.registration_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.events.registrationDelete', {'tnid':M.curTenantID, 'registration_id':this.registration_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -247,7 +247,7 @@ function ciniki_events_registrations() {
             this.customer_id = cid;
         }
         if( this.customer_id > 0 ) {
-            M.api.getJSONCb('ciniki.customers.customerDetails', {'business_id':M.curBusinessID, 'customer_id':this.customer_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.customers.customerDetails', {'tnid':M.curTenantID, 'customer_id':this.customer_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -294,7 +294,7 @@ function ciniki_events_registrations() {
         if( cid != null ) { this.customer_id = cid; }
         if( rid != null ) { this.registration_id = rid; }
         if( quantity != null ) { this.quantity = quantity; }
-        M.api.getJSONCb('ciniki.events.eventPriceList', {'business_id':M.curBusinessID, 'event_id':this.event_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.events.eventPriceList', {'tnid':M.curTenantID, 'event_id':this.event_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -355,7 +355,7 @@ function ciniki_events_registrations() {
         args = {};
         if( aG != null ) { args = eval(aG); }
 
-        this.edit.sections.registration.fields.status.active = (M.curBusiness.modules['ciniki.events'].flags&0x04)>0?'yes':'no';
+        this.edit.sections.registration.fields.status.active = (M.curTenant.modules['ciniki.events'].flags&0x04)>0?'yes':'no';
 
         //
         // Create the app container if it doesn't exist, and clear it out

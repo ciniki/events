@@ -16,7 +16,7 @@ function ciniki_events_dbIntegrityCheck($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'fix'=>array('required'=>'no', 'default'=>'no', 'name'=>'Fix Problems'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -25,10 +25,10 @@ function ciniki_events_dbIntegrityCheck($ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id as owner, or sys admin
+    // Check access to tnid as owner, or sys admin
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.dbIntegrityCheck', 0);
+    $rc = ciniki_events_checkAccess($ciniki, $args['tnid'], 'ciniki.events.dbIntegrityCheck', 0);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -54,7 +54,7 @@ function ciniki_events_dbIntegrityCheck($ciniki) {
         // Check any references for the objects
         //
         foreach($objects as $o => $obj) {
-            $rc = ciniki_core_objectRefFix($ciniki, $args['business_id'], 'ciniki.events.'.$o, 0x04);
+            $rc = ciniki_core_objectRefFix($ciniki, $args['tnid'], 'ciniki.events.'.$o, 0x04);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -63,7 +63,7 @@ function ciniki_events_dbIntegrityCheck($ciniki) {
         //
         // Update the history for ciniki_events
         //
-        $rc = ciniki_core_dbFixTableHistory($ciniki, 'ciniki.events', $args['business_id'],
+        $rc = ciniki_core_dbFixTableHistory($ciniki, 'ciniki.events', $args['tnid'],
             'ciniki_events', 'ciniki_event_history', 
             array('uuid', 'name', 'url', 'description', 'start_date', 'end_date'));
         if( $rc['stat'] != 'ok' ) {
@@ -73,7 +73,7 @@ function ciniki_events_dbIntegrityCheck($ciniki) {
         //
         // Update the history for ciniki_event_files
         //
-        $rc = ciniki_core_dbFixTableHistory($ciniki, 'ciniki.events', $args['business_id'],
+        $rc = ciniki_core_dbFixTableHistory($ciniki, 'ciniki.events', $args['tnid'],
             'ciniki_event_files', 'ciniki_event_history', 
             array('uuid', 'extension', 'name', 'permalink', 'webflags', 'description', 'org_filename', 'publish_date'));
         if( $rc['stat'] != 'ok' ) {

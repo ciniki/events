@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_events_web_calendarsWebItems($ciniki, $settings, $business_id, $args) {
+function ciniki_events_web_calendarsWebItems($ciniki, $settings, $tnid, $args) {
 
     if( !isset($args['ltz_start']) || !is_a($args['ltz_start'], 'DateTime') ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.65', 'msg'=>'Invalid start date'));
@@ -21,10 +21,10 @@ function ciniki_events_web_calendarsWebItems($ciniki, $settings, $business_id, $
     $sdt = $args['ltz_start'];
     $edt = $args['ltz_end'];
 
-    if( isset($ciniki['business']['module_pages']['ciniki.events']['base_url']) ) {
-        $base_url = $ciniki['business']['module_pages']['ciniki.events']['base_url'];
-    } elseif( isset($ciniki['business']['module_pages']['ciniki.events.upcoming']['base_url']) ) {
-        $base_url = $ciniki['business']['module_pages']['ciniki.events.upcoming']['base_url'];
+    if( isset($ciniki['tenant']['module_pages']['ciniki.events']['base_url']) ) {
+        $base_url = $ciniki['tenant']['module_pages']['ciniki.events']['base_url'];
+    } elseif( isset($ciniki['tenant']['module_pages']['ciniki.events.upcoming']['base_url']) ) {
+        $base_url = $ciniki['tenant']['module_pages']['ciniki.events.upcoming']['base_url'];
     } else {
         $base_url = '/events';
     }
@@ -72,7 +72,7 @@ function ciniki_events_web_calendarsWebItems($ciniki, $settings, $business_id, $
         . "ciniki_events.description, "
         . "ciniki_events.primary_image_id "
         . "FROM ciniki_events "
-        . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND (ciniki_events.flags&0x01) = 0x01 "
         // Event has to start or end between the dates for the calendar
         . "AND (("

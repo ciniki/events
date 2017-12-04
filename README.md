@@ -1,7 +1,7 @@
-Ciniki - Small Business Management Platform
+Ciniki - Multitenant Cloud Platform
 ===========================================
 
-The Events module stores information about events the business will be 
+The Events module stores information about events the tenant will be 
 associated with.  These events will be displayed in the web module.
 
 License

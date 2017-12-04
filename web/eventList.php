@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_events_web_eventList($ciniki, $settings, $business_id, $args) {
+function ciniki_events_web_eventList($ciniki, $settings, $tnid, $args) {
 
     $type_strsql = '';
     if( isset($args['type']) && $args['type'] == 'past' ) {
@@ -48,21 +48,21 @@ function ciniki_events_web_eventList($ciniki, $settings, $business_id, $args) {
         $strsql .= "FROM ciniki_event_tags "
             . "LEFT JOIN ciniki_events ON ("
                 . "ciniki_event_tags.event_id = ciniki_events.id "
-                . "AND ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND (ciniki_events.flags&0x01) = 0x01 "
                 . $type_strsql
                 . ") "
             . "LEFT JOIN ciniki_event_images ON ("
                 . "ciniki_events.id = ciniki_event_images.event_id "
-                . "AND ciniki_event_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_event_images.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND (ciniki_event_images.webflags&0x01) = 0 " // public images
                 . ") "
             . "LEFT JOIN ciniki_event_files ON ("
                 . "ciniki_events.id = ciniki_event_files.event_id "
-                . "AND ciniki_event_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_event_files.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND (ciniki_event_files.webflags&0x01) = 0 " // public files
                 . ") "
-            . "WHERE ciniki_event_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_event_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_event_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
             . "AND ciniki_event_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['tag_permalink']) . "' "
             . "";
@@ -70,15 +70,15 @@ function ciniki_events_web_eventList($ciniki, $settings, $business_id, $args) {
         $strsql .= "FROM ciniki_events "
             . "LEFT JOIN ciniki_event_images ON ("
                 . "ciniki_events.id = ciniki_event_images.event_id "
-                . "AND ciniki_event_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_event_images.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND (ciniki_event_images.webflags&0x01) = 0 " // public images
                 . ") "
             . "LEFT JOIN ciniki_event_files ON ("
                 . "ciniki_events.id = ciniki_event_files.event_id "
-                . "AND ciniki_event_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_event_files.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND (ciniki_event_files.webflags&0x01) = 0 " // public files
                 . ") "
-            . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND (ciniki_events.flags&0x01) = 0x01 "
             . $type_strsql
             . "";

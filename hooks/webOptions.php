@@ -8,7 +8,7 @@
 // ---------
 // ciniki:
 // settings:        The web settings structure.
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // args:            The possible arguments for posts
 //
@@ -16,12 +16,12 @@
 // Returns
 // -------
 //
-function ciniki_events_hooks_webOptions(&$ciniki, $business_id, $args) {
+function ciniki_events_hooks_webOptions(&$ciniki, $tnid, $args) {
 
     //
     // Check to make sure the module is enabled
     //
-    if( !isset($ciniki['business']['modules']['ciniki.events']) ) {
+    if( !isset($ciniki['tenant']['modules']['ciniki.events']) ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.2', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
 
@@ -29,7 +29,7 @@ function ciniki_events_hooks_webOptions(&$ciniki, $business_id, $args) {
     // Get the settings from the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'business_id', $business_id, 'ciniki.web', 'settings', 'page-events');
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'tnid', $tnid, 'ciniki.web', 'settings', 'page-events');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -100,7 +100,7 @@ function ciniki_events_hooks_webOptions(&$ciniki, $business_id, $args) {
     //
     // Categories enabled
     //
-    if( ($ciniki['business']['modules']['ciniki.events']['flags']&0x10) > 0 ) {
+    if( ($ciniki['tenant']['modules']['ciniki.events']['flags']&0x10) > 0 ) {
         $options[] = array(
             'label'=>'Display Categories',
             'setting'=>'page-events-categories-display', 

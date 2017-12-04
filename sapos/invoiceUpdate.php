@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_events_sapos_invoiceUpdate($ciniki, $business_id, $invoice_id, $item) {
+function ciniki_events_sapos_invoiceUpdate($ciniki, $tnid, $invoice_id, $item) {
 
     //
     // An event was added to an invoice item, get the details and see if we need to 
@@ -22,7 +22,7 @@ function ciniki_events_sapos_invoiceUpdate($ciniki, $business_id, $invoice_id, $
         //
         $strsql = "SELECT id, event_id, customer_id, num_tickets "
             . "FROM ciniki_event_registrations "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND id = '" . ciniki_core_dbQuote($ciniki, $item['object_id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'registration');
@@ -39,7 +39,7 @@ function ciniki_events_sapos_invoiceUpdate($ciniki, $business_id, $invoice_id, $
         //
         $strsql = "SELECT id, customer_id "
             . "FROM ciniki_sapos_invoices "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND id = '" . ciniki_core_dbQuote($ciniki, $invoice_id) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.sapos', 'invoice');
@@ -56,7 +56,7 @@ function ciniki_events_sapos_invoiceUpdate($ciniki, $business_id, $invoice_id, $
         //
         if( $registration['customer_id'] != $invoice['customer_id'] ) {
             $reg_args = array('customer_id'=>$invoice['customer_id']);
-            $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.events.registration', $registration['id'], $reg_args, 0x04);
+            $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.events.registration', $registration['id'], $reg_args, 0x04);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }

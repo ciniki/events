@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_events_hooks_checkObjectUsed($ciniki, $business_id, $args) {
+function ciniki_events_hooks_checkObjectUsed($ciniki, $tnid, $args) {
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
 
@@ -28,7 +28,7 @@ function ciniki_events_hooks_checkObjectUsed($ciniki, $business_id, $args) {
         $strsql = "SELECT 'items', COUNT(*) "
             . "FROM ciniki_event_registrations "
             . "WHERE customer_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "";
         $rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.events', 'num');
         if( $rc['stat'] != 'ok' ) {
@@ -52,7 +52,7 @@ function ciniki_events_hooks_checkObjectUsed($ciniki, $business_id, $args) {
         $strsql = "SELECT COUNT(*) AS items "
             . "FROM ciniki_events "
             . "WHERE primary_image_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "";
         $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.events', 'num');
         if( $rc['stat'] != 'ok' ) {
@@ -68,7 +68,7 @@ function ciniki_events_hooks_checkObjectUsed($ciniki, $business_id, $args) {
         $strsql = "SELECT COUNT(*) AS items "
             . "FROM ciniki_event_images "
             . "WHERE image_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "";
         $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.events', 'num');
         if( $rc['stat'] != 'ok' ) {

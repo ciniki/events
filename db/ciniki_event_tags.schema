@@ -7,7 +7,7 @@
 # -------
 # id:               The ID of the tag.
 # uuid:             The Universal Unique ID for the tag.
-# business_id:      The ID of the business the blog post is attached to.
+# tnid:             The ID of the tenant the blog post is attached to.
 #
 # event_id:         The ID of the event.
 #
@@ -28,7 +28,7 @@
 create table ciniki_event_tags (
     id bigint not null auto_increment,
     uuid char(36) not null,
-    business_id int not null,
+    tnid int not null,
     event_id int not null,
     tag_type tinyint not null,
     tag_name varchar(150) not null,
@@ -37,5 +37,5 @@ create table ciniki_event_tags (
     last_updated datetime not null,
     primary key (id),
     unique index (event_id, tag_type, tag_name),
-    index sync (business_id, uuid, last_updated)
+    index sync (tnid, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

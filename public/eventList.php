@@ -2,14 +2,14 @@
 //
 // Description
 // -----------
-// This method will return the list of events for a business.  It is restricted
-// to business owners and sysadmins.
+// This method will return the list of events for a tenant.  It is restricted
+// to tenant owners and sysadmins.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // Returns
 // -------
@@ -24,7 +24,7 @@ function ciniki_events_eventList($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'tag_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Type'), 
         'tag_permalink'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Permalink'), 
         'categories'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Categories'), 
@@ -35,10 +35,10 @@ function ciniki_events_eventList($ciniki) {
     $args = $rc['args'];
     
     //  
-    // Check access to business_id as owner, or sys admin. 
+    // Check access to tnid as owner, or sys admin. 
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.eventList');
+    $rc = ciniki_events_checkAccess($ciniki, $args['tnid'], 'ciniki.events.eventList');
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -63,10 +63,10 @@ function ciniki_events_eventList($ciniki) {
             . "FROM ciniki_event_tags "
             . "LEFT JOIN ciniki_events ON ("
                 . "ciniki_event_tags.event_id = ciniki_events.id "
-                . "AND ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
                 . ") "
-            . "WHERE ciniki_event_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_event_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_event_tags.tag_type = '10' "
             . "GROUP BY ciniki_event_tags.permalink "
             . "ORDER BY ciniki_event_tags.tag_name COLLATE latin1_general_cs "
@@ -97,10 +97,10 @@ function ciniki_events_eventList($ciniki) {
             . "FROM ciniki_events "
             . "LEFT JOIN ciniki_event_tags ON ("
                 . "ciniki_events.id = ciniki_event_tags.event_id "
-                . "AND ciniki_event_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND ciniki_event_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . "AND ciniki_event_tags.tag_type = '10' "
                 . ") "
-            . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
 //          . "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
             . "AND ISNULL(tag_name) "
             . "GROUP BY tag_name "
@@ -134,11 +134,11 @@ function ciniki_events_eventList($ciniki) {
             . "DATE_FORMAT(ciniki_events.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
             . "DATE_FORMAT(ciniki_events.end_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS end_date "
             . "FROM ciniki_event_tags, ciniki_events "
-            . "WHERE ciniki_event_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_event_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_event_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
             . "AND ciniki_event_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['tag_permalink']) . "' "
             . "AND ciniki_event_tags.event_id = ciniki_events.id "
-            . "AND ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
             . "ORDER BY ciniki_events.start_date ASC "
             . "";
@@ -153,9 +153,9 @@ function ciniki_events_eventList($ciniki) {
             . "LEFT JOIN ciniki_event_tags ON ("
                 . "ciniki_events.id = ciniki_event_tags.event_id "
                 . "AND ciniki_event_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
-                . "AND ciniki_event_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND ciniki_event_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . ") "
-            . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
             . "AND ISNULL(tag_name) "
             . "ORDER BY ciniki_events.start_date ASC "
@@ -165,7 +165,7 @@ function ciniki_events_eventList($ciniki) {
             . "DATE_FORMAT(start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
             . "DATE_FORMAT(end_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS end_date "
             . "FROM ciniki_events "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND (end_date >= DATE(NOW()) OR start_date >= DATE(NOW())) "
             . "ORDER BY ciniki_events.start_date ASC "
             . "";
@@ -189,11 +189,11 @@ function ciniki_events_eventList($ciniki) {
             . "DATE_FORMAT(ciniki_events.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
             . "DATE_FORMAT(ciniki_events.end_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS end_date "
             . "FROM ciniki_event_tags, ciniki_events "
-            . "WHERE ciniki_event_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_event_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_event_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
             . "AND ciniki_event_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['tag_permalink']) . "' "
             . "AND ciniki_event_tags.event_id = ciniki_events.id "
-            . "AND ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ((ciniki_events.end_date > ciniki_events.start_date AND ciniki_events.end_date < DATE(NOW())) "
                 . "OR (ciniki_events.end_date <= ciniki_events.start_date AND ciniki_events.start_date <= DATE(NOW())) "
                 . ") "
@@ -210,9 +210,9 @@ function ciniki_events_eventList($ciniki) {
             . "LEFT JOIN ciniki_event_tags ON ("
                 . "ciniki_events.id = ciniki_event_tags.event_id "
                 . "AND ciniki_event_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
-                . "AND ciniki_event_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND ciniki_event_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . ") "
-            . "WHERE ciniki_events.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ((ciniki_events.end_date > ciniki_events.start_date AND ciniki_events.end_date < DATE(NOW())) "
                 . "OR (ciniki_events.end_date <= ciniki_events.start_date AND ciniki_events.start_date <= DATE(NOW())) "
                 . ") "
@@ -224,7 +224,7 @@ function ciniki_events_eventList($ciniki) {
             . "DATE_FORMAT(start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
             . "DATE_FORMAT(end_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS end_date "
             . "FROM ciniki_events "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ((ciniki_events.end_date > ciniki_events.start_date AND ciniki_events.end_date < DATE(NOW())) "
                 . "OR (ciniki_events.end_date <= ciniki_events.start_date AND ciniki_events.start_date <= DATE(NOW())) "
                 . ") "

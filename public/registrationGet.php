@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the event is attached to.
+// tnid:         The ID of the tenant the event is attached to.
 // registration_id:     The ID of the registration to get the details for.
 // 
 // Returns
@@ -20,7 +20,7 @@ function ciniki_events_registrationGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'registration_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Registration'), 
         'customer'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Customer'),
         'invoice'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Invoice'),
@@ -32,10 +32,10 @@ function ciniki_events_registrationGet($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'checkAccess');
-    $rc = ciniki_events_checkAccess($ciniki, $args['business_id'], 'ciniki.events.registrationGet'); 
+    $rc = ciniki_events_checkAccess($ciniki, $args['tnid'], 'ciniki.events.registrationGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -53,7 +53,7 @@ function ciniki_events_registrationGet($ciniki) {
         . "ciniki_event_registrations.customer_notes, "
         . "ciniki_event_registrations.notes "
         . "FROM ciniki_event_registrations "
-        . "WHERE ciniki_event_registrations.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_event_registrations.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_event_registrations.id = '" . ciniki_core_dbQuote($ciniki, $args['registration_id']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
@@ -74,7 +74,7 @@ function ciniki_events_registrationGet($ciniki) {
     //
     if( isset($args['customer']) && $args['customer'] == 'yes' && $registration['customer_id'] > 0 ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'customers', 'private', 'customerDetails');
-        $rc = ciniki_customers__customerDetails($ciniki, $args['business_id'], $registration['customer_id'], 
+        $rc = ciniki_customers__customerDetails($ciniki, $args['tnid'], $registration['customer_id'], 
             array('phones'=>'yes', 'emails'=>'yes', 'addresses'=>'yes', 'subscriptions'=>'no'));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
@@ -87,7 +87,7 @@ function ciniki_events_registrationGet($ciniki) {
     //
     if( isset($args['invoice']) && $args['invoice'] == 'yes' && $registration['invoice_id'] > 0 ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'invoiceLoad');
-        $rc = ciniki_sapos_invoiceLoad($ciniki, $args['business_id'], $registration['invoice_id']);
+        $rc = ciniki_sapos_invoiceLoad($ciniki, $args['tnid'], $registration['invoice_id']);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
