@@ -30,6 +30,13 @@ function ciniki_events_web_calendarsWebItems($ciniki, $settings, $tnid, $args) {
     }
 
     //
+    // Check if this modules items are to be included in the calendar
+    //
+    if( isset($settings['ciniki-events-calendar-include']) && $settings['ciniki-events-calendar-include'] == 'no' ) {
+        return array('stat'=>'ok');
+    }
+
+    //
     // Check if colours specified
     //
     $style = '';

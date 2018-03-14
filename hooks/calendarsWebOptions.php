@@ -29,6 +29,16 @@ function ciniki_events_hooks_calendarsWebOptions(&$ciniki, $tnid, $args) {
 
     $options = array();
     $options[] = array(
+        'label'=>'Include Events',
+        'setting'=>'ciniki-events-calendar-include',
+        'type'=>'toggle',
+        'value'=>(isset($settings['ciniki-events-calendar-include'])?$settings['ciniki-events-calendar-include']:'yes'),
+        'toggles'=>array(
+            array('value'=>'no', 'label'=>'No'),
+            array('value'=>'yes', 'label'=>'Yes'),
+            ),
+        );
+    $options[] = array(
         'label'=>'Event Title Prefix',
         'setting'=>'ciniki-events-prefix',
         'type'=>'text',
