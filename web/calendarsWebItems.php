@@ -80,7 +80,7 @@ function ciniki_events_web_calendarsWebItems($ciniki, $settings, $tnid, $args) {
         . "ciniki_events.primary_image_id "
         . "FROM ciniki_events "
         . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-        . "AND (ciniki_events.flags&0x01) = 0x01 "
+        . "AND (ciniki_events.flags&0x03) = 0x03 "
         // Event has to start or end between the dates for the calendar
         . "AND (("
             . "ciniki_events.start_date >= '" . ciniki_core_dbQuote($ciniki, $sdt->format('Y-m-d')) . "' "
