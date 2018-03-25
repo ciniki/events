@@ -80,7 +80,7 @@ function ciniki_events_eventGet($ciniki) {
     if( $args['event_id'] == 0 ) {
         $event = array('id'=>0,
             'name'=>'',
-            'flags'=>'1',
+            'flags'=>0x03,
             'url'=>'',
             'description'=>'',
             'num_tickets'=>0,

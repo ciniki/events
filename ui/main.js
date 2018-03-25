@@ -299,7 +299,8 @@ function ciniki_events_main() {
             'end_date':{'label':'End', 'type':'date'},
             'times':{'label':'Hours', 'type':'text'},
             'oidref':{'label':'Exhibition', 'active':'no', 'type':'select', 'options':{}},
-            'flags':{'label':'Options', 'type':'flags', 'flags':{'1':{'name':'Visible'}}},
+            'flags':{'label':'Website', 'type':'flags', 'flags':{'1':{'name':'Visible'}}},
+            'flags2':{'label':'Web Calendar', 'active':'no', 'type':'flagspiece', 'field':'flags', 'mask':0x02, 'flags':{'2':{'name':'Visible'}}},
             }}, 
         '_categories':{'label':'Categories', 'aside':'yes', 'active':'no', 'fields':{
             'categories':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':[], 'hint':'Enter a new category: '},
@@ -456,6 +457,11 @@ function ciniki_events_main() {
             this.edit.sections.general.fields.oidref.active = 'yes';
         } else {
             this.edit.sections.general.fields.oidref.active = 'no';
+        }
+        if( M.curTenant.modules['ciniki.calendars'] != null ) {
+            this.edit.sections.general.fields.flags2.active = 'yes';
+        } else {
+            this.edit.sections.general.fields.flags2.active = 'no';
         }
 
         //

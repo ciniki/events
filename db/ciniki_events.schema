@@ -7,39 +7,45 @@
 #
 # Fields
 # ------
-# id:               The ID assigned to the event.
-# uuid:             The Universal Unique ID.
-# tnid:             The tenant the event is attached to.
-# name:             The name for the event.
-# permalink:        The permalink for the URL to open the event.
+# id:                   The ID assigned to the event.
+# uuid:                 The Universal Unique ID.
+# tnid:                 The tenant the event is attached to.
 #
-# flags:            The options for the event.
+# name:                 The name for the event.
+# permalink:            The permalink for the URL to open the event.
 #
-# url:              The URL for more information on the event.
-# description:      The longer text description of the event (optional).
+# flags:                The options for the event.
+#
+#                           0x01 - Visible, show the event on the website
+#                           0x02 - Calendar Visible, show the event in the calendar
+#                           0x04 - 
+#                           0x08 - 
+#
+# url:                  The URL for more information on the event.
+# description:          The longer text description of the event (optional).
 #
 #
-# num_tickets:      The number of tickets available for the event.
-# reg_flags:        The flags to control how registrations are handled.
+# num_tickets:          The number of tickets available for the event.
+# reg_flags:            The flags to control how registrations are handled.
 #
-#                    0x01 - Admin Registration enabled
-#                    0x02 - Online Registrations enabled
-#                    0x04 -
-#                    0x08 - 
+#                           0x01 - Admin Registration enabled
+#                           0x02 - Online Registrations enabled
+#                           0x04 - 
+#                           0x08 - 
 #
-# start_date:        The date of the start of the event.
-# end_date:            The date of the end of the event.
-# times:            The times for the event. (optional)
+# start_date:           The date of the start of the event.
+# end_date:             The date of the end of the event.
+# times:                The times for the event. (optional)
 #
-# primary_image_id:    The ID of the image to show in listings and top of event page.
+# primary_image_id:     The ID of the image to show in listings and top of event page.
 #
-# long_description:    The full description of the event.
+# long_description:     The full description of the event.
 #
-# object:            The object to pull additional images from, eg: ciniki.artcatalog.place
-# object_id:        The ID of the object.
+# object:               The object to pull additional images from, eg: ciniki.artcatalog.place
+# object_id:            The ID of the object.
 #
-# date_added:        The UTC date and time the record was added.
-# last_updated:        The UTC date and time the record was last updated.
+# date_added:           The UTC date and time the record was added.
+# last_updated:         The UTC date and time the record was last updated.
 #
 create table ciniki_events (
     id int not null auto_increment,
