@@ -52,7 +52,15 @@ function ciniki_events_hooks_webIndexObject($ciniki, $tnid, $args) {
             }
         }
 
-        $strsql = "SELECT id, name, permalink, flags, start_date, end_date, "
+        $strsql = "SELECT id, name, permalink, flags, times, "
+            . "DATE_FORMAT(ciniki_events.start_date, '%a %b %e, %Y') AS start_date, "
+            . "DATE_FORMAT(ciniki_events.end_date, '%a %b %e, %Y') AS end_date, "
+            . "DATE_FORMAT(ciniki_events.start_date, '%M') AS start_month, "
+            . "DATE_FORMAT(ciniki_events.start_date, '%D') AS start_day, "
+            . "DATE_FORMAT(ciniki_events.start_date, '%Y') AS start_year, "
+            . "IF(ciniki_events.end_date = '0000-00-00', '', DATE_FORMAT(ciniki_events.end_date, '%M')) AS end_month, "
+            . "IF(ciniki_events.end_date = '0000-00-00', '', DATE_FORMAT(ciniki_events.end_date, '%D')) AS end_day, "
+            . "IF(ciniki_events.end_date = '0000-00-00', '', DATE_FORMAT(ciniki_events.end_date, '%Y')) AS end_year, "
             . "primary_image_id, description, long_description "
             . "FROM ciniki_events "
             . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
@@ -65,29 +73,39 @@ function ciniki_events_hooks_webIndexObject($ciniki, $tnid, $args) {
         if( !isset($rc['item']) ) {
             return array('stat'=>'noexist', 'err'=>array('code'=>'ciniki.events.71', 'msg'=>'Object not found'));
         }
+        $item = $rc['item'];
 
         //
         // Check if item is visible on website
         //
-        if( ($rc['item']['flags']&0x01) != 0x01 ) {
+        if( ($item['flags']&0x01) != 0x01 ) {
             return array('stat'=>'ok');
         }
+        //
+        // Process dates
+        $meta = '';
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'processDateRange');
+        $rc = ciniki_core_processDateRange($ciniki, $item);
+        if( $rc['stat'] == 'ok' && isset($rc['dates']) && $rc['dates'] != '' ) {
+            $meta = $rc['dates'] . ($event['times'] != '' ? ' ' . $event['items'] : '');
+        }
+
         $object = array(
             'label'=>'Events',
-            'title'=>$rc['item']['name'],
+            'title'=>$item['name'],
             'subtitle'=>'',
-            'meta'=>'',
-            'primary_image_id'=>$rc['item']['primary_image_id'],
-            'synopsis'=>$rc['item']['description'],
+            'meta'=>$meta,
+            'primary_image_id'=>$item['primary_image_id'],
+            'synopsis'=>$item['description'],
             'object'=>'ciniki.events.event',
-            'object_id'=>$rc['item']['id'],
-            'primary_words'=>$rc['item']['name'],
-            'secondary_words'=>$rc['item']['description'],
-            'tertiary_words'=>$rc['item']['long_description'],
+            'object_id'=>$item['id'],
+            'primary_words'=>$item['name'],
+            'secondary_words'=>$item['description'],
+            'tertiary_words'=>$item['long_description'],
             'weight'=>20000,
             'url'=>$base_url 
                 . (isset($category_permalink) ? '/' . $category_permalink : '')
-                . '/' . $rc['item']['permalink']
+                . '/' . $item['permalink']
             );
         return array('stat'=>'ok', 'object'=>$object);
     }
