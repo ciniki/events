@@ -87,7 +87,7 @@ function ciniki_events_hooks_webIndexObject($ciniki, $tnid, $args) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'processDateRange');
         $rc = ciniki_core_processDateRange($ciniki, $item);
         if( $rc['stat'] == 'ok' && isset($rc['dates']) && $rc['dates'] != '' ) {
-            $meta = $rc['dates'] . ($event['times'] != '' ? ' ' . $event['items'] : '');
+            $meta = $rc['dates'] . ($item['times'] != '' ? ' ' . $item['times'] : '');
         }
 
         $object = array(
