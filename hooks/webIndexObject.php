@@ -37,7 +37,7 @@ function ciniki_events_hooks_webIndexObject($ciniki, $tnid, $args) {
         //
         if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.events', 0x10) ) {
             $strsql = "SELECT tag_type, permalink "
-                . "FROM ciniki_events_tags "
+                . "FROM ciniki_event_tags "
                 . "WHERE event_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
                 . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND tag_type = 10 "
