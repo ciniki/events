@@ -436,19 +436,31 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                 $num_upcoming = count($rc['events']);
             }
             if( $display_format == 'imagelist' ) {
-                // $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'title'=>'Upcoming ' . $module_title, 'base_url'=>$args['base_url'], 'list'=>$rc['events']);
-                $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'list'=>$rc['events'],
-                    'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+                if( $num_current > 0 ) {
+                    $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'title'=>'Upcoming ' . $module_title, 'base_url'=>$args['base_url'], 'list'=>$rc['events']);
+                } else {
+                    $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'list'=>$rc['events'],
+                        'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+                }
             } else {
                 // $page['blocks'][] = array('type'=>'cilist', 'section'=>'upcoming-events', 'title'=>'Upcoming ' . $module_title, 'base_url'=>$args['base_url'], 'categories'=>$rc['events']);
-                $page['blocks'][] = array('type'=>'cilist', 'section'=>'upcoming-events', 'base_url'=>$args['base_url'], 'categories'=>$rc['events'],
-                    'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+                if( $num_current > 0 ) {
+                    $page['blocks'][] = array('type'=>'cilist', 'section'=>'upcoming-events', 'title'=>'Upcoming ' . $module_title, 'base_url'=>$args['base_url'], 'categories'=>$rc['events'],
+                        'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+                } else {
+                    $page['blocks'][] = array('type'=>'cilist', 'section'=>'upcoming-events', 'base_url'=>$args['base_url'], 'categories'=>$rc['events'],
+                        'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+                }
             }
         } elseif( isset($settings['page-events-single-list']) && $settings['page-events-single-list'] == 'yes' ) {
             $page['blocks'][] = array('type'=>'message', 'section'=>'upcoming-events', 'content'=>"Currently no " . strtolower($module_title) . ".");
         } else {
-            //$page['blocks'][] = array('type'=>'message', 'section'=>'upcoming-events', 'title'=>'Upcoming ' . $module_title, 'content'=>"Currently no " . strtolower($module_title) . ".");
-            $page['blocks'][] = array('type'=>'message', 'section'=>'upcoming-events', 'content'=>"Currently no upcoming " . strtolower($module_title) . ".");
+            if( $num_current > 0 ) {
+                //$page['blocks'][] = array('type'=>'message', 'section'=>'upcoming-events', 'title'=>'Upcoming ' . $module_title, 'content'=>"Currently no " . strtolower($module_title) . ".");
+                $page['blocks'][] = array('type'=>'message', 'section'=>'upcoming-events', 'title'=>'Upcoming ' . $module_title, 'content'=>"Currently no upcoming " . strtolower($module_title) . ".");
+            } else {
+                $page['blocks'][] = array('type'=>'message', 'section'=>'upcoming-events', 'content'=>"Currently no upcoming " . strtolower($module_title) . ".");
+            }
         }
 
         //
