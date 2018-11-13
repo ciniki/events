@@ -17,8 +17,8 @@ function ciniki_events_registrations() {
             'addFn':'M.ciniki_events_registrations.edit.addCustomer(\'M.ciniki_events_registrations.menu.open();\',M.ciniki_events_registrations.menu.event_id);',
             },
         '_buttons':{'label':'', 'buttons':{
-//            'registrationspdf':{'label':'Class List (PDF)', 'fn':'M.ciniki_courses_registrations.offeringRegistrationsPDF(M.ciniki_courses_registrations.menu.offering_id);'},
-            'registrationsexcel':{'label':'Class List (Excel)', 'fn':'M.ciniki_events_registrations.menu.excel();'},
+//            'registrationspdf':{'label':'Registration List (PDF)', 'fn':'M.ciniki_courses_registrations.offeringRegistrationsPDF(M.ciniki_courses_registrations.menu.offering_id);'},
+            'registrationsexcel':{'label':'Registration List (Excel)', 'fn':'M.ciniki_events_registrations.menu.excel();'},
             }},
         };
     this.menu.cellValue = function(s, i, j, d) {
