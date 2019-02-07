@@ -34,6 +34,7 @@ function ciniki_events_priceAdd(&$ciniki) {
             'name'=>'Unit Discount Amount'),
         'unit_discount_percentage'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 
             'name'=>'Unit Discount Percentage'),
+        'unit_donation_amount'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Donation Portion'),
         'taxtype_id'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Tax Type'),
         'webflags'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Web Flags'),
         )); 

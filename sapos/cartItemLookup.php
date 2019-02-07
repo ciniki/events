@@ -32,6 +32,7 @@ function ciniki_events_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) {
             . "ciniki_event_prices.unit_amount, "
             . "ciniki_event_prices.unit_discount_amount, "
             . "ciniki_event_prices.unit_discount_percentage, "
+            . "ciniki_event_prices.unit_donation_amount, "
             . "ciniki_event_prices.taxtype_id "
             . "FROM ciniki_event_prices "
             . "LEFT JOIN ciniki_events ON ("
@@ -46,7 +47,7 @@ function ciniki_events_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) {
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
             array('container'=>'events', 'fname'=>'event_id',
                 'fields'=>array('event_id', 'price_id', 'price_name', 'description', 'reg_flags', 'num_tickets', 
-                    'available_to', 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id',
+                    'available_to', 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'unit_donation_amount', 'taxtype_id',
                     )),
             ));
         if( $rc['stat'] != 'ok' ) {
@@ -70,6 +71,13 @@ function ciniki_events_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) {
         }
 
         $item['flags'] = 0x20;
+
+        //
+        // Specify this item has a donation portion
+        //
+        if( $item['unit_donation_amount'] > 0 ) {
+            $item['flags'] |= 0x0800;
+        }
     
         //
         // Check the number of seats remaining

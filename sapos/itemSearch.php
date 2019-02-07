@@ -53,6 +53,7 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
         . "ciniki_event_prices.unit_amount, "
         . "ciniki_event_prices.unit_discount_amount, "
         . "ciniki_event_prices.unit_discount_percentage, "
+        . "ciniki_event_prices.unit_donation_amount, "
         . "ciniki_event_prices.taxtype_id "
         . "FROM ciniki_events "
         . "LEFT JOIN ciniki_event_prices ON (ciniki_events.id = ciniki_event_prices.event_id "
@@ -71,7 +72,7 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
             'fields'=>array('id', 'name', 'start_date')),
         array('container'=>'prices', 'fname'=>'price_id',
             'fields'=>array('id'=>'price_id', 'name'=>'price_name', 'unit_amount'=>'unit_amount', 
-                'unit_discount_amount', 'unit_discount_percentage',
+                'unit_discount_amount', 'unit_discount_percentage', 'unit_donation_amount',
                 'taxtype_id')),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -99,6 +100,9 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
                     'taxtype_id'=>$price['taxtype_id'], 
                     'notes'=>'',
                     );
+                if( $price['unit_donation_amount'] > 0 ) {
+                    $details['unit_donation_amount'] = $price['unit_donation_amount'];
+                }
                 if( $price['name'] != '' ) {
                     $details['description'] .= ' - ' . $price['name'];
                 }
@@ -130,6 +134,9 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
                 }
                 if( isset($price['unit_discount_percentage']) && $price['unit_discount_percentage'] != '' ) {
                     $details['unit_discount_percentage'] = $price['unit_discount_percentage'];
+                }
+                if( isset($price['unit_donation_amount']) && $price['unit_donation_amount'] > 0 ) {
+                    $details['unit_donation_amount'] = $price['unit_donation_amount'];
                 }
                 if( isset($price['taxtype_id']) && $price['taxtype_id'] != '' ) {
                     $details['taxtype_id'] = $price['taxtype_id'];

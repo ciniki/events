@@ -79,6 +79,7 @@ function ciniki_events_objects($ciniki) {
             'unit_amount'=>array(),
             'unit_discount_amount'=>array(),
             'unit_discount_percentage'=>array(),
+            'unit_donation_amount'=>array('name'=>'Donation Portion', 'default'=>0),
             'taxtype_id'=>array('ref'=>'ciniki.taxes.type'),
             'webflags'=>array(),
             ),
