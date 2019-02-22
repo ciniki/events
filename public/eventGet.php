@@ -229,14 +229,14 @@ function ciniki_events_eventGet($ciniki) {
             //
             // Get the price list for the event
             //
-            $strsql = "SELECT id, name, available_to, available_to AS available_to_text, unit_amount "
+            $strsql = "SELECT id, name, available_to, available_to AS available_to_text, unit_amount, webflags "
                 . "FROM ciniki_event_prices "
                 . "WHERE ciniki_event_prices.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
-                . "ORDER BY ciniki_event_prices.name "
+                . "ORDER BY ciniki_event_prices.name COLLATE latin1_general_cs "
                 . "";
             $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
                 array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
-                    'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount'),
+                    'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount', 'webflags' ),
                     'flags'=>array('available_to_text'=>$maps['prices']['available_to'])),
                 ));
             if( $rc['stat'] != 'ok' ) {
@@ -251,6 +251,9 @@ function ciniki_events_eventGet($ciniki) {
             } else {
                 $event['prices'] = array();
             }
+            uasort($event['prices'], function($a, $b) {
+                return strnatcmp($b['price']['name'], $a['price']['name']);
+                });
         }
 
         //

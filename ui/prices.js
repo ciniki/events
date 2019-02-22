@@ -23,6 +23,12 @@ function ciniki_events_prices() {
                 },
             'taxtype_id':{'label':'Taxes', 'active':'no', 'type':'select', 'options':{}},
             'webflags':{'label':'Web', 'type':'flags', 'toggle':'no', 'join':'yes', 'flags':{}},
+            'webflags2':{'label':'Individual Ticket', 'type':'flagtoggle', 'bit':0x02, 'field':'webflags', 'default':'no',
+                'visible':function() {return M.modFlagSet('ciniki.events', 0x08);},
+                },
+            'webflags3':{'label':'Sold Out', 'type':'flagtoggle', 'bit':0x04, 'field':'webflags', 'default':'no',
+                'visible':function() {return M.modFlagSet('ciniki.events', 0x08);},
+                },
             }},
         '_buttons':{'label':'', 'buttons':{
             'save':{'label':'Save', 'fn':'M.ciniki_events_prices.edit.save();'},

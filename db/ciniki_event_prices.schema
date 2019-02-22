@@ -18,7 +18,7 @@
 #
 #                           0x01 - Public - unregistered customers, registered customers, etc.
 #                           0x02 - Private (internal UI use only)
-#                           0x04 -
+#                           0x04 - 
 #                           0x08 - 
 #                           0x10 - Customers - must already exist in the database
 #                           0x20 - Members - must be member_status = 10 in customers
@@ -40,9 +40,13 @@
 # webflags:                 Flags for displaying the file on the website.
 #
 #                           0x01 - Hidden, Do now show the file on the website
+#                           0x02 - Individual Ticket, quantity locked at 1.
+#                           0x04 - Sold out
+#                           0x08
 #                           0x10 - Show Members price to the public.
 #                           0x20 - Show Dealers price to the public.
 #                           0x40 - Show Distributors price to the public.
+#                           0x80 - 
 #
 # date_added:               The UTC date and time the price was added.
 # last_updated:             The UTC date and time the price was last updated.

@@ -123,7 +123,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $tnid, $permalink) {
     } else {
         $price_flags = 0x01;
     }
-    $strsql = "SELECT id, name, available_to, unit_amount "
+    $strsql = "SELECT id, name, available_to, unit_amount, webflags "
         . "FROM ciniki_event_prices "
         . "WHERE ciniki_event_prices.event_id = '" . ciniki_core_dbQuote($ciniki, $event['id']) . "' "
         . "AND ciniki_event_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
@@ -133,7 +133,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $tnid, $permalink) {
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
         array('container'=>'prices', 'fname'=>'id',
-            'fields'=>array('price_id'=>'id', 'name', 'available_to', 'unit_amount')),
+            'fields'=>array('price_id'=>'id', 'name', 'available_to', 'unit_amount', 'webflags')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -155,10 +155,25 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $tnid, $permalink) {
             }
             $event['prices'][$pid]['unit_amount_display'] = numfmt_format_currency(
                 $intl_currency_fmt, $price['unit_amount'], $intl_currency);
+            // 
+            // Check if single ticket price
+            //
+            if( ($price['webflags']&0x02) == 0x02 ) {
+                $event['prices'][$pid]['limited_units'] = 'yes';
+                $event['prices'][$pid]['individual_ticket'] = 'yes';
+                $event['prices'][$pid]['units_available'] = 1;
+            }
+            if( ($price['webflags']&0x04) == 0x04 ) {
+                $event['prices'][$pid]['limited_units'] = 'yes';
+                $event['prices'][$pid]['units_available'] = 0;
+            }
         }
     } else {
         $event['prices'] = array();
     }
+    uasort($event['prices'], function($a, $b) {
+        return strnatcmp($a['name'], $b['name']);
+        });
 
     //
     // Get the links for the event

@@ -24,7 +24,47 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
     // create a registration for this event
     //
     if( $args['object'] == 'ciniki.events.event' ) {
-        $strsql = "SELECT id, name, reg_flags, num_tickets "
+        $strsql = "SELECT ciniki_events.id AS event_id, "
+            . "ciniki_events.name AS description, "
+            . "ciniki_events.reg_flags, "
+            . "ciniki_events.num_tickets, "
+            . "ciniki_event_prices.id AS price_id, "
+            . "ciniki_event_prices.name AS price_name, "
+            . "ciniki_event_prices.available_to, "
+            . "ciniki_event_prices.unit_amount, "
+            . "ciniki_event_prices.unit_discount_amount, "
+            . "ciniki_event_prices.unit_discount_percentage, "
+            . "ciniki_event_prices.unit_donation_amount, "
+            . "ciniki_event_prices.taxtype_id, "
+            . "ciniki_event_prices.webflags "
+            . "FROM ciniki_event_prices "
+            . "LEFT JOIN ciniki_events ON ("
+                . "ciniki_event_prices.event_id = ciniki_events.id "
+                . "AND ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+                . "AND ciniki_events.id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
+                . ") "
+            . "WHERE ciniki_event_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . "AND ciniki_event_prices.id = '" . ciniki_core_dbQuote($ciniki, $args['price_id']) . "' "
+            . "";
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
+        $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
+            array('container'=>'events', 'fname'=>'event_id',
+                'fields'=>array('id'=>'event_id', 'price_id', 'price_name', 'description', 'reg_flags', 'num_tickets', 
+                    'available_to', 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'unit_donation_amount', 
+                    'taxtype_id', 'webflags',
+                    )),
+            ));
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( !isset($rc['events']) || count($rc['events']) < 1 ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.44', 'msg'=>'No event found.'));      
+        }
+        $event = array_pop($rc['events']);
+        if( isset($event['price_name']) && $event['price_name'] != '' ) {
+            $event['description'] .= ' - ' . $event['price_name'];
+        }
+/*        $strsql = "SELECT id, name, reg_flags, num_tickets "
             . "FROM ciniki_events "
             . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
@@ -35,14 +75,14 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
         }
         if( !isset($rc['event']) ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.57', 'msg'=>'Unable to find event'));
-        }
-        $event = $rc['event'];
+        } 
+        $event = $rc['event']; */
         $item = array(
             'id'=>$event['id'],
             'name'=>$event['name'],
             'flags'=>0x08,          // Registration item
             );
-
+        
         //
         // If registrations online enabled, check the available tickets
         //
@@ -64,6 +104,20 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
                 $item['limited_units'] = 'yes';
                 $item['units_available'] = $event['tickets_available'];
             }
+           
+            //
+            // Check for individual tickets flag
+            //
+            if( ($event['webflags']&0x02) == 0x02 ) {
+                $item['limited_units'] = 'yes';
+                $item['units_available'] = 1;
+                $item['flags'] |= 0x08;
+            }
+            if( ($event['webflags']&0x04) == 0x04 ) {
+                $item['limited_units'] = 'yes';
+                $item['units_available'] = 0;
+            }
+
         }
 
         return array('stat'=>'ok', 'item'=>$item);

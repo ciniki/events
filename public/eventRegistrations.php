@@ -119,6 +119,32 @@ function ciniki_events_eventRegistrations($ciniki) {
         }
     }
 
+    if( $args['output'] == 'exceltickets' ) {
+        $rc = ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'templates', 'eventIndividualTickets');
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        $fn = $rc['function_call'];
+
+        $rc = $fn($ciniki, $args['tnid'], $args['event_id'], $tenant_details, $events_settings);
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+
+        $title = $rc['event']['name'];
+
+        $filename = preg_replace('/[^a-zA-Z0-9_]/', '', preg_replace('/ /', '_', $title));
+
+        if( isset($rc['excel']) ) {
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
+            header('Cache-Control: max-age=0');
+            
+            $objWriter = PHPExcel_IOFactory::createWriter($rc['excel'], 'Excel5');
+            $objWriter->save('php://output');
+        }
+    }
+
     return array('stat'=>'exit');
 }
 ?>

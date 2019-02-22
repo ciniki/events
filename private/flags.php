@@ -16,7 +16,7 @@ function ciniki_events_flags($ciniki, $modules) {
         array('flag'=>array('bit'=>'1', 'name'=>'Registrations')),
         array('flag'=>array('bit'=>'2', 'name'=>'Online Registrations')),
         array('flag'=>array('bit'=>'3', 'name'=>'Status')),
-//      array('flag'=>array('bit'=>'4', 'name'=>'')),
+        array('flag'=>array('bit'=>'4', 'name'=>'Individual Priced Tickets')),
         // 0x10
         array('flag'=>array('bit'=>'5', 'name'=>'Categories')),
 //      array('flag'=>array('bit'=>'6', 'name'=>'')),
