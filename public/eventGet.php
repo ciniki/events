@@ -251,8 +251,8 @@ function ciniki_events_eventGet($ciniki) {
             } else {
                 $event['prices'] = array();
             }
-            uasort($event['prices'], function($a, $b) {
-                return strnatcmp($b['price']['name'], $a['price']['name']);
+            usort($event['prices'], function($a, $b) {
+                return strnatcmp($a['price']['name'], $b['price']['name']);
                 });
         }
 
