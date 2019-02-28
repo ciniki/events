@@ -51,7 +51,7 @@ function ciniki_events_templates_eventIndividualTickets(&$ciniki, $tnid, $event_
         return $rc;
     }
     if( !isset($rc['event']) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.59', 'msg'=>'Unable to find event'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.73', 'msg'=>'Unable to find event'));
     }
     $event = $rc['event'];
 
@@ -94,7 +94,7 @@ function ciniki_events_templates_eventIndividualTickets(&$ciniki, $tnid, $event_
         return $rc;
     }
     if( !isset($rc['registrations']) || count($rc['registrations']) == 0 ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.60', 'msg'=>'No registrations'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.74', 'msg'=>'No registrations'));
     }
     $registrations = $rc['registrations'];
 

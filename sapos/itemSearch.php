@@ -98,6 +98,7 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
                     'unit_discount_amount'=>$price['unit_discount_amount'],
                     'unit_discount_percentage'=>$price['unit_discount_percentage'],
                     'taxtype_id'=>$price['taxtype_id'], 
+                    'price_id'=>$price['id'],
                     'notes'=>'',
                     );
                 if( $price['unit_donation_amount'] > 0 ) {
@@ -119,6 +120,7 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
                 'unit_discount_amount'=>0,
                 'unit_discount_percentage'=>0,
                 'taxtype_id'=>0, 
+                'price_id'=>$price['id'],
                 'notes'=>'',
                 );
             if( isset($event['prices']) && count($event['prices']) == 1 ) {

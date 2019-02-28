@@ -58,7 +58,7 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
             return $rc;
         }
         if( !isset($rc['events']) || count($rc['events']) < 1 ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.44', 'msg'=>'No event found.'));      
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.72', 'msg'=>'No event found.'));      
         }
         $event = array_pop($rc['events']);
         if( isset($event['price_name']) && $event['price_name'] != '' ) {
@@ -79,7 +79,7 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
         $event = $rc['event']; */
         $item = array(
             'id'=>$event['id'],
-            'name'=>$event['name'],
+            'name'=>$event['description'],
             'flags'=>0x08,          // Registration item
             );
         
