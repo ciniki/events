@@ -156,6 +156,8 @@ function ciniki_events_priceGet($ciniki) {
                 }
                 $price['taxtype_id'] = $rc['lastprice']['taxtype_id'];
                 $price['webflags'] = $rc['lastprice']['webflags'];
+            } else {
+                $price['webflags'] = 0x08;
             }
         }
     } else {
