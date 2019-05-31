@@ -125,8 +125,21 @@ function ciniki_events_main() {
             'categories_text':{'label':'Categories', 'visible':'no'},
             'webcollections_text':{'label':'Web Collections'},
             }},
-        '_registrations':{'label':'', 'aside':'yes', 'hidelabel':'yes', 'visible':'no', 'list':{
-            'registrations':{'label':'Tickets'},
+        '_registrations':{'label':'', 'aside':'yes', 'hidelabel':'yes', 
+            'visible':function() {return (M.ciniki_events_main.event.data.reg_flags&0x03) > 0 ? 'yes' : 'no'; },
+            'list':{
+                'registrations':{'label':'Tickets'},
+            }},
+        '_ticketmap':{'label':'Ticket Map', 'aside':'yes', 'type':'html'},
+/*        '_ticketmap':{'label':'', 'aside':'yes', 'type':'imageform', 
+            'visible':function() {return (M.ciniki_events_main.event.data.reg_flags&0x04) == 0x04 ? 'yes' : 'no'; },
+            'fields':{
+                'ticketmap1_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'history':'no'},
+            }}, */
+        '_ticketmap_buttons':{'label':'', 'aside':'yes', 'hidelabel':'yes', 
+            'visible':function() {return (M.ciniki_events_main.event.data.reg_flags&0x04) == 0x04 ? 'yes' : 'no'; },
+            'buttons':{
+                'ticketmapedit':{'label':'Edit Ticket Map', 'fn':'M.ciniki_events_main.ticketmap.open(\'M.ciniki_events_main.event.open();\',M.ciniki_events_main.event.event_id);'},
             }},
         'description':{'label':'Synopsis', 'type':'htmlcontent'},
         'long_description':{'label':'Description', 'type':'htmlcontent'},
@@ -188,6 +201,7 @@ function ciniki_events_main() {
     this.event.sectionData = function(s) {
         if( s == 'description' || s == 'long_description' ) { return this.data[s].replace(/\n/g, '<br/>'); }
         if( s == 'info' || s == '_registrations' ) { return this.sections[s].list; }
+        if( s == '_ticketmap' ) { return this.generateSVG(); }
         return this.data[s];
     };
     this.event.listLabel = function(s, i, d) { return d.label; };
@@ -243,12 +257,28 @@ function ciniki_events_main() {
     this.event.thumbFn = function(s, i, d) {
         return 'M.startApp(\'ciniki.events.images\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'event_image_id\':\'' + d.image.id + '\'});';
     };
+    this.event.generateSVG = function() {
+        var svg = '<svg id="' + this.panelUID + '_map_image" viewBox="0 0 993 697">';
+        svg += '<image x=\'0\' y=\'0\' xlink:href=\'' + M.api.getBinaryURL('ciniki.images.get', {'tnid':M.curTenantID, 'image_id':this.data.ticketmap1_image_id, 'version':'original', 'maxwidth':'0', 'maxheight':'0'}) + '\' />';
+        for(var i in this.data.tickets) {
+            var t = this.data.tickets[i];
+            svg += '<circle id="' + this.panelUID + '_price_' + t.id + '" '
+                + 'cx="' + t.position_x + '" '
+                + 'cy="' + t.position_y + '" '
+                + 'r="' + t.diameter + '" '
+                + 'stroke="green" stroke-width="0" '
+                + 'fill="' + ((t.webflags&0x04) == 0x04 ? 'red' : 'blue') + '" />';
+        }
+        svg += '</svg>';
+
+        return svg;
+    }
     this.event.open = function(cb, eid) {
         this.reset();
         if( eid != null ) { this.event_id = eid; }
         M.api.getJSONCb('ciniki.events.eventGet', {'tnid':M.curTenantID, 
             'event_id':this.event_id, 'images':'yes', 'files':'yes', 'prices':'yes', 
-            'sponsors':'yes', 'webcollections':'yes', 'categories':'yes', 'links':'yes'}, function(rsp) {
+            'sponsors':'yes', 'webcollections':'yes', 'categories':'yes', 'links':'yes', 'ticketmap':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -269,11 +299,11 @@ function ciniki_events_main() {
                 } else {
                     p.sections.info.list.url.visible = 'no';
                 }
-                if( (rsp.event.reg_flags&0x03) > 0 ) {
-                    p.sections._registrations.visible = 'yes';
-                } else {
-                    p.sections._registrations.visible = 'no';
-                }
+//                if( (rsp.event.reg_flags&0x03) > 0 ) {
+//                    p.sections._registrations.visible = 'yes';
+//                } else {
+//                    p.sections._registrations.visible = 'no';
+//                }
                 p.refresh();
                 p.show(cb);
             });
@@ -429,6 +459,360 @@ function ciniki_events_main() {
     this.edit.addClose('Cancel');
 
     //
+    // The ticketmap edit panel
+    //
+    this.ticketmap = new M.panel('Ticket Map', 'ciniki_events_main', 'ticketmap', 'mc', 'medium mediumaside', 'sectioned', 'ciniki.events.main.ticketmap');
+    this.ticketmap.data = null;
+    this.ticketmap.event_id = 0;
+    this.ticketmap.sections = { 
+//        '_image':{'label':'Ticket Map', 'type':'imageform', 'aside':'yes', 'fields':{
+//            'ticketmap1_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
+//            }},
+        '_ticketmap':{'label':'Ticket Map', 'aside':'yes', 'type':'html'},
+        '_buttons1':{'label':'', 'aside':'yes', 'buttons':{
+            'changeimage':{'label':'Change Image', 'fn':'M.ciniki_events_main.ticketmap.uploadFile("ticketmap1_image_id");'},
+            }},
+        '_details':{'label':'Price Label', 'aside':'yes', 'fields':{
+            'ticketmap1_ptext':{'label':'Price Name', 'type':'text'},
+            'ticketmap1_btext':{'label':'Button Label', 'type':'text'},
+            'ticketmap1_ntext':{'label':'None Selected', 'type':'text'},
+            }},
+        '_buttons2':{'label':'', 'aside':'yes', 'buttons':{
+            'save':{'label':'Save', 'fn':'M.ciniki_events_main.ticketmap.save();'},
+            }},
+        'tickets':{'label':'Tickets', 'type':'simplegrid', 'num_cols':2,
+            'headerValues':null,
+            'cellClasses':['', ''],
+            'noData':'No tickets added',
+            'addTxt':'Add Ticket',
+            'addFn':'M.ciniki_events_main.ticketmap.save("M.ciniki_events_main.mapticket.open(\'M.ciniki_events_main.ticketmap.open();\',0,M.ciniki_events_main.ticketmap.event_id);");',
+        },
+    }  
+    this.ticketmap.sectionData = function(s) {
+        if( s == '_ticketmap' ) {
+            return this.generateSVG();
+        }
+        return this.data[s];
+    }
+    this.ticketmap.generateSVG = function() {
+        var svg = '<svg id="' + this.panelUID + '_map_image" viewBox="0 0 993 697">';
+        svg += '<image x=\'0\' y=\'0\' xlink:href=\'' + M.api.getBinaryURL('ciniki.images.get', {'tnid':M.curTenantID, 'image_id':this.data.ticketmap1_image_id, 'version':'original', 'maxwidth':'0', 'maxheight':'0'}) + '\' />';
+        for(var i in this.data.tickets) {
+            var t = this.data.tickets[i];
+            svg += '<circle id="' + this.panelUID + '_price_' + t.id + '" '
+                + 'cx="' + t.position_x + '" '
+                + 'cy="' + t.position_y + '" '
+                + 'r="' + t.diameter + '" '
+                + 'stroke="green" stroke-width="0" '
+                + 'fill="' + ((t.webflags&0x04) == 0x04 ? 'red' : 'blue') + '" />';
+        }
+        svg += '</svg>';
+
+        return svg;
+    }
+    this.ticketmap.fieldValue = function(s, i, d) { return this.data[i]; }
+//    this.ticketmap.fieldHistoryArgs = function(s, i) {
+//        return {'method':'ciniki.events.eventHistory', 'args':{'tnid':M.curTenantID, 'event_id':this.event_id, 'field':i}};
+//    }
+    this.ticketmap.cellValue = function(s, i, j, d) {
+        switch(j) {
+            case 0: return d.name;
+        }
+    }
+    this.ticketmap.rowFn = function(s, i, d) {
+        return 'M.ciniki_events_main.ticketmap.save("M.ciniki_events_main.mapticket.open(\'M.ciniki_events_main.ticketmap.open();\',\'' + d.id + '\',M.ciniki_events_main.ticketmap.event_id);");';
+    }
+    this.ticketmap.addDropImage = function(iid) {
+        var args = {
+            'tnid':M.curTenantID, 
+            'event_id':M.ciniki_events_main.ticketmap.event_id,
+            'ticketmap1_image_id':iid,
+            };
+        M.api.getJSONCb('ciniki.events.eventUpdate', args, function(rsp) {
+            if( rsp.stat != 'ok' ) {
+                M.api.err(rsp);
+                return false;
+            } 
+            M.ciniki_events_main.ticketmap.open();
+        });
+    }
+    this.ticketmap.deleteImage = function(fid) {
+        var args = {
+            'tnid':M.curTenantID, 
+            'event_id':M.ciniki_events_main.ticketmap.event_id,
+            'ticketmap1_image_id':i,
+            };
+        M.api.getJSONCb('ciniki.events.eventUpdate', args, function(rsp) {
+            if( rsp.stat != 'ok' ) {
+                M.api.err(rsp);
+                return false;
+            } 
+            M.ciniki_events_main.ticketmap.open();
+        });
+    }
+    this.ticketmap.open = function(cb, eid) {
+        if( eid != null ) { this.event_id = eid; }
+        M.api.getJSONCb('ciniki.events.eventGet', {'tnid':M.curTenantID, 'event_id':this.event_id, 'ticketmap':'yes'}, function(rsp) {
+            if( rsp.stat != 'ok' ) {
+                M.api.err(rsp);
+                return false;
+            }
+            var p = M.ciniki_events_main.ticketmap;
+            p.data = rsp.event;
+            p.refresh();
+            p.show(cb);
+        });
+    }
+    this.ticketmap.save = function(cb) {
+        if( cb == null ) {
+            cb = 'M.ciniki_events_main.ticketmap.close();';
+        }
+        var c = this.serializeForm('no');
+        if( c != '' ) {
+            M.api.postJSONCb('ciniki.events.eventUpdate', {'tnid':M.curTenantID, 'event_id':M.ciniki_events_main.ticketmap.event_id}, c, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                } 
+                eval(cb);
+            });
+        } else {
+            eval(cb);
+        }
+    };
+    this.ticketmap.addButton('save', 'Save', 'M.ciniki_events_main.ticketmap.save();');
+    this.ticketmap.addClose('Back');
+
+    //
+    // The panel to add/edit a mapped ticket
+    //
+    this.mapticket = new M.panel('Ticket', 'ciniki_events_main', 'mapticket', 'mc', 'large mediumaside', 'sectioned', 'ciniki.events.main.mapticket');
+    this.mapticket.data = null;
+    this.mapticket.event_id = 0;
+    this.mapticket.price_id = 0;
+    this.mapticket.sections = { 
+        'price':{'label':'Price', 'aside':'yes', 'fields':{
+            'name':{'label':'Name', 'type':'text'},
+            'available_to':{'label':'Available', 'type':'flags', 'default':'1', 'flags':{}},
+            'unit_amount':{'label':'Unit Amount', 'type':'text', 'size':'small'},
+            'unit_discount_amount':{'label':'Discount Amount', 'type':'text', 'size':'small'},
+            'unit_discount_percentage':{'label':'Discount Percent', 'type':'text', 'size':'small'},
+            'unit_donation_amount':{'label':'Donation Portion', 'type':'text', 'size':'small',
+                'visible':function() {return M.modFlagSet('ciniki.sapos', 0x04000000);},
+                },
+            'taxtype_id':{'label':'Taxes', 'active':'no', 'type':'select', 'options':{}},
+            'webflags':{'label':'Web', 'type':'flags', 'toggle':'no', 'join':'yes', 'flags':{}},
+            'webflags2':{'label':'Individual Ticket', 'type':'flagtoggle', 'bit':0x02, 'field':'webflags', 'default':'on',
+                'visible':function() {return 'no';},
+                },
+            'webflags3':{'label':'Sold', 'type':'flagtoggle', 'bit':0x04, 'field':'webflags', 'default':'off',
+                'onchange':'M.ciniki_events_main.mapticket.updateSVG',
+//                'visible':function() {return M.modFlagSet('ciniki.events', 0x08);},
+                },
+            'webflags4':{'label':'Mapped Ticket', 'type':'flagtoggle', 'bit':0x08, 'field':'webflags', 'default':'on',
+                'visible':function() {return 'no';},
+                },
+            }},
+        'position':{'label':'Position', 'aside':'yes', 'fields':{
+            'position_num':{'label':'Number', 'type':'text', 'size':'small'},
+            'position_x':{'label':'X', 'type':'text', 'size':'small', 'onkeyup':'M.ciniki_events_main.mapticket.updateSVG'},
+            'position_y':{'label':'Y', 'type':'text', 'size':'small', 'onkeyup':'M.ciniki_events_main.mapticket.updateSVG'},
+            'diameter':{'label':'Diameter', 'type':'text', 'size':'small', 'onkeyup':'M.ciniki_events_main.mapticket.updateSVG'},
+            }},
+        '_buttons':{'label':'', 'aside':'yes', 'buttons':{
+            'save':{'label':'Save', 'fn':'M.ciniki_events_main.mapticket.save();'},
+            'delete':{'label':'Delete', 
+                'visible':function() {return M.ciniki_events_main.mapticket.price_id > 0 ? 'yes' : 'no'},
+                'fn':'M.ciniki_events_main.mapticket.remove();',
+                },
+            }},
+        '_ticketmap':{'label':'Ticket Map', 'type':'html'},
+/*        '_image':{'label':'Ticket Map', 'type':'imageform', 'fields':{
+            'ticketmap1_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'size':'large', 'controls':'no', 
+                'history':'no',
+                'onclick':'M.ciniki_events_main.mapticket.selectCoords',
+                },
+            }},  */
+        };  
+    this.mapticket.fieldValue = function(s, i, d) { return this.data[i]; }
+    this.mapticket.fieldHistoryArgs = function(s, i) {
+        return {'method':'ciniki.events.priceHistory', 'args':{'tnid':M.curTenantID, 'price_id':this.price_id, 'event_id':this.event_id, 'field':i}};
+    }
+    this.mapticket.sectionData = function(s) {
+        if( s == '_ticketmap' ) {
+            return this.generateSVG();
+        }
+        return this.data[s];
+    }
+    this.mapticket.generateSVG = function() {
+        var svg = '<svg id="' + this.panelUID + '_map_image" viewBox="0 0 993 697" contenteditable="true">';
+        svg += '<image x=\'0\' y=\'0\' xlink:href=\'' + M.api.getBinaryURL('ciniki.images.get', {'tnid':M.curTenantID, 'image_id':this.data.ticketmap1_image_id, 'version':'original', 'maxwidth':'0', 'maxheight':'0'}) + '\' onclick="M.ciniki_events_main.mapticket.selectCoords(event);" contenteditable="yes" />';
+        var s = this.formValue('webflags3');
+        for(var i in this.data.tickets) {
+            var t = this.data.tickets[i];
+            svg += '<circle id="' + this.panelUID + '_price_' + t.id + '" '
+                + 'cx="' + t.position_x + '" '
+                + 'cy="' + t.position_y + '" '
+                + 'r="' + t.diameter + '" '
+                + 'stroke="orange" stroke-width="' + (t.id == this.price_id ? 0 : 0) + '" '
+                + (t.id != this.price_id ? 'onclick="M.ciniki_events_main.mapticket.switchTicket(' + t.id + ');" ' : '')
+//                + 'fill="' + (s == 'off' ? 'blue' : 'red') + '" />';
+                + 'fill="' + ((t.id == this.price_id && s == 'on') || (t.webflags&0x04) == 0x04 ? 'red' : 'blue') + '" />';
+        }
+        svg += '</svg>';
+
+        return svg;
+    }
+    this.mapticket.rowFn = function(s, i, d) { return ''; }
+    this.mapticket.switchTicket = function(id) {
+        this.save('M.ciniki_events_main.mapticket.open(null,' + id + ');');
+    }
+    this.mapticket.selectCoords = function(e) {
+        // Check for circle existing in SVG
+        var dim = e.target.getBoundingClientRect();
+        var x = Math.round((e.offsetX/dim.width)*993, 0);
+        var y = Math.round((e.offsetY/dim.height)*697, 0);
+        this.setFieldValue('position_x', x);
+        this.setFieldValue('position_y', y);
+        this.updateSVG();
+    }
+    this.mapticket.updateSVG = function(e) {
+        console.log('update');
+        if( e != null ) {
+            e.stopPropagation();
+        }
+        var p = M.gE(this.panelUID + '_price_' + this.price_id);
+        if( p == null ) {
+            var s = M.gE(this.panelUID + '_map_image');
+            var p = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            p.setAttribute('id', this.panelUID + '_price_' + this.price_id);
+            s.appendChild(p);
+        }
+
+        var x = this.formValue('position_x');
+        var y = this.formValue('position_y');
+        var r = this.formValue('diameter');
+        if( r == '' ) {
+            r = 0;
+        }
+        if( e != null && e.keyCode >= 37 && e.keyCode <= 40 ) {
+            if( e.target.id == this.panelUID + '_diameter' ) {
+                if( e.keyCode == 38 && r != '' ) {
+                    r++;
+                } else if( e.keyCode == 40 && r > 0 ) {
+                    r--;
+                }
+            } else {
+                if( e.keyCode == 38 && y != '' && y > 1 ) {
+                    y--;
+                } else if( e.keyCode == 40 && y != '' ) {
+                    y++;
+                }
+                if( e.keyCode == 37 && x != '' ) {
+                    x--;
+                } else if( e.keyCode == 39 && x != '' && x > 1 ) {
+                    x++;
+                }
+            }
+            this.setFieldValue('position_x', x);
+            this.setFieldValue('position_y', y);
+            this.setFieldValue('diameter', r);
+        }
+        p.setAttribute("cx", x);
+        p.setAttribute("cy", y);
+        p.setAttribute("stroke", "green");
+        p.setAttribute("stroke-width", "0");
+        var f = this.formValue('webflags3');
+        if( f == 'on' ) {
+            p.setAttribute("fill", "red");
+        } else {
+            p.setAttribute("fill", "blue");
+        }
+        p.setAttribute("r", r);
+
+/*        var bordersize = ((e.target.clientWidth - e.target.width)/2);
+        var x = (e.offsetX-bordersize);
+        var y = (e.offsetY-bordersize);
+        if( x < 0 ) { x = 0; }
+        if( y < 0 ) { y = 0; }
+        if( x > 0 ) {
+            x = (x/e.target.clientWidth)*e.target.naturalWidth;
+        }
+        if( x > 0 ) {
+            y = (y/e.target.clientHeight)*e.target.naturalHeight;
+        } */
+    }
+    this.mapticket.open = function(cb, pid, eid) {
+        this.reset();
+        if( pid != null ) { this.price_id = pid; }
+        if( eid != null ) { this.event_id = eid; }
+
+        // Check if this is editing a existing price or adding a new one
+        if( this.price_id > 0 ) {
+            this.sections._buttons.buttons.delete.visible = 'yes';
+        }
+        M.api.getJSONCb('ciniki.events.priceGet', {'tnid':M.curTenantID, 
+            'event_id':this.event_id, 'price_id':this.price_id, 'ticketmap':'1'}, 
+            function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                var p = M.ciniki_events_main.mapticket;
+                p.data = rsp.price;
+                p.data.tickets = rsp.tickets;
+                p.refresh();
+                p.show(cb);
+                var m = M.gE(p.panelUID + '_map_image');
+                m.contenteditable = true;
+                document.body.addEventListener('keyup', function(e) {
+                    M.ciniki_events_main.mapticket.updateSVG(e);
+                    });
+            });
+    };
+    this.mapticket.save = function(cb) {
+        if( cb == null ) {
+            cb = 'M.ciniki_events_main.mapticket.close();';
+        }
+        if( this.price_id > 0 ) {
+            var c = this.serializeForm('no');
+            if( c != '' ) {
+                M.api.postJSONCb('ciniki.events.priceUpdate', {'tnid':M.curTenantID, 'price_id':M.ciniki_events_main.mapticket.price_id}, c, function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    } 
+                    eval(cb);
+                });
+            } else {
+                eval(cb);
+            }
+        } else {
+            var c = this.serializeForm('yes');
+            M.api.postJSONCb('ciniki.events.priceAdd', {'tnid':M.curTenantID, 'event_id':this.event_id}, c, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                } 
+                eval(cb);
+            });
+        }
+    };
+    this.mapticket.remove = function() {
+        if( confirm("Are you sure you want to remove this price?") ) {
+            M.api.getJSONCb('ciniki.events.priceDelete', {'tnid':M.curTenantID, 'price_id':this.price_id}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                M.ciniki_events_main.mapticket.close();    
+            });
+        }
+    };
+    this.mapticket.addButton('save', 'Save', 'M.ciniki_events_main.mapticket.save();');
+    this.mapticket.addClose('Cancel');
+
+    //
     // Arguments:
     // aG - The arguments to be parsed into args
     //
@@ -446,6 +830,20 @@ function ciniki_events_main() {
             return false;
         } 
 
+        //
+        // Check if ticket mapping and grouping is turned on
+        //
+        this.regFlags = {
+            '1':{'name':'Track Registrations'},
+            '2':{'name':'Online Registrations'},
+            };
+        if( M.modFlagOn('ciniki.events', 0x0100) ) {
+            this.regFlags['3'] = {'name':'Seating Maps'};
+        }
+        if( M.modFlagOn('ciniki.events', 0x0200) ) {
+            this.regFlags['4'] = {'name':'Ticket Groups'};
+        }
+        this.edit.sections._registrations.fields.reg_flags.flags = this.regFlags;
         if( M.curTenant.modules['ciniki.sponsors'] != null 
             && (M.curTenant.modules['ciniki.sponsors'].flags&0x02) ) {
             this.event.sections.sponsors.visible = 'yes';
@@ -499,6 +897,39 @@ function ciniki_events_main() {
             this.edit.sections._webcollections.active = 'no';
         }
 
+        //
+        // Setup the tax types
+        //
+        if( M.modOn('ciniki.taxes') ) {
+            this.mapticket.sections.price.fields.taxtype_id.active = 'yes';
+            this.mapticket.sections.price.fields.taxtype_id.options = {'0':'No Taxes'};
+            if( M.curTenant.taxes != null && M.curTenant.taxes.settings.types != null ) {
+                for(i in M.curTenant.taxes.settings.types) {
+                    this.mapticket.sections.price.fields.taxtype_id.options[M.curTenant.taxes.settings.types[i].type.id] = M.curTenant.taxes.settings.types[i].type.name;
+                }
+            }
+        } else {
+            this.mapticket.sections.price.fields.taxtype_id.active = 'no';
+            this.mapticket.sections.price.fields.taxtype_id.options = {'0':'No Taxes'};
+        }
+        
+        //
+        // Setup the available_to flags and webflags
+        //
+        this.mapticket.sections.price.fields.available_to.flags = {'1':{'name':'Public'}};
+        this.mapticket.sections.price.fields.webflags.flags = {'1':{'name':'Hidden'}};
+        if( (M.curTenant.modules['ciniki.customers'].flags&0x02) > 0 ) {
+            this.mapticket.sections.price.fields.available_to.flags['6'] = {'name':'Members'};
+            this.mapticket.sections.price.fields.webflags.flags['6'] = {'name':'Show Members Price'};
+        }
+        if( (M.curTenant.modules['ciniki.customers'].flags&0x10) > 0 ) {
+            this.mapticket.sections.price.fields.available_to.flags['7'] = {'name':'Dealers'};
+            this.mapticket.sections.price.fields.webflags.flags['7'] = {'name':'Show Dealers Price'};
+        }
+        if( (M.curTenant.modules['ciniki.customers'].flags&0x100) > 0 ) {
+            this.mapticket.sections.price.fields.available_to.flags['8'] = {'name':'Distributors'};
+            this.mapticket.sections.price.fields.webflags.flags['8'] = {'name':'Show Distributors Price'};
+        }
         this.menu.tag_type = '10';
         this.menu.tag_permalink = '';
         this.menu.sections.upcoming.label = 'Upcoming Events';

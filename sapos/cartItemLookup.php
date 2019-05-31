@@ -106,6 +106,12 @@ function ciniki_events_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) {
             $item['units_available'] = 1;
             $item['flags'] |= 0x08;
         }
+        if( ($item['webflags']&0x08) == 0x08 ) {
+            $item['limited_units'] = 'yes';
+            $item['units_available'] = 1;
+            $item['flags'] |= 0x08;
+        }
+        // Check if ticket is sold out
         if( ($item['webflags']&0x04) == 0x04 ) {
             $item['limited_units'] = 'yes';
             $item['units_available'] = 0;

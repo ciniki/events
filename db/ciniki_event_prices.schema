@@ -6,9 +6,9 @@
 #
 # Fields
 # ------
-# id:                       The file ID.
-# uuid:                     The Universal Unique ID for the file.
-# tnid:                     The tenant the file is for.
+# id:                       The ID of the price/ticket.
+# uuid:                     The Universal Unique ID for the price.
+# tnid:                     The tenant the price is for.
 #
 # event_id:                 The ID of the event the price is attached to
 #
@@ -37,16 +37,22 @@
 #
 # taxtype_id:               The ciniki.taxes to be applied for this price.
 #
-# webflags:                 Flags for displaying the file on the website.
+# webflags:                 Flags for displaying the price. 
+#                               FIXME: This needs to be renamed to flags, not only for website options
 #
-#                           0x01 - Hidden, Do now show the file on the website
+#                           0x01 - Hidden, Do now show the price on the website
 #                           0x02 - Individual Ticket, quantity locked at 1.
 #                           0x04 - Sold out
-#                           0x08
+#                           0x08 - Mapped ticket to image, quantity locked at 1.
 #                           0x10 - Show Members price to the public.
 #                           0x20 - Show Dealers price to the public.
 #                           0x40 - Show Distributors price to the public.
 #                           0x80 - 
+#
+# position_num:             The number of the position, Table 1, Seat 1, etc.
+# position_x:               The center X position of the circle of the price on the ticketmap.
+# position_y:               The center Y position of the circle of the price on the ticketmap.
+# diameter:                 The diameter of the circle of the price on the ticketmap.
 #
 # date_added:               The UTC date and time the price was added.
 # last_updated:             The UTC date and time the price was last updated.
@@ -66,9 +72,13 @@ create table ciniki_event_prices (
     unit_donation_amount decimal(19,4) not null,
     taxtype_id int not null,
     webflags tinyint unsigned not null,
+    position_num int not null,
+    position_x int not null,
+    position_y int not null,
+    diameter int not null,
     date_added datetime not null,
     last_updated datetime not null,
     primary key (id),
     index (event_id, name),
     index sync (uuid, tnid, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.03';
+) ENGINE='InnoDB', COMMENT='v1.04';

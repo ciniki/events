@@ -42,6 +42,10 @@ function ciniki_events_eventUpdate(&$ciniki) {
         'oidref'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Link'),
         'object'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Object'), 
         'object_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Object ID'), 
+        'ticketmap1_image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ticket Map'), 
+        'ticketmap1_ptext'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ticket Map Name'), 
+        'ticketmap1_btext'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ticket Map Button'), 
+        'ticketmap1_ntext'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ticket Map No Select'), 
         'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'),
         'webcollections'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Web Collections'), 
         )); 

@@ -22,6 +22,11 @@ function ciniki_events_flags($ciniki, $modules) {
 //      array('flag'=>array('bit'=>'6', 'name'=>'')),
 //      array('flag'=>array('bit'=>'7', 'name'=>'')),
 //      array('flag'=>array('bit'=>'8', 'name'=>'')),
+        // 0x0100
+        array('flag'=>array('bit'=>'9', 'name'=>'Ticket Maps')),
+        array('flag'=>array('bit'=>'10', 'name'=>'Ticket Groups')),
+//      array('flag'=>array('bit'=>'11', 'name'=>'')),
+//      array('flag'=>array('bit'=>'12', 'name'=>'')),
         );
 
     return array('stat'=>'ok', 'flags'=>$flags);

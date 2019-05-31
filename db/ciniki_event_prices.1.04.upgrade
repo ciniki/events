@@ -1,0 +1,9 @@
+#
+# This file will add the uuid to ciniki_events
+# which is required for the sync to work.
+#
+ALTER TABLE ciniki_event_prices ADD COLUMN position_num int not null AFTER webflags;
+ALTER TABLE ciniki_event_prices ADD COLUMN position_x int not null AFTER position_num;
+ALTER TABLE ciniki_event_prices ADD COLUMN position_y int not null AFTER position_x;
+ALTER TABLE ciniki_event_prices ADD COLUMN diameter int not null AFTER position_y;
+ALTER TABLE ciniki_event_prices COMMENT='v1.04';

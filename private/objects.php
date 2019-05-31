@@ -31,6 +31,10 @@ function ciniki_events_objects($ciniki) {
             'long_description'=>array(),
             'object'=>array('default'=>''),
             'object_id'=>array('default'=>''),
+            'ticketmap1_image_id'=>array('name'=>'Ticket Map 1 Image', 'default'=>0),
+            'ticketmap1_ptext'=>array('name'=>'Ticket Map 1 Name', 'default'=>''),
+            'ticketmap1_btext'=>array('name'=>'Ticket Map 1 Button', 'default'=>''),
+            'ticketmap1_ntext'=>array('name'=>'Ticket Map 1 None Selected', 'default'=>''),
             ),
         'history_table'=>'ciniki_event_history',
         );
@@ -82,6 +86,10 @@ function ciniki_events_objects($ciniki) {
             'unit_donation_amount'=>array('name'=>'Donation Portion', 'default'=>0),
             'taxtype_id'=>array('ref'=>'ciniki.taxes.type'),
             'webflags'=>array(),
+            'position_num'=>array('name'=>'Position Number', 'default'=>'1'),
+            'position_x'=>array('name'=>'Position X', 'default'=>'0'),
+            'position_y'=>array('name'=>'Position Y', 'default'=>'0'),
+            'diameter'=>array('name'=>'Diameter', 'default'=>'0'),
             ),
         'history_table'=>'ciniki_event_history',
         );

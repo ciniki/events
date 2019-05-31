@@ -37,6 +37,10 @@ function ciniki_events_priceAdd(&$ciniki) {
         'unit_donation_amount'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Donation Portion'),
         'taxtype_id'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Tax Type'),
         'webflags'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Web Flags'),
+        'position_num'=>array('required'=>'no', 'blank'=>'no', 'default'=>'1', 'name'=>'Ticket Map Position Number'),
+        'position_x'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Ticket Map Position X'),
+        'position_y'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Ticket Map Position Y'),
+        'diameter'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Ticket Map Diameter'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;

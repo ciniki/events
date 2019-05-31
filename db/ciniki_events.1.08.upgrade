@@ -1,0 +1,8 @@
+#
+# Add the flags field
+#
+ALTER TABLE ciniki_events ADD COLUMN ticketmap1_image_id int unsigned not null AFTER object_id;
+ALTER TABLE ciniki_events ADD COLUMN ticketmap1_ptext varchar(250) not null AFTER ticketmap1_image_id;
+ALTER TABLE ciniki_events ADD COLUMN ticketmap1_btext varchar(50) not null AFTER ticketmap1_ptext;
+ALTER TABLE ciniki_events ADD COLUMN ticketmap1_ntext varchar(250) not null AFTER ticketmap1_btext;
+ALTER TABLE ciniki_events COMMENT='v1.08';

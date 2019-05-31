@@ -283,6 +283,22 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'title'=>'', 'content'=>$content);
 
             //
+            // Check if mapped tickets
+            //
+            if( isset($event['mappedtickets']) && count($event['mappedtickets']) > 0 ) {
+                $page['blocks'][] = array('type'=>'mappedtickets', 
+                    'section'=>'mappedtickets',
+                    'image_id'=>$event['ticketmap1_image_id'],
+                    'intro-text'=>$event['ticketmap1_ptext'],
+                    'button-label'=>$event['ticketmap1_btext'],
+                    'empty-text'=>$event['ticketmap1_ntext'],
+                    'object'=>'ciniki.events.event',
+                    'object_id'=>$event['id'],
+                    'mappedtickets'=>$event['mappedtickets'],
+                    );
+            }
+
+            //
             // Add prices, links, files, etc to the page blocks
             //
             if( isset($event['prices']) && count($event['prices']) > 0 ) {

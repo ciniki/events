@@ -32,6 +32,7 @@ function ciniki_events_eventGet($ciniki) {
         'categories'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Categories'),
         'webcollections'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Web Collections'),
         'objects'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Objects'),
+        'ticketmap'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ticket Map'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -112,7 +113,11 @@ function ciniki_events_eventGet($ciniki) {
             . "ciniki_events.long_description, "
             . "CONCAT_WS(':', ciniki_events.object, ciniki_events.object_id) AS oidref, "
             . "ciniki_events.object, "
-            . "ciniki_events.object_id "
+            . "ciniki_events.object_id, "
+            . "ciniki_events.ticketmap1_image_id, "
+            . "ciniki_events.ticketmap1_ptext, "
+            . "ciniki_events.ticketmap1_btext, "
+            . "ciniki_events.ticketmap1_ntext "
             . "";
         if( isset($args['images']) && $args['images'] == 'yes' ) {
             $strsql .= ", "
@@ -139,7 +144,8 @@ function ciniki_events_eventGet($ciniki) {
                 array('container'=>'events', 'fname'=>'id', 'name'=>'event',
                     'fields'=>array('id', 'name', 'permalink', 'flags', 'url', 'primary_image_id', 
                         'start_date', 'end_date', 'times', 'description', 
-                        'num_tickets', 'reg_flags', 'long_description', 'oidref', 'object', 'object_id')),
+                        'num_tickets', 'reg_flags', 'long_description', 'oidref', 'object', 'object_id',
+                        'ticketmap1_image_id', 'ticketmap1_ptext', 'ticketmap1_btext', 'ticketmap1_ntext')),
                 array('container'=>'images', 'fname'=>'img_id', 'name'=>'image',
                     'fields'=>array('id'=>'img_id', 'name'=>'image_name', 'webflags'=>'image_webflags',
                         'image_id', 'description'=>'image_description', 'url'=>'image_url')),
@@ -168,7 +174,8 @@ function ciniki_events_eventGet($ciniki) {
                 array('container'=>'events', 'fname'=>'id', 'name'=>'event',
                     'fields'=>array('id', 'name', 'permalink', 'flags', 'url', 'primary_image_id', 
                         'start_date', 'end_date', 'times',
-                        'description', 'num_tickets', 'reg_flags', 'long_description', 'oidref', 'object', 'object_id')),
+                        'description', 'num_tickets', 'reg_flags', 'long_description', 'oidref', 'object', 'object_id', 
+                        'ticketmap1_image_id', 'ticketmap1_ptext', 'ticketmap1_btext', 'ticketmap1_ntext')),
             ));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
@@ -232,6 +239,7 @@ function ciniki_events_eventGet($ciniki) {
             $strsql = "SELECT id, name, available_to, available_to AS available_to_text, unit_amount, webflags "
                 . "FROM ciniki_event_prices "
                 . "WHERE ciniki_event_prices.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+                . "AND (ciniki_event_prices.webflags&0x08) = 0 "   // Skip mapped ticket prices
                 . "ORDER BY ciniki_event_prices.name COLLATE latin1_general_cs "
                 . "";
             $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
@@ -253,6 +261,41 @@ function ciniki_events_eventGet($ciniki) {
             }
             usort($event['prices'], function($a, $b) {
                 return strnatcmp($a['price']['name'], $b['price']['name']);
+                });
+        }
+
+        if( isset($args['ticketmap']) && $args['ticketmap'] == 'yes' ) {
+            //
+            // Get the price list for the event
+            //
+            $strsql = "SELECT id, name, available_to, available_to AS available_to_text, unit_amount, webflags, "
+                . "position_num, position_x, position_y, diameter "
+                . "FROM ciniki_event_prices "
+                . "WHERE ciniki_event_prices.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+                . "AND (ciniki_event_prices.webflags&0x08) = 0x08 "
+                . "ORDER BY ciniki_event_prices.name COLLATE latin1_general_cs "
+                . "";
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+            $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.events', array(
+                array('container'=>'tickets', 'fname'=>'id',
+                    'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount', 'webflags',
+                        'position_num', 'position_x', 'position_y', 'diameter'),
+                    'flags'=>array('available_to_text'=>$maps['prices']['available_to'])),
+                ));
+            if( $rc['stat'] != 'ok' ) {
+                return $rc;
+            }
+            if( isset($rc['tickets']) ) {
+                $event['tickets'] = $rc['tickets'];
+                foreach($event['tickets'] as $pid => $ticket) {
+                    $event['tickets'][$pid]['unit_amount_display'] = numfmt_format_currency(
+                        $intl_currency_fmt, $ticket['unit_amount'], $intl_currency);
+                }
+            } else {
+                $event['tickets'] = array();
+            }
+            usort($event['tickets'], function($a, $b) {
+                return strnatcmp($a['name'], $b['name']);
                 });
         }
 

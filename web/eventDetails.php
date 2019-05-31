@@ -47,6 +47,10 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $tnid, $permalink) {
         . "ciniki_events.object, "
         . "ciniki_events.object_id, "
         . "ciniki_events.primary_image_id, "
+        . "ciniki_events.ticketmap1_image_id, "
+        . "ciniki_events.ticketmap1_ptext, "
+        . "ciniki_events.ticketmap1_btext, "
+        . "ciniki_events.ticketmap1_ntext, "
         . "ciniki_event_images.image_id, "
         . "ciniki_event_images.name AS image_name, "
         . "ciniki_event_images.permalink AS image_permalink, "
@@ -70,7 +74,9 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $tnid, $permalink) {
             'start_date', 'start_date_ts', 'start_day', 'start_month', 'start_year', 
             'end_date', 'end_day', 'end_month', 'end_year', 'times',
             'reg_flags', 'num_tickets', 
-            'url', 'short_description', 'description'=>'long_description', 'object', 'object_id')),
+            'url', 'short_description', 'description'=>'long_description', 'object', 'object_id',
+            'ticketmap1_image_id', 'ticketmap1_ptext', 'ticketmap1_btext', 'ticketmap1_ntext', 
+            )),
         array('container'=>'images', 'fname'=>'image_id', 
             'fields'=>array('image_id', 'title'=>'image_name', 'permalink'=>'image_permalink',
                 'description'=>'image_description', 'url'=>'image_url',
@@ -123,7 +129,8 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $tnid, $permalink) {
     } else {
         $price_flags = 0x01;
     }
-    $strsql = "SELECT id, name, available_to, unit_amount, webflags "
+    $strsql = "SELECT id, name, available_to, unit_amount, "
+        . "position_x, position_y, diameter, webflags "
         . "FROM ciniki_event_prices "
         . "WHERE ciniki_event_prices.event_id = '" . ciniki_core_dbQuote($ciniki, $event['id']) . "' "
         . "AND ciniki_event_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
@@ -133,13 +140,15 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $tnid, $permalink) {
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
         array('container'=>'prices', 'fname'=>'id',
-            'fields'=>array('price_id'=>'id', 'name', 'available_to', 'unit_amount', 'webflags')),
+            'fields'=>array('price_id'=>'id', 'name', 'available_to', 'unit_amount', 
+                'position_x', 'position_y', 'diameter', 'webflags')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
     if( isset($rc['prices']) ) {
         $event['prices'] = $rc['prices'];
+        $event['mappedtickets'] = array();
         foreach($event['prices'] as $pid => $price) {
             // Check if online registrations enabled
             if( ($event['reg_flags']&0x02) > 0 && ($price['available_to']&$price_flags) > 0 ) {
@@ -167,6 +176,16 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $tnid, $permalink) {
                 $event['prices'][$pid]['limited_units'] = 'yes';
                 $event['prices'][$pid]['units_available'] = 0;
             }
+            //
+            // Check if a mapped ticket
+            //
+            if( ($price['webflags']&0x08) == 0x08 ) {
+                $event['mappedtickets'][] = $price;
+                unset($event['prices'][$pid]);
+            }
+        }
+        if( count($event['mappedtickets']) == 0 ) {
+            unset($event['mappedtickets']);
         }
     } else {
         $event['prices'] = array();
