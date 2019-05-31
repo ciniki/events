@@ -58,37 +58,39 @@ function ciniki_events_priceGet($ciniki) {
     //
     // Check if event is specified and check for ticketmap
     //
-    $strsql = "SELECT ciniki_events.id, "
-        . "ciniki_events.name, "
-        . "ciniki_events.permalink, "
-        . "ciniki_events.flags, "
-        . "ciniki_events.url, "
-        . "ciniki_events.description, "
-        . "ciniki_events.num_tickets, "
-        . "ciniki_events.reg_flags, "
-        . "DATE_FORMAT(ciniki_events.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
-        . "DATE_FORMAT(ciniki_events.end_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS end_date, "
-        . "ciniki_events.times, "
-        . "ciniki_events.primary_image_id, "
-        . "ciniki_events.long_description, "
-        . "CONCAT_WS(':', ciniki_events.object, ciniki_events.object_id) AS oidref, "
-        . "ciniki_events.object, "
-        . "ciniki_events.object_id, "
-        . "ciniki_events.ticketmap1_image_id, "
-        . "ciniki_events.ticketmap1_ptext, "
-        . "ciniki_events.ticketmap1_btext "
-        . "FROM ciniki_events "
-        . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
-        . "AND ciniki_events.id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
-        . "";
-    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'event');
-    if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.78', 'msg'=>'Unable to load event', 'err'=>$rc['err']));
+    if( isset($args['event_id']) ) {
+        $strsql = "SELECT ciniki_events.id, "
+            . "ciniki_events.name, "
+            . "ciniki_events.permalink, "
+            . "ciniki_events.flags, "
+            . "ciniki_events.url, "
+            . "ciniki_events.description, "
+            . "ciniki_events.num_tickets, "
+            . "ciniki_events.reg_flags, "
+            . "DATE_FORMAT(ciniki_events.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
+            . "DATE_FORMAT(ciniki_events.end_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS end_date, "
+            . "ciniki_events.times, "
+            . "ciniki_events.primary_image_id, "
+            . "ciniki_events.long_description, "
+            . "CONCAT_WS(':', ciniki_events.object, ciniki_events.object_id) AS oidref, "
+            . "ciniki_events.object, "
+            . "ciniki_events.object_id, "
+            . "ciniki_events.ticketmap1_image_id, "
+            . "ciniki_events.ticketmap1_ptext, "
+            . "ciniki_events.ticketmap1_btext "
+            . "FROM ciniki_events "
+            . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . "AND ciniki_events.id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+            . "";
+        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'event');
+        if( $rc['stat'] != 'ok' ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.78', 'msg'=>'Unable to load event', 'err'=>$rc['err']));
+        }
+        if( !isset($rc['event']) ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.82', 'msg'=>'Unable to find requested event'));
+        }
+        $event = $rc['event'];
     }
-    if( !isset($rc['event']) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.82', 'msg'=>'Unable to find requested event'));
-    }
-    $event = $rc['event'];
 
     if( $args['price_id'] == 0 ) {
         $price = array(
@@ -205,7 +207,9 @@ function ciniki_events_priceGet($ciniki) {
             $price['unit_donation_amount'], $intl_currency);
     }
 
-    $price['ticketmap1_image_id'] = $event['ticketmap1_image_id'];
+    if( isset($event['ticketmap1_image_id']) ) {
+        $price['ticketmap1_image_id'] = $event['ticketmap1_image_id'];
+    }
 
     $rsp = array('stat'=>'ok', 'price'=>$price);
 
