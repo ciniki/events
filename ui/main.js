@@ -130,7 +130,9 @@ function ciniki_events_main() {
             'list':{
                 'registrations':{'label':'Tickets'},
             }},
-        '_ticketmap':{'label':'Ticket Map', 'aside':'yes', 'type':'html'},
+        '_ticketmap':{'label':'Ticket Map', 'aside':'yes', 'type':'html',
+            'visible':function() {return (M.ciniki_events_main.event.data.reg_flags&0x04) == 0x04 ? 'yes' : 'no'; },
+            },
 /*        '_ticketmap':{'label':'', 'aside':'yes', 'type':'imageform', 
             'visible':function() {return (M.ciniki_events_main.event.data.reg_flags&0x04) == 0x04 ? 'yes' : 'no'; },
             'fields':{
@@ -507,6 +509,7 @@ function ciniki_events_main() {
                 + 'fill="' + ((t.webflags&0x04) == 0x04 ? 'red' : 'blue') + '" />';
         }
         svg += '</svg>';
+        svg += '<input id="' + this.panelUID + '_ticketmap1_image_id_upload" class="image_uploader" name="ticketmap1_image_id" type="file" onchange="' + this.panelRef + '.uploadDropImages(\'ticketmap1_image_id\');"/>';
 
         return svg;
     }
