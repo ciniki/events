@@ -285,7 +285,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             //
             // Check if mapped tickets
             //
-            if( isset($event['mappedtickets']) && count($event['mappedtickets']) > 0 ) {
+            if( ($event['reg_flags']&0x04) == 0x04 && isset($event['mappedtickets']) && count($event['mappedtickets']) > 0 ) {
                 $page['blocks'][] = array('type'=>'mappedtickets', 
                     'section'=>'mappedtickets',
                     'image_id'=>$event['ticketmap1_image_id'],
