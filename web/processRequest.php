@@ -283,7 +283,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'title'=>'', 'content'=>$content);
 
             //
-            // Check if mapped tickets
+            // Check if mapped tickets, otherwise add prices as list
             //
             if( ($event['reg_flags']&0x04) == 0x04 && isset($event['mappedtickets']) && count($event['mappedtickets']) > 0 ) {
                 $page['blocks'][] = array('type'=>'mappedtickets', 
@@ -297,12 +297,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                     'mappedtickets'=>$event['mappedtickets'],
                     'addons'=>(isset($event['prices']) ? $event['prices'] : array()),
                     );
-            }
-
-            //
-            // Add prices, links, files, etc to the page blocks
-            //
-            if( isset($event['prices']) && count($event['prices']) > 0 ) {
+            } elseif( isset($event['prices']) && count($event['prices']) > 0 ) {
                 $page['blocks'][] = array('type'=>'prices', 'section'=>'prices', 'title'=>'', 'prices'=>$event['prices']);
             }
             if( isset($event['links']) && count($event['links']) > 0 ) {
