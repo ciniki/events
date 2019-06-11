@@ -42,6 +42,8 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
 //      $taxtype_id = $tax_settings['taxes-default-taxtype'];
 //  }
 
+    $args['start_needle'] = preg_replace("/ +/", '%', $args['start_needle']);
+
     //
     // Prepare the query
     //
@@ -50,6 +52,7 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
         . "DATE_FORMAT(ciniki_events.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
         . "ciniki_event_prices.id AS price_id, "
         . "ciniki_event_prices.name AS price_name, "
+        . "CONCAT_WS(' ', ciniki_events.name, ciniki_event_prices.name) AS search_name, "
         . "ciniki_event_prices.unit_amount, "
         . "ciniki_event_prices.unit_discount_amount, "
         . "ciniki_event_prices.unit_discount_percentage, "
@@ -62,8 +65,8 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
         . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND (ciniki_events.reg_flags&0x03) > 0 "
         . "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
-        . "AND (ciniki_events.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
-            . "OR ciniki_events.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+        . "HAVING (search_name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR search_name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . ") "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');

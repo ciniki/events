@@ -82,9 +82,9 @@ function ciniki_events_sapos_cartItemPaymentReceived($ciniki, $tnid, $customer, 
         $reg_id = $rc['id'];
 
         //
-        // Check if price is individual ticket and not marked as sold out
+        // Check if price is individual ticket or mapped ticket and not marked as sold out
         //
-        if( ($event['webflags']&0x06) == 0x02 ) {
+        if( ($event['webflags']&0x06) == 0x02 || ($event['webflags']&0x0C) == 0x08 ) {
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
             $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.events.price', $event['price_id'], array('webflags'=>$event['webflags']|0x04), 0x04);
             if( $rc['stat'] != 'ok' ) {
