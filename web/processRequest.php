@@ -297,7 +297,8 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                     'mappedtickets'=>$event['mappedtickets'],
                     'addons'=>(isset($event['prices']) ? $event['prices'] : array()),
                     );
-            } elseif( isset($event['prices']) && count($event['prices']) > 0 ) {
+            } 
+            if( isset($event['prices']) && count($event['prices']) > 0 ) {
                 $page['blocks'][] = array('type'=>'prices', 'section'=>'prices', 'title'=>'', 'prices'=>$event['prices']);
             }
             if( isset($event['links']) && count($event['links']) > 0 ) {
