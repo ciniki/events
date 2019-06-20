@@ -130,7 +130,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $tnid, $permalink) {
         $price_flags = 0x01;
     }
     $strsql = "SELECT id, name, available_to, unit_amount, "
-        . "position_x, position_y, diameter, webflags "
+        . "position_num, position_x, position_y, diameter, webflags "
         . "FROM ciniki_event_prices "
         . "WHERE ciniki_event_prices.event_id = '" . ciniki_core_dbQuote($ciniki, $event['id']) . "' "
         . "AND ciniki_event_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
@@ -141,7 +141,7 @@ function ciniki_events_web_eventDetails($ciniki, $settings, $tnid, $permalink) {
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
         array('container'=>'prices', 'fname'=>'id',
             'fields'=>array('price_id'=>'id', 'name', 'available_to', 'unit_amount', 
-                'position_x', 'position_y', 'diameter', 'webflags')),
+                'position_num', 'position_x', 'position_y', 'diameter', 'webflags')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;

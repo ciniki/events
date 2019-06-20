@@ -294,6 +294,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                     'empty-text'=>$event['ticketmap1_ntext'],
                     'object'=>'ciniki.events.event',
                     'object_id'=>$event['id'],
+                    'numbers'=>'yes',
                     'mappedtickets'=>$event['mappedtickets'],
                     'addons'=>(isset($event['prices']) ? $event['prices'] : array()),
                     );
