@@ -921,15 +921,18 @@ function ciniki_events_main() {
         //
         this.mapticket.sections.price.fields.available_to.flags = {'1':{'name':'Public'}};
         this.mapticket.sections.price.fields.webflags.flags = {'1':{'name':'Hidden'}};
-        if( (M.curTenant.modules['ciniki.customers'].flags&0x02) > 0 ) {
+        if( M.modFlagOn('ciniki.customers', 0x02) ) {
+//        if( (M.curTenant.modules['ciniki.customers'].flags&0x02) > 0 ) {
             this.mapticket.sections.price.fields.available_to.flags['6'] = {'name':'Members'};
             this.mapticket.sections.price.fields.webflags.flags['6'] = {'name':'Show Members Price'};
         }
-        if( (M.curTenant.modules['ciniki.customers'].flags&0x10) > 0 ) {
+        if( M.modFlagOn('ciniki.customers', 0x10) ) {
+//        if( (M.curTenant.modules['ciniki.customers'].flags&0x10) > 0 ) {
             this.mapticket.sections.price.fields.available_to.flags['7'] = {'name':'Dealers'};
             this.mapticket.sections.price.fields.webflags.flags['7'] = {'name':'Show Dealers Price'};
         }
-        if( (M.curTenant.modules['ciniki.customers'].flags&0x100) > 0 ) {
+        if( M.modFlagOn('ciniki.customers', 0x0100) ) {
+//        if( (M.curTenant.modules['ciniki.customers'].flags&0x100) > 0 ) {
             this.mapticket.sections.price.fields.available_to.flags['8'] = {'name':'Distributors'};
             this.mapticket.sections.price.fields.webflags.flags['8'] = {'name':'Show Distributors Price'};
         }
