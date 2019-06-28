@@ -123,7 +123,7 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
                 'unit_discount_amount'=>0,
                 'unit_discount_percentage'=>0,
                 'taxtype_id'=>0, 
-                'price_id'=>$price['id'],
+                'price_id'=>0,
                 'notes'=>'',
                 );
             if( isset($event['prices']) && count($event['prices']) == 1 ) {

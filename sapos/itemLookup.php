@@ -19,7 +19,6 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.56', 'msg'=>'No event specified.'));
     }
 
-error_log(print_r($args, true));
     //
     // An event was added to an invoice item, get the details and see if we need to 
     // create a registration for this event
