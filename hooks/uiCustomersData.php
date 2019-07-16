@@ -16,21 +16,6 @@
 function ciniki_events_hooks_uiCustomersData($ciniki, $tnid, $args) {
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteIDs');
-    //
-    // Get the time information for tenant and user
-    //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
-    $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
-    if( $rc['stat'] != 'ok' ) {
-        return $rc;
-    }
-    $intl_timezone = $rc['settings']['intl-default-timezone'];
-
-    //
-    // Load the date format strings for the user
-    //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
-    $date_format = ciniki_users_dateFormat($ciniki, 'mysql');
 
     //
     // Load the status maps for the text description of each status
@@ -42,11 +27,6 @@ function ciniki_events_hooks_uiCustomersData($ciniki, $tnid, $args) {
     }
     $maps = $rc['maps'];
     
-    //
-    // Setup current date in tenant timezone
-    //
-    $cur_date = new DateTime('now', new DateTimeZone($intl_timezone));
-
     //
     // Default response
     //
@@ -70,29 +50,29 @@ function ciniki_events_hooks_uiCustomersData($ciniki, $tnid, $args) {
             ),
         'data' => array(),
         );
-        $strsql = "SELECT regs.id, regs.customer_id, "
-            . "regs.status AS status_text, "
-            . "IFNULL(customers.display_name, '') AS display_name, "
-            . "events.name, "
-            . "DATE_FORMAT(events.start_date, '%b %d, %Y') AS start_date "
-            . "FROM ciniki_event_registrations AS regs "
-            . "INNER JOIN ciniki_events AS events ON ("
-                . "regs.event_id = events.id "
-                . "AND events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-                . ") "
-            . "LEFT JOIN ciniki_customers AS customers ON ("
-                . "regs.customer_id = customers.id "
-                . "AND customers.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-                . ") "
-            . "WHERE regs.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-            . "";
-        if( isset($args['customer_id']) ) {
-            $strsql .= "AND regs.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' ";
-        } elseif( isset($args['customer_ids']) && count($args['customer_ids']) > 0 ) {
-            $strsql .= "AND regs.customer_id IN (" . ciniki_core_dbQuoteIDs($ciniki, $args['customer_ids']) . ") ";
-        } else {
-            return array('stat'=>'ok');
-        }
+    $strsql = "SELECT regs.id, regs.customer_id, "
+        . "regs.status AS status_text, "
+        . "IFNULL(customers.display_name, '') AS display_name, "
+        . "events.name, "
+        . "DATE_FORMAT(events.start_date, '%b %d, %Y') AS start_date "
+        . "FROM ciniki_event_registrations AS regs "
+        . "INNER JOIN ciniki_events AS events ON ("
+            . "regs.event_id = events.id "
+            . "AND events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . ") "
+        . "LEFT JOIN ciniki_customers AS customers ON ("
+            . "regs.customer_id = customers.id "
+            . "AND customers.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . ") "
+        . "WHERE regs.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+        . "";
+    if( isset($args['customer_id']) ) {
+        $strsql .= "AND regs.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' ";
+    } elseif( isset($args['customer_ids']) && count($args['customer_ids']) > 0 ) {
+        $strsql .= "AND regs.customer_id IN (" . ciniki_core_dbQuoteIDs($ciniki, $args['customer_ids']) . ") ";
+    } else {
+        return array('stat'=>'ok');
+    }
     $strsql .= "ORDER BY customers.display_name, events.start_date DESC, events.name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
