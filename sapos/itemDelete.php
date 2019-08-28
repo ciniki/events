@@ -36,11 +36,10 @@ function ciniki_events_sapos_itemDelete($ciniki, $tnid, $invoice_id, $item) {
         $registration = $rc['registration'];
 
         //
-        // Remove the invoice from the registration, don't delete it
+        // Delete the registration
         //
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-        $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.events.registration', 
-            $registration['id'], array('invoice_id'=>'0'), 0x04);
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
+        $rc = ciniki_core_objectDelete($ciniki, $tnid, 'ciniki.events.registration', $registration['id'], $registration['uuid'], 0x04);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }

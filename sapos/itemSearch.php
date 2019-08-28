@@ -128,6 +128,7 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
                 );
             if( isset($event['prices']) && count($event['prices']) == 1 ) {
                 $price = array_pop($event['prices']);
+                $details['price_id'] = $price['id'];
                 if( isset($price['name']) && $price['name'] != '' ) {
                     $details['description'] .= ' - ' . $price['name'];
                 }
