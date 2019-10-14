@@ -266,6 +266,10 @@ function ciniki_events_eventGet($ciniki) {
 
         if( isset($args['ticketmap']) && $args['ticketmap'] == 'yes' ) {
             //
+            // FIXME: Get the image size
+            //
+
+            //
             // Get the price list for the event
             //
             $strsql = "SELECT id, name, available_to, available_to AS available_to_text, unit_amount, webflags, "
