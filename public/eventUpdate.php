@@ -64,6 +64,16 @@ function ciniki_events_eventUpdate(&$ciniki) {
         return $rc;
     }   
 
+    //
+    // Load the tenant settings
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $intl_timezone = $rc['settings']['intl-default-timezone'];
+    
     if( isset($args['oidref']) ) {
         if( preg_match("/(.*):(.*)/", $args['oidref'], $m) ) {
             $args['object'] = $m[1];
@@ -77,7 +87,7 @@ function ciniki_events_eventUpdate(&$ciniki) {
     //
     // Get the existing event details
     //
-    $strsql = "SELECT uuid "
+    $strsql = "SELECT uuid, name, start_date "
         . "FROM ciniki_events "
         . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
@@ -91,10 +101,13 @@ function ciniki_events_eventUpdate(&$ciniki) {
     }
     $event = $rc['event'];
 
-    if( isset($args['name']) ) {
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
-        $args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
-//      $args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
+    if( isset($args['name']) || isset($args['start_date']) ) {
+
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'makePermalink');
+        $args['permalink'] = ciniki_events_makePermalink($ciniki, $args['tnid'], array(
+            'name'=>(isset($args['name']) ? $args['name'] : $event['name']),
+            'start_date'=>(isset($args['start_date']) ? $args['start_date'] : new DateTime($event['start_date'], new DateTimezone($intl_timezone))),
+            ));
         //
         // Make sure the permalink is unique
         //

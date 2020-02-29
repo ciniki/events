@@ -325,9 +325,9 @@ function ciniki_events_main() {
             'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
             }},
         'general':{'label':'General', 'aside':'yes', 'fields':{
-            'name':{'label':'Name', 'hint':'Events name', 'type':'text'},
+            'name':{'label':'Name', 'hint':'Events name', 'required':'yes', 'type':'text'},
             'url':{'label':'URL', 'hint':'Enter the http:// address for your events website', 'type':'text'},
-            'start_date':{'label':'Start', 'type':'date'},
+            'start_date':{'label':'Start', 'required':'yes', 'type':'date'},
             'end_date':{'label':'End', 'type':'date'},
             'times':{'label':'Hours', 'type':'text'},
             'oidref':{'label':'Exhibition', 'active':'no', 'type':'select', 'options':{}},

@@ -33,7 +33,7 @@ function ciniki_events_eventAdd(&$ciniki) {
         'description'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Description'), 
         'num_tickets'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Number of Tickets'),
         'reg_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Registration Flags'),
-        'start_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Start Date'), 
+        'start_date'=>array('required'=>'yes', 'blank'=>'yes', 'type'=>'date', 'name'=>'Start Date'), 
         'end_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'End Date'), 
         'times'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Times'), 
         'primary_image_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Image'), 
@@ -63,8 +63,8 @@ function ciniki_events_eventAdd(&$ciniki) {
     }
 
     if( !isset($args['permalink']) || $args['permalink'] == '' ) {  
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
-        $args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'makePermalink');
+        $args['permalink'] = ciniki_events_makePermalink($ciniki, $args['tnid'], $args);
     }
 
     if( isset($args['oidref']) && $args['oidref'] != '' && preg_match("/(.*):(.*)/", $args['oidref'], $m) ) {
