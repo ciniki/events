@@ -34,7 +34,7 @@ function ciniki_events_eventUpdate(&$ciniki) {
         'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'), 
         'num_tickets'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Number of Tickets'),
         'reg_flags'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Registration Flags'),
-        'start_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Start Date'), 
+        'start_date'=>array('required'=>'no', 'blank'=>'no', 'type'=>'date', 'name'=>'Start Date'), 
         'end_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'End Date'), 
         'times'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Times'), 
         'primary_image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Image'), 
@@ -106,7 +106,7 @@ function ciniki_events_eventUpdate(&$ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'makePermalink');
         $args['permalink'] = ciniki_events_makePermalink($ciniki, $args['tnid'], array(
             'name'=>(isset($args['name']) ? $args['name'] : $event['name']),
-            'start_date'=>(isset($args['start_date']) ? $args['start_date'] : new DateTime($event['start_date'], new DateTimezone($intl_timezone))),
+            'start_date'=>new DateTime((isset($args['start_date']) ? $args['start_date'] : $event['start_date']), new DateTimezone($intl_timezone)),
             ));
         //
         // Make sure the permalink is unique

@@ -33,7 +33,7 @@ function ciniki_events_eventAdd(&$ciniki) {
         'description'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Description'), 
         'num_tickets'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Number of Tickets'),
         'reg_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Registration Flags'),
-        'start_date'=>array('required'=>'yes', 'blank'=>'yes', 'type'=>'date', 'name'=>'Start Date'), 
+        'start_date'=>array('required'=>'yes', 'blank'=>'no', 'type'=>'date', 'name'=>'Start Date'), 
         'end_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'End Date'), 
         'times'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Times'), 
         'primary_image_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Image'), 
@@ -62,9 +62,22 @@ function ciniki_events_eventAdd(&$ciniki) {
         return $rc;
     }
 
+    //
+    // Load the tenant settings
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $intl_timezone = $rc['settings']['intl-default-timezone'];
+    
     if( !isset($args['permalink']) || $args['permalink'] == '' ) {  
         ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'makePermalink');
-        $args['permalink'] = ciniki_events_makePermalink($ciniki, $args['tnid'], $args);
+        $args['permalink'] = ciniki_events_makePermalink($ciniki, $args['tnid'], array(
+            'name' => $args['name'],
+            'start_date' => new DateTime($args['start_date'], new DateTimezone($intl_timezone)),
+            ));
     }
 
     if( isset($args['oidref']) && $args['oidref'] != '' && preg_match("/(.*):(.*)/", $args['oidref'], $m) ) {

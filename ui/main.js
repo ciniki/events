@@ -301,11 +301,6 @@ function ciniki_events_main() {
                 } else {
                     p.sections.info.list.url.visible = 'no';
                 }
-//                if( (rsp.event.reg_flags&0x03) > 0 ) {
-//                    p.sections._registrations.visible = 'yes';
-//                } else {
-//                    p.sections._registrations.visible = 'no';
-//                }
                 p.refresh();
                 p.show(cb);
             });
@@ -327,8 +322,8 @@ function ciniki_events_main() {
         'general':{'label':'General', 'aside':'yes', 'fields':{
             'name':{'label':'Name', 'hint':'Events name', 'required':'yes', 'type':'text'},
             'url':{'label':'URL', 'hint':'Enter the http:// address for your events website', 'type':'text'},
-            'start_date':{'label':'Start', 'required':'yes', 'type':'date'},
-            'end_date':{'label':'End', 'type':'date'},
+            'start_date':{'label':'Start Date', 'required':'yes', 'type':'date'},
+            'end_date':{'label':'End Date', 'type':'date'},
             'times':{'label':'Hours', 'type':'text'},
             'oidref':{'label':'Exhibition', 'active':'no', 'type':'select', 'options':{}},
             'flags':{'label':'Website', 'type':'flags', 'flags':{'1':{'name':'Visible'}}},
@@ -412,6 +407,7 @@ function ciniki_events_main() {
             });
     };
     this.edit.save = function() {
+        if( !this.checkForm() ) { return false; }
         if( this.event_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
