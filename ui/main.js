@@ -436,16 +436,16 @@ function ciniki_events_main() {
                         return false;
                     } 
                     if( rsp.id > 0 ) {
-                        var cb = null;
                         if( M.ciniki_events_main.edit.cb != 'M.ciniki_events_main.event.open();' ) {
-                            console.log('set cb');
-                            cb = M.ciniki_events_main.edit.cb;
+                            // Move callback to event panel,
+                            // Setup for close of this panel
+                            M.ciniki_events_main.event.cb = M.ciniki_events_main.edit.cb;
+                            M.ciniki_events_main.edit.cb = 'M.ciniki_events_main.event.open(null,' + rsp.id + ');';
+                        } else {
+                            M.ciniki_events_main.edit.cb = 'M.ciniki_events_main.event.open(null,' + rsp.id + ');';
                         }
-                        M.ciniki_events_main.edit.close();
-                        M.ciniki_events_main.event.open(cb,rsp.id);
-                    } else {
-                        M.ciniki_events_main.edit.close();
                     }
+                    M.ciniki_events_main.edit.close();
                 });
             } else {
                 this.close();
