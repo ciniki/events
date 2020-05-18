@@ -453,15 +453,15 @@ function ciniki_events_main() {
         }
     };
     this.edit.remove = function() {
-        if( confirm("Are you sure you want to remove '" + this.data.name + "' as an event ?") ) {
-            M.api.getJSONCb('ciniki.events.eventDelete', {'tnid':M.curTenantID, 'event_id':this.event_id}, function(rsp) {
+        M.confirm("Are you sure you want to remove '" + this.data.name + "' as an event ?",null,function() {
+            M.api.getJSONCb('ciniki.events.eventDelete', {'tnid':M.curTenantID, 'event_id':M.ciniki_events_main.edit.event_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
                 }
                 M.ciniki_events_main.event.close();
             });
-        }
+        });
     }
     this.edit.addButton('save', 'Save', 'M.ciniki_events_main.edit.save();');
     this.edit.addClose('Cancel');
@@ -808,15 +808,15 @@ function ciniki_events_main() {
         }
     };
     this.mapticket.remove = function() {
-        if( confirm("Are you sure you want to remove this price?") ) {
-            M.api.getJSONCb('ciniki.events.priceDelete', {'tnid':M.curTenantID, 'price_id':this.price_id}, function(rsp) {
+        M.confirm("Are you sure you want to remove this price?",null,function() {
+            M.api.getJSONCb('ciniki.events.priceDelete', {'tnid':M.curTenantID, 'price_id':M.ciniki_events_main.mapticket.price_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
                 }
                 M.ciniki_events_main.mapticket.close();    
             });
-        }
+        });
     };
     this.mapticket.addButton('save', 'Save', 'M.ciniki_events_main.mapticket.save();');
     this.mapticket.addClose('Cancel');
@@ -835,7 +835,7 @@ function ciniki_events_main() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_events_main', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 

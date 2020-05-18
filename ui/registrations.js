@@ -238,15 +238,15 @@ function ciniki_events_registrations() {
         }
     };
     this.edit.remove = function() {
-        if( confirm("Are you sure you want to remove this registration?") ) {
-            M.api.getJSONCb('ciniki.events.registrationDelete', {'tnid':M.curTenantID, 'registration_id':this.registration_id}, function(rsp) {
+        M.confirm("Are you sure you want to remove this registration?",null,function() {
+            M.api.getJSONCb('ciniki.events.registrationDelete', {'tnid':M.curTenantID, 'registration_id':M.ciniki_events_registrations.edit.registration_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
                 }
                 M.ciniki_events_registrations.edit.close(); 
             });
-        }
+        });
     };
     this.edit.updateCustomer = function(cid) {
         if( cid != null && this.customer_id != cid ) {
@@ -369,7 +369,7 @@ function ciniki_events_registrations() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_events_registrations', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 

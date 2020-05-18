@@ -104,7 +104,7 @@ function ciniki_events_files() {
         }
     };
     this.edit.remove = function() {
-        if( confirm('Are you sure you want to delete \'' + this.data.name + '\'?  All information about it will be removed and unrecoverable.') ) {
+        M.confirm('Are you sure you want to delete \'' + this.data.name + '\'?  All information about it will be removed and unrecoverable.',null,function() {
             var rsp = M.api.getJSONCb('ciniki.events.fileDelete', {'tnid':M.curTenantID, 'file_id':M.ciniki_events_files.edit.file_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -112,7 +112,7 @@ function ciniki_events_files() {
                 } 
                 M.ciniki_events_files.edit.close();
             });
-        }
+        });
     };
     this.edit.downloadFile = function(fid) {
         M.api.openFile('ciniki.events.fileDownload', {'tnid':M.curTenantID, 'file_id':fid});
@@ -129,7 +129,7 @@ function ciniki_events_files() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_events_files', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
 
@@ -138,7 +138,7 @@ function ciniki_events_files() {
         } else if( args.event_id != null && args.event_id > 0 && args.add != null && args.add == 'yes' ) {
             this.add.open(cb, args.event_id);
         } else {
-            alert('Invalid request');
+            M.alert('Invalid request');
         }
     }
 }

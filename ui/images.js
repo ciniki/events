@@ -93,15 +93,15 @@ function ciniki_events_images() {
         }
     };
     this.edit.remove = function() {
-        if( confirm('Are you sure you want to delete this image?') ) {
-            M.api.getJSONCb('ciniki.events.imageDelete', {'tnid':M.curTenantID, 'event_image_id':this.event_image_id}, function(rsp) {
+        M.confirm('Are you sure you want to delete this image?',null,function() {
+            M.api.getJSONCb('ciniki.events.imageDelete', {'tnid':M.curTenantID, 'event_image_id':M.ciniki_events_images.edit.event_image_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
                 }
                 M.ciniki_events_images.edit.close();
             });
-        }
+        });
     };
     this.edit.addButton('save', 'Save', 'M.ciniki_events_images.edit.save();');
     this.edit.addClose('Cancel');
@@ -115,7 +115,7 @@ function ciniki_events_images() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_events_images', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
 
