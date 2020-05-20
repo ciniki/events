@@ -81,7 +81,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         $page_nav_limit = $args['post_limit'];
     }
     if( isset($ciniki['request']['args']['page']) && $ciniki['request']['args']['page'] != '' ) {
-        $page_nav_cur = $ciniki['request']['args']['page'];
+        $page_nav_cur = intval($ciniki['request']['args']['page']);
     } else {
         $page_nav_cur = 1;
     }
