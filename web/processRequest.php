@@ -371,7 +371,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             if( $display_format == 'imagelist' ) {
                 $page['blocks'][] = array('type'=>'imagelist', 'section'=>'past-events', 'noimage'=>'yes', 
                     'base_url'=>$args['base_url'], 'list'=>$rc['events'], 
-                    'limit'=>$page_post_limit,
+                    'limit'=>$page_nav_limit,
                     'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
             } else {
                 $page['blocks'][] = array('type'=>'cilist', 'section'=>'past-events', 'base_url'=>$args['base_url'], 'categories'=>$rc['events'],
