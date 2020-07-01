@@ -23,6 +23,7 @@ function ciniki_events_registrationAdd(&$ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event'),
+        'price_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Price'),
         'customer_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Customer'),
         'num_tickets'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Number of Tickets'),
         'invoice_id'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Invoice'),

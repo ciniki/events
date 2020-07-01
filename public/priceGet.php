@@ -106,6 +106,7 @@ function ciniki_events_priceGet($ciniki) {
             'unit_donation_amount' => '',
             'taxtype_id' => '',
             'webflags' => 0,
+            'num_tickets' => 0,
             'position_num' => 1,
             'position_x' => '',
             'position_y' => '',
@@ -173,6 +174,7 @@ function ciniki_events_priceGet($ciniki) {
             . "ciniki_event_prices.unit_donation_amount, "
             . "ciniki_event_prices.taxtype_id, "
             . "ciniki_event_prices.webflags, "
+            . "ciniki_event_prices.num_tickets, "
             . "ciniki_event_prices.position_num, "
             . "ciniki_event_prices.position_x, "
             . "ciniki_event_prices.position_y, "
@@ -186,7 +188,7 @@ function ciniki_events_priceGet($ciniki) {
             array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
                 'fields'=>array('id', 'event_id', 'name', 'available_to', 'valid_from', 'valid_to', 
                     'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'unit_donation_amount',
-                    'taxtype_id', 'webflags', 'position_num', 'position_x', 'position_y', 'diameter'),
+                    'taxtype_id', 'webflags', 'num_tickets', 'position_num', 'position_x', 'position_y', 'diameter'),
                 'utctotz'=>array('valid_from'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),
                     'valid_to'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),
                     ),

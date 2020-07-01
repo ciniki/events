@@ -1,0 +1,6 @@
+#
+# Add the num_tickets column for tracking limited for each price
+#
+ALTER TABLE ciniki_event_prices MODIFY COLUMN webflags smallint unsigned not null;
+ALTER TABLE ciniki_event_prices ADD COLUMN num_tickets int not null AFTER webflags;
+ALTER TABLE ciniki_event_prices COMMENT='v1.05';

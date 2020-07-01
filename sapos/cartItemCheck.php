@@ -34,7 +34,8 @@ function ciniki_events_sapos_cartItemCheck($ciniki, $tnid, $customer, $args) {
             . "ciniki_event_prices.unit_discount_percentage, "
             . "ciniki_event_prices.unit_donation_amount, "
             . "ciniki_event_prices.taxtype_id, "
-            . "ciniki_event_prices.webflags "
+            . "ciniki_event_prices.webflags, "
+            . "ciniki_event_prices.num_tickets "
             . "FROM ciniki_event_prices "
             . "LEFT JOIN ciniki_events ON ("
                 . "ciniki_event_prices.event_id = ciniki_events.id "
@@ -49,7 +50,7 @@ function ciniki_events_sapos_cartItemCheck($ciniki, $tnid, $customer, $args) {
             array('container'=>'events', 'fname'=>'event_id',
                 'fields'=>array('event_id', 'price_id', 'price_name', 'description', 'reg_flags', 'num_tickets', 
                     'available_to', 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'unit_donation_amount', 
-                    'taxtype_id', 'webflags',
+                    'taxtype_id', 'webflags', 'num_tickets',
                     )),
             ));
         if( $rc['stat'] != 'ok' ) {
@@ -74,6 +75,26 @@ function ciniki_events_sapos_cartItemCheck($ciniki, $tnid, $customer, $args) {
         //
         if( ($item['webflags']&0x04) == 0x04 ) {
             return array('stat'=>'unavailable', 'err'=>array('code'=>'ciniki.events.86', 'msg'=>"I'm sorry but this item has already been sold."));
+        }
+
+        //
+        // Check if tickets available at pricepoint
+        //
+        if( ($item['webflags']&0x80) == 0x80 ) {
+            $strsql = "SELECT COUNT(id) "
+                . "FROM ciniki_event_registrations "
+                . "WHERE event = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
+                . "AND price_id = '" . ciniki_core_dbQuote($ciniki, $args['price_id']) . "' "
+                . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+                . "";
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
+            $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.events', 'num');
+            if( $rc['stat'] != 'ok' ) {
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.90', 'msg'=>'Unable to load get the number of registrations', 'err'=>$rc['err']));
+            }
+            if( $rc['num'] >= $item['num_tickets'] ) {
+                return array('stat'=>'unavailable', 'err'=>array('code'=>'ciniki.events.86', 'msg'=>"I'm sorry but this item now sold out."));
+            }
         }
 
         return array('stat'=>'ok');

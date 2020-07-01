@@ -1,0 +1,5 @@
+#
+# Add the price_id field to store link to prices
+#
+ALTER TABLE ciniki_event_registrations ADD COLUMN price_id int not null AFTER event_id;
+ALTER TABLE ciniki_event_registrations COMMENT='v1.03';

@@ -39,7 +39,8 @@ function ciniki_events_sapos_cartItemPaymentReceived($ciniki, $tnid, $customer, 
             . "ciniki_event_prices.unit_discount_amount, "
             . "ciniki_event_prices.unit_discount_percentage, "
             . "ciniki_event_prices.taxtype_id, "
-            . "ciniki_event_prices.webflags "
+            . "ciniki_event_prices.webflags, "
+            . "ciniki_event_prices.num_tickets "
             . "FROM ciniki_event_prices "
             . "LEFT JOIN ciniki_events ON ("
                 . "ciniki_event_prices.event_id = ciniki_events.id "
@@ -53,7 +54,7 @@ function ciniki_events_sapos_cartItemPaymentReceived($ciniki, $tnid, $customer, 
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
             array('container'=>'events', 'fname'=>'event_id',
                 'fields'=>array('event_id', 'price_id', 'price_name', 'description', 'reg_flags', 'num_tickets', 
-                    'available_to', 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id', 'webflags'
+                    'available_to', 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id', 'webflags', 'num_tickets',
                     )),
             ));
         if( $rc['stat'] != 'ok' ) {
@@ -67,12 +68,14 @@ function ciniki_events_sapos_cartItemPaymentReceived($ciniki, $tnid, $customer, 
         //
         // Create the registration for the customer
         //
-        $reg_args = array('event_id'=>$event['event_id'],
-            'customer_id'=>$args['customer_id'],
-            'num_tickets'=>(isset($args['quantity'])?$args['quantity']:1),
-            'invoice_id'=>$args['invoice_id'],
-            'customer_notes'=>'',
-            'notes'=>'',
+        $reg_args = array(
+            'event_id' => $event['event_id'],
+            'price_id' => $event['price_id'],
+            'customer_id' => $args['customer_id'],
+            'num_tickets' => (isset($args['quantity'])?$args['quantity']:1),
+            'invoice_id' => $args['invoice_id'],
+            'customer_notes' => '',
+            'notes' => '',
             );
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
         $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.events.registration', $reg_args, 0x04);
@@ -86,7 +89,9 @@ function ciniki_events_sapos_cartItemPaymentReceived($ciniki, $tnid, $customer, 
         //
         if( ($event['webflags']&0x06) == 0x02 || ($event['webflags']&0x0C) == 0x08 ) {
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-            $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.events.price', $event['price_id'], array('webflags'=>$event['webflags']|0x04), 0x04);
+            $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.events.price', $event['price_id'], array(
+                'webflags' => ($event['webflags']|0x04),
+                ), 0x04);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }

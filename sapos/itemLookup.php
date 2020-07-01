@@ -117,7 +117,6 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
                 $item['limited_units'] = 'yes';
                 $item['units_available'] = 0;
             }
-
         }
 
         return array('stat'=>'ok', 'item'=>$item);

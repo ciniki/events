@@ -47,7 +47,9 @@
 #                           0x10 - Show Members price to the public.
 #                           0x20 - Show Dealers price to the public.
 #                           0x40 - Show Distributors price to the public.
-#                           0x80 - 
+#                           0x80 - Limited number of tickets at this price.
+#
+# num_tickets:              The number of tickets available for this price. Flag 0x80 must be set
 #
 # position_num:             The number of the position, Table 1, Seat 1, etc.
 # position_x:               The center X position of the circle of the price on the ticketmap.
@@ -72,6 +74,7 @@ create table ciniki_event_prices (
     unit_donation_amount decimal(19,4) not null,
     taxtype_id int not null,
     webflags tinyint unsigned not null,
+    num_tickets int not null,
     position_num int not null,
     position_x int not null,
     position_y int not null,
@@ -81,4 +84,4 @@ create table ciniki_event_prices (
     primary key (id),
     index (event_id, name),
     index sync (uuid, tnid, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.04';
+) ENGINE='InnoDB', COMMENT='v1.05';

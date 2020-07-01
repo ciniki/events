@@ -236,15 +236,29 @@ function ciniki_events_eventGet($ciniki) {
             //
             // Get the price list for the event
             //
-            $strsql = "SELECT id, name, available_to, available_to AS available_to_text, unit_amount, webflags "
-                . "FROM ciniki_event_prices "
-                . "WHERE ciniki_event_prices.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
-                . "AND (ciniki_event_prices.webflags&0x08) = 0 "   // Skip mapped ticket prices
-                . "ORDER BY ciniki_event_prices.name COLLATE latin1_general_cs "
+            $strsql = "SELECT prices.id, "
+                . "prices.name, "
+                . "prices.available_to, "
+                . "prices.available_to AS available_to_text, "
+                . "prices.unit_amount, "
+                . "prices.webflags, "
+                . "prices.num_tickets, "
+                . "COUNT(registrations.id) AS num_registrations "
+                . "FROM ciniki_event_prices AS prices "
+                . "LEFT JOIN ciniki_event_registrations AS registrations ON ("
+                    . "prices.id = registrations.price_id "
+                    . "AND prices.event_id = registrations.event_id "
+                    . "AND registrations.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+                    . ") "
+                . "WHERE prices.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
+                . "AND (prices.webflags&0x08) = 0 "   // Skip mapped ticket prices
+                . "GROUP BY prices.id "
+                . "ORDER BY prices.name COLLATE latin1_general_cs "
                 . "";
             $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
                 array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
-                    'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount', 'webflags' ),
+                    'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount', 
+                        'webflags', 'num_tickets', 'num_registrations'),
                     'flags'=>array('available_to_text'=>$maps['prices']['available_to'])),
                 ));
             if( $rc['stat'] != 'ok' ) {

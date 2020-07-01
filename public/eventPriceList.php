@@ -78,6 +78,8 @@ function ciniki_events_eventPriceList($ciniki) {
         . "ciniki_event_prices.unit_discount_amount, "
         . "ciniki_event_prices.unit_discount_percentage, "
         . "ciniki_event_prices.taxtype_id, "
+        . "ciniki_event_prices.webflags, "
+        . "ciniki_event_prices.num_tickets, "
         . "ciniki_events.name AS event_name "
         . "FROM ciniki_event_prices "
         . "LEFT JOIN ciniki_events ON (ciniki_event_prices.event_id = ciniki_events.id "
@@ -91,7 +93,8 @@ function ciniki_events_eventPriceList($ciniki) {
     $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
         array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
             'fields'=>array('id', 'event_name', 'name', 'available_to', 'available_to_text',
-                'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id'),
+                'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id',
+                'webflags', 'num_tickets'),
             'flags'=>array('available_to_text'=>$maps['prices']['available_to'])),
         ));
     if( $rc['stat'] != 'ok' ) {
