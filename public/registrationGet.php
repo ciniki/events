@@ -91,6 +91,7 @@ function ciniki_events_registrationGet($ciniki) {
         // Get the price list for the event
         //
         $strsql = "SELECT prices.id, "
+            . "IFNULL(events.name, '') AS event_name, "
             . "prices.name, "
             . "prices.available_to, "
             . "prices.available_to AS available_to_text, "
@@ -98,6 +99,10 @@ function ciniki_events_registrationGet($ciniki) {
             . "prices.webflags, "
             . "prices.num_tickets "
             . "FROM ciniki_event_prices AS prices "
+            . "LEFT JOIN ciniki_events AS events ON ("
+                . "prices.event_id = events.id "
+                . "AND events.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+                . ") "
             . "WHERE prices.event_id = '" . ciniki_core_dbQuote($ciniki, $registration['event_id']) . "' "
             . "AND (prices.webflags&0x08) = 0 "   // Skip mapped ticket prices
             . "ORDER BY prices.name COLLATE latin1_general_cs "
@@ -105,7 +110,7 @@ function ciniki_events_registrationGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.events', array(
             array('container'=>'prices', 'fname'=>'id',
-                'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount', 
+                'fields'=>array('id', 'event_name', 'name', 'available_to', 'available_to_text', 'unit_amount', 
                     'webflags', 'num_tickets'),
                 ),
             ));
