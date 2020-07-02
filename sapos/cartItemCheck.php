@@ -83,7 +83,7 @@ function ciniki_events_sapos_cartItemCheck($ciniki, $tnid, $customer, $args) {
         if( ($item['webflags']&0x80) == 0x80 ) {
             $strsql = "SELECT COUNT(id) "
                 . "FROM ciniki_event_registrations "
-                . "WHERE event = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
+                . "WHERE event_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
                 . "AND price_id = '" . ciniki_core_dbQuote($ciniki, $args['price_id']) . "' "
                 . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "";

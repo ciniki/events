@@ -36,7 +36,8 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
             . "ciniki_event_prices.unit_discount_percentage, "
             . "ciniki_event_prices.unit_donation_amount, "
             . "ciniki_event_prices.taxtype_id, "
-            . "ciniki_event_prices.webflags "
+            . "ciniki_event_prices.webflags, "
+            . "ciniki_event_prices.num_tickets AS price_num_tickets "
             . "FROM ciniki_event_prices "
             . "LEFT JOIN ciniki_events ON ("
                 . "ciniki_event_prices.event_id = ciniki_events.id "
@@ -51,7 +52,7 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
             array('container'=>'events', 'fname'=>'event_id',
                 'fields'=>array('id'=>'event_id', 'price_id', 'price_name', 'description', 'reg_flags', 'num_tickets', 
                     'available_to', 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'unit_donation_amount', 
-                    'taxtype_id', 'webflags',
+                    'taxtype_id', 'webflags', 'price_num_tickets',
                     )),
             ));
         if( $rc['stat'] != 'ok' ) {
@@ -64,25 +65,13 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
         if( isset($event['price_name']) && $event['price_name'] != '' ) {
             $event['description'] .= ' - ' . $event['price_name'];
         }
-/*        $strsql = "SELECT id, name, reg_flags, num_tickets "
-            . "FROM ciniki_events "
-            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-            . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
-            . "";
-        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.events', 'event');
-        if( $rc['stat'] != 'ok' ) { 
-            return $rc;
-        }
-        if( !isset($rc['event']) ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.57', 'msg'=>'Unable to find event'));
-        } 
-        $event = $rc['event']; */
         $item = array(
             'id'=>$event['id'],
             'name'=>$event['description'],
             'flags'=>0x08,          // Registration item
             );
         
+        error_log(print_r($item,true));
         //
         // If registrations online enabled, check the available tickets
         //
@@ -93,6 +82,13 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
                 . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND ciniki_event_registrations.event_id = '" . ciniki_core_dbQuote($ciniki, $event['id']) . "' "
                 . "";
+            //
+            // Only get registrations for this price if price specific limits
+            //
+            if( ($event['webflags']&0x80) == 0x80 ) { 
+                $strsql .= "AND ciniki_event_registrations.price_id = '" . ciniki_core_dbQuote($ciniki, $args['price_id']) . "' ";
+                $item['num_tickets'] = $item['price_num_tickets'];
+            }
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbCount');
             $rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.events', 'num');
             if( $rc['stat'] != 'ok' ) {

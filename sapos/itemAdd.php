@@ -54,7 +54,9 @@ function ciniki_events_sapos_itemAdd($ciniki, $tnid, $invoice_id, $item) {
         //
         // Create the registration for the customer
         //
-        $reg_args = array('event_id'=>$event['id'],
+        $reg_args = array(
+            'event_id'=>$event['id'],
+            'price_id'=>(isset($item['price_id']) ? $item['price_id'] : 0),
             'customer_id'=>$invoice['customer_id'],
             'num_tickets'=>(isset($item['quantity'])?$item['quantity']:1),
             'invoice_id'=>$invoice['id'],

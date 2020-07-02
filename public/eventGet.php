@@ -243,7 +243,7 @@ function ciniki_events_eventGet($ciniki) {
                 . "prices.unit_amount, "
                 . "prices.webflags, "
                 . "prices.num_tickets, "
-                . "COUNT(registrations.id) AS num_registrations "
+                . "IFNULL(SUM(registrations.num_tickets), 0) AS num_registrations "
                 . "FROM ciniki_event_prices AS prices "
                 . "LEFT JOIN ciniki_event_registrations AS registrations ON ("
                     . "prices.id = registrations.price_id "

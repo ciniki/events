@@ -145,9 +145,9 @@ function ciniki_events_main() {
             }},
         'description':{'label':'Synopsis', 'type':'htmlcontent'},
         'long_description':{'label':'Description', 'type':'htmlcontent'},
-        'prices':{'label':'Price List', 'type':'simplegrid', 'num_cols':2,
+        'prices':{'label':'Price List', 'type':'simplegrid', 'num_cols':3,
             'headerValues':null,
-            'cellClasses':['', ''],
+            'cellClasses':['', '', ''],
             'noData':'No prices',
             'addTxt':'Add Price',
             'addFn':'M.startApp(\'ciniki.events.prices\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'event_id\':M.ciniki_events_main.event.event_id,\'price_id\':\'0\'});',
@@ -231,6 +231,11 @@ function ciniki_events_main() {
             switch(j) {
                 case 0: return d.price.name + ' <span class="subdue">(' + d.price.available_to_text + ')</span>';
                 case 1: return d.price.unit_amount_display;
+                case 2: 
+                    if( (d.price.webflags&0x80) == 0 || d.price.num_tickets == 0 ) {
+                        return '';
+                    }
+                    return d.price.num_registrations + ' of ' + d.price.num_tickets;
             }
         }
         if( s == 'links' && j == 0 ) {
@@ -686,7 +691,6 @@ function ciniki_events_main() {
         this.updateSVG();
     }
     this.mapticket.updateSVG = function(e) {
-        console.log('update');
         if( e != null ) {
             e.stopPropagation();
         }

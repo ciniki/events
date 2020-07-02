@@ -84,6 +84,45 @@ function ciniki_events_registrationGet($ciniki) {
     }
 
     //
+    // Get the available prices for this event
+    //
+    if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.sapos', 0x01) ) {
+        //
+        // Get the price list for the event
+        //
+        $strsql = "SELECT prices.id, "
+            . "prices.name, "
+            . "prices.available_to, "
+            . "prices.available_to AS available_to_text, "
+            . "prices.unit_amount, "
+            . "prices.webflags, "
+            . "prices.num_tickets "
+            . "FROM ciniki_event_prices AS prices "
+            . "WHERE prices.event_id = '" . ciniki_core_dbQuote($ciniki, $registration['event_id']) . "' "
+            . "AND (prices.webflags&0x08) = 0 "   // Skip mapped ticket prices
+            . "ORDER BY prices.name COLLATE latin1_general_cs "
+            . "";
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+        $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.events', array(
+            array('container'=>'prices', 'fname'=>'id',
+                'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount', 
+                    'webflags', 'num_tickets'),
+                ),
+            ));
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['prices']) ) {
+            $registration['prices'] = $rc['prices'];
+            foreach($registration['prices'] as $pid => $price) {
+                $registration['prices'][$pid]['unit_amount_display'] = '$' . number_format($price['unit_amount'], 2);
+            }
+        } else {
+            $registration['prices'] = array();
+        }
+    }
+
+    //
     // Add invoice information
     //
     if( isset($args['invoice']) && $args['invoice'] == 'yes' && $registration['invoice_id'] > 0 ) {
