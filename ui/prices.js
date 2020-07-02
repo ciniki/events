@@ -33,7 +33,7 @@ function ciniki_events_prices() {
                 'visible':function() {return M.modFlagSet('ciniki.events', 0x01);},
                 'on_fields':['num_tickets'],
                 },
-            'num_tickets':{'label':'Number of Tickets', 'type':'text', 'size':'small', 'active':'no'},
+            'num_tickets':{'label':'Number of Tickets', 'type':'text', 'size':'small', 'visible':'no'},
             }},
         '_buttons':{'label':'', 'buttons':{
             'save':{'label':'Save', 'fn':'M.ciniki_events_prices.edit.save();'},
@@ -63,14 +63,14 @@ function ciniki_events_prices() {
                 }
                 var p = M.ciniki_events_prices.edit;
                 p.data = rsp.price;
-                p.sections.price.fields.num_tickets.active = ((p.data.webflags&0x80) > 0 ? 'yes' : 'no');
+                p.sections.price.fields.num_tickets.visible = ((p.data.webflags&0x80) > 0 ? 'yes' : 'no');
                 p.event_id = rsp.price.event_id;
                 p.refresh();
                 p.show(cb);
             });
         } else {
             this.sections._buttons.buttons.delete.visible = 'no';
-            this.sections.price.fields.num_tickets.active = 'no';
+            this.sections.price.fields.num_tickets.visible = 'no';
             this.data = {};
             this.refresh();
             this.show(cb);
