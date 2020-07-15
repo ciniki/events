@@ -71,7 +71,6 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
             'flags'=>0x08,          // Registration item
             );
         
-        error_log(print_r($item,true));
         //
         // If registrations online enabled, check the available tickets
         //
@@ -87,7 +86,7 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
             //
             if( ($event['webflags']&0x80) == 0x80 ) { 
                 $strsql .= "AND ciniki_event_registrations.price_id = '" . ciniki_core_dbQuote($ciniki, $args['price_id']) . "' ";
-                $item['num_tickets'] = $item['price_num_tickets'];
+                $item['num_tickets'] = $event['price_num_tickets'];
             }
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbCount');
             $rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.events', 'num');
