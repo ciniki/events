@@ -114,7 +114,7 @@ function ciniki_events_eventList($ciniki) {
         }
         // No uncategorized events, show the first category
         if( (!isset($rc['uncategorized']['num_events']) || $rc['uncategorized']['num_events'] == 0) 
-            && is_array($rsp['categories']) && count($rsp['categories']) > 0 
+            && isset($rsp['categories']) && is_array($rsp['categories']) && count($rsp['categories']) > 0 
             && (!isset($args['tag_permalink']) || $args['tag_permalink'] == '') 
             ) {
             $args['tag_permalink'] = $rsp['categories'][0]['tag']['permalink'];
