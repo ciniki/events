@@ -394,8 +394,16 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         }
 //        $page['breadcrumbs'][] = array('name'=>$module_title, 'url'=>$args['base_url']);
     
-
         ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'web', 'list');
+    
+        $list_title = '';
+        if( isset($settings['page-events-content']) && $settings['page-events-content'] != '' && $tag_permalink == '' ) {
+            if( isset($settings['page-events-image']) && $settings['page-events-image'] > 0 ) {
+                $page['blocks'][] = array('type'=>'asideimage', 'section'=>'primary-image', 'primary'=>'yes', 'image_id'=>$settings['page-events-images'], 'title'=>$event['name'], 'caption'=>'');
+            }
+            $list_title = 'Upcoming ' . $module_title;
+            $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'content'=>$settings['page-events-content']);
+        }
 
         //
         // Get any current events
@@ -462,7 +470,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                     $page['blocks'][] = array('type'=>'cilist', 'section'=>'upcoming-events', 'title'=>'Upcoming ' . $module_title, 'base_url'=>$args['base_url'], 'categories'=>$rc['events'],
                         'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                 } else {
-                    $page['blocks'][] = array('type'=>'cilist', 'section'=>'upcoming-events', 'base_url'=>$args['base_url'], 'categories'=>$rc['events'],
+                    $page['blocks'][] = array('type'=>'cilist', 'section'=>'upcoming-events', 'title'=>$list_title, 'base_url'=>$args['base_url'], 'categories'=>$rc['events'],
                         'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                 }
             }
@@ -500,7 +508,9 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                 $page['breadcrumbs'][count($page['breadcrumbs'])-1]['name'] = 'Current ' . $page['breadcrumbs'][count($page['breadcrumbs'])-1]['name'];
             }
         } elseif( $num_upcoming > 0 ) {
-            if( count($page['breadcrumbs']) > 0 ) {
+            if( count($page['breadcrumbs']) > 0 
+                && (!isset($settings['page-events-content']) || $settings['page-events-content'] == '') 
+                ) {
                 $page['breadcrumbs'][count($page['breadcrumbs'])-1]['name'] = 'Upcoming ' . $page['breadcrumbs'][count($page['breadcrumbs'])-1]['name'];
             }
         }
