@@ -11,19 +11,37 @@
 //
 function ciniki_events_web_list($ciniki, $settings, $tnid, $args) {
 
+    //
+    // Load the tenant settings
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $intl_timezone = $rc['settings']['intl-default-timezone'];
+
+    //
+    // Use local timezone so events don't disappear after midnight UTC
+    //
+    $dt = new DateTime('now', new DateTimezone($intl_timezone));
+    $now = $dt->format('Y-m-d');
+
     $type_strsql = '';
     if( isset($args['type']) && $args['type'] == 'past' ) {
-        $type_strsql .= "AND ((ciniki_events.end_date > ciniki_events.start_date AND ciniki_events.end_date < DATE(NOW())) "
-                . "OR (ciniki_events.end_date <= ciniki_events.start_date AND ciniki_events.start_date < DATE(NOW())) "
+        $type_strsql .= "AND ((ciniki_events.end_date > ciniki_events.start_date AND ciniki_events.end_date < '" . ciniki_core_dbQuote($ciniki, $now) . "') "
+                . "OR (ciniki_events.end_date <= ciniki_events.start_date AND ciniki_events.start_date < '" . ciniki_core_dbQuote($ciniki, $now) . "') "
                 . ") ";
     } elseif( isset($args['type']) && $args['type'] == 'all' ) {
 
     } elseif( isset($args['type']) && $args['type'] == 'current' ) {
-        $type_strsql .= "AND (ciniki_events.start_date = DATE(NOW()) OR (ciniki_events.start_date < DATE(NOW()) AND ciniki_events.end_date >= DATE(NOW()))) ";
+        $type_strsql .= "AND (ciniki_events.start_date = '" . ciniki_core_dbQuote($ciniki, $now) . "' "
+            . "OR (ciniki_events.start_date < '" . ciniki_core_dbQuote($ciniki, $now) . "' "
+                . "AND ciniki_events.end_date >= '" . ciniki_core_dbQuote($ciniki, $now) . "')) ";
     } elseif( isset($args['type']) && $args['type'] == 'future' ) {
-        $type_strsql .= "AND ciniki_events.start_date > DATE(NOW()) ";
+        $type_strsql .= "AND ciniki_events.start_date > '" . ciniki_core_dbQuote($ciniki, $now) . "' ";
     } else {
-        $type_strsql .= "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) ";
+        $type_strsql .= "AND (ciniki_events.end_date >= '" . ciniki_core_dbQuote($ciniki, $now) . "' OR ciniki_events.start_date >= '" . ciniki_core_dbQuote($ciniki, $now) . "') ";
     }
     $strsql = "SELECT ciniki_events.id, "
         . "ciniki_events.name, "
