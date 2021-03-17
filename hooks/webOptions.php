@@ -113,6 +113,13 @@ function ciniki_events_hooks_webOptions(&$ciniki, $tnid, $args) {
             );
     }
 
+    $options[] = array(
+        'label'=>'Introduction',
+        'setting'=>'page-events-content', 
+        'type'=>'textarea',
+        'value'=>(isset($settings['page-events-content'])?$settings['page-events-content']:''),
+        );
+
     $pages['ciniki.events'] = array('name'=>'Events', 'options'=>$options);
 
     //
