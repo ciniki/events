@@ -393,10 +393,14 @@ function ciniki_events_main() {
                 var p = M.ciniki_events_main.edit;
                 p.data = rsp.event;
                 if( dup != null && dup == 'yes' ) {
+                    p.dup_event_id = p.event_id;
                     p.event_id = 0;
                     rsp.event.start_date = '';
                     rsp.event.end_date = '';
+                } else {
+                    p.dup_event_id = 0;
                 }
+            
                 p.sections._categories.fields.categories.tags = [];
                 if( rsp.categories != null ) {
                     for(i in rsp.categories) {
@@ -434,6 +438,9 @@ function ciniki_events_main() {
             }
         } else {
             var c = this.serializeForm('yes');
+            if( this.dup_event_id != null && this.dup_event_id > 0 ) {
+                c += '&dup_event_id=' + this.dup_event_id;
+            }
             if( c != '' ) {
                 M.api.postJSONCb('ciniki.events.eventAdd', {'tnid':M.curTenantID}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
