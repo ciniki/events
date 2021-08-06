@@ -69,6 +69,10 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
             'id'=>$event['id'],
             'name'=>$event['description'],
             'flags'=>0x08,          // Registration item
+            'unit_amount' => $event['unit_amount'],
+            'unit_discount_amount' => $event['unit_discount_amount'],
+            'unit_discount_percentage' => $event['unit_discount_percentage'],
+            'description' => $event['description'],
             );
         
         //
