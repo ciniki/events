@@ -27,6 +27,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
     $page = array(
         'title'=>$args['page_title'],
         'breadcrumbs'=>$args['breadcrumbs'],
+        'article-class'=>'ciniki-events',
         'blocks'=>array(),
         );
 
@@ -51,6 +52,8 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
 
     $display_format = 'cilist';
     if( isset($settings['page-events-display-format']) && $settings['page-events-display-format'] == 'imagelist' ) {
+        $display_format = 'imagelist';
+    } elseif( isset($settings['site-theme']) && $settings['site-theme'] == 'twentyone' ) {
         $display_format = 'imagelist';
     }
 
