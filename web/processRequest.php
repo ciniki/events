@@ -419,7 +419,9 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             && (!isset($settings['page-events-single-list']) || $settings['page-events-single-list'] != 'yes')
             ) {
             $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['tnid'], 
-                array('type'=>'current', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink, 'format'=>$display_format));
+                array('type'=>'current', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink, 
+                    'format'=>$display_format,
+                    ));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -547,17 +549,36 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             && (!isset($settings['page-events-single-list']) || $settings['page-events-single-list'] != 'yes')
             ) {
             $rc = ciniki_events_web_list($ciniki, $settings, $ciniki['request']['tnid'], 
-                array('type'=>'past', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink, 'format'=>$display_format));
+                array('type'=>'past', 'tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink, 
+                    'format'=>$display_format,
+                    'offset'=>(($page_nav_cur-1)*$page_nav_limit), 
+                    'limit'=>$page_nav_limit+1,
+                    ));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
             if( isset($rc['events']) && count($rc['events']) > 0 ) {
                 if( $display_format == 'imagelist' ) {
                     $page['blocks'][] = array('type'=>'imagelist', 'section'=>'past-events', 'noimage'=>'yes', 'title'=>'Past ' . $module_title, 'base_url'=>$args['base_url'], 'list'=>$rc['events'],
-                        'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+                        'limit'=>$page_nav_limit,
+                        'thumbnail_format'=>$thumbnail_format, 
+                        'thumbnail_padding_color'=>$thumbnail_padding_color,
+                        );
                 } else {
-                    $page['blocks'][] = array('type'=>'cilist', 'section'=>'past-events', 'title'=>'Past ' . $module_title, 'base_url'=>$args['base_url'], 'categories'=>$rc['events'],
-                        'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+                    $page['blocks'][] = array('type'=>'cilist', 'section'=>'past-events', 
+                        'title'=>'Past ' . $module_title, 
+                        'base_url'=>$args['base_url'], 
+                        'categories'=>$rc['events'],
+                        'limit'=>$page_nav_limit,
+                        'thumbnail_format'=>$thumbnail_format, 
+                        'thumbnail_padding_color'=>$thumbnail_padding_color,
+                        );
+                }
+                if( count($rc['events']) > $page_nav_limit ) {
+                    $page['blocks'][] = array('type'=>'multipagenav', 
+                        'cur_page'=>$page_nav_cur, 
+                        'total_pages'=>ceil(count($rc['events'])/$page_nav_limit),
+                        'base_url'=>$args['base_url']);
                 }
             } else {
                 $page['blocks'][] = array('type'=>'message', 'section'=>'past-events', 'content'=>"No past " . strtolower($module_title) . ".");
