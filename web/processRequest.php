@@ -574,7 +574,6 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                         'thumbnail_padding_color'=>$thumbnail_padding_color,
                         );
                 } else {
-                    error_log($page_nav_limit . 'asdfasf');
                     $page['blocks'][] = array('type'=>'cilist', 'section'=>'past-events', 
                         'title'=>($page_nav_cur > 1 ? '' : 'Past ' . $module_title), 
                         'base_url'=>$args['base_url'], 
