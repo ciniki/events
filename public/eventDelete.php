@@ -159,10 +159,10 @@ function ciniki_events_eventDelete(&$ciniki) {
         return $rc;
     }
     if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'private', 'registrationDelete');
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
         $registrations = $rc['rows'];
         foreach($registrations as $rid => $registration) {
-            $rc = ciniki_core__registrationDelete($ciniki, $args['tnid'], 
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.events.registration',
                 $registration['id'],$registration['uuid']);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.events');
