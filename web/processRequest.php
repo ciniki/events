@@ -404,7 +404,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         $current_list_title = '';
         if( isset($settings['page-events-content']) && $settings['page-events-content'] != '' && $tag_permalink == '' ) {
             if( isset($settings['page-events-image']) && $settings['page-events-image'] > 0 ) {
-                $page['blocks'][] = array('type'=>'asideimage', 'section'=>'primary-image', 'primary'=>'yes', 'image_id'=>$settings['page-events-image'], 'title'=>$event['name'], 'caption'=>'');
+                $page['blocks'][] = array('type'=>'asideimage', 'section'=>'primary-image', 'primary'=>'yes', 'image_id'=>$settings['page-events-image'], 'title'=>$page['title'], 'caption'=>'');
             }
             $list_title = 'Upcoming ' . $module_title;
             $current_list_title = 'Current ' . $module_title;
