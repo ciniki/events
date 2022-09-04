@@ -27,10 +27,10 @@ function ciniki_events_eventUpdate(&$ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event'), 
-        'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'), 
+        'name'=>array('required'=>'no', 'blank'=>'no', 'trim'=>'yes', 'name'=>'Name'), 
         'permalink'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Permalink'), 
         'flags'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Flags'), 
-        'url'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'URL'), 
+        'url'=>array('required'=>'no', 'blank'=>'yes', 'trim'=>'yes', 'name'=>'URL'), 
         'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'), 
         'num_tickets'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Number of Tickets'),
         'reg_flags'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Registration Flags'),
