@@ -505,7 +505,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                     if( $num_current > 0 ) {
                         $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'title'=>'Upcoming ' . $module_title, 'base_url'=>$args['base_url'], 'list'=>$rc['events']);
                     } else {
-                        $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'cards'=>$rc['events'],
+                        $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'list'=>$rc['events'],
                             'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                     }
                 } elseif( $display_format == 'tradingcards' ) {

@@ -29,7 +29,7 @@ function ciniki_events_hooks_webOptions(&$ciniki, $tnid, $args) {
     // Get the settings from the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'tnid', $tnid, 'ciniki.web', 'settings', 'page-events');
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'tnid', $tnid, 'ciniki.web', 'settings', '');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -41,7 +41,7 @@ function ciniki_events_hooks_webOptions(&$ciniki, $tnid, $args) {
 
 
     $options = array();
-    $options[] = array(
+    $option = array(
         'label'=>'Display Format',
         'setting'=>'page-events-display-format', 
         'type'=>'toggle',
@@ -51,6 +51,13 @@ function ciniki_events_hooks_webOptions(&$ciniki, $tnid, $args) {
             array('value'=>'imagelist', 'label'=>'Image List'),
             ),
         );
+    if( isset($settings['site-theme']) && $settings['site-theme'] == 'twentyone' ) {
+        $option['toggles'] = array(
+            array('value'=>'imagelist', 'label'=>'Image List'),
+            array('value'=>'tradingcards', 'label'=>'Trading Cards'),
+            );
+    }
+    $options[] = $option;
 
     $options[] = array(
         'label'=>'Separate Current Events',
@@ -126,7 +133,7 @@ function ciniki_events_hooks_webOptions(&$ciniki, $tnid, $args) {
     // For specific pages, no as many options are required
     //
     $options = array();
-    $options[] = array(
+    $option = array(
         'label'=>'Display Format',
         'setting'=>'page-events-display-format', 
         'type'=>'toggle',
@@ -136,6 +143,13 @@ function ciniki_events_hooks_webOptions(&$ciniki, $tnid, $args) {
             array('value'=>'imagelist', 'label'=>'Image List'),
             ),
         );
+    if( isset($settings['site-theme']) && $settings['site-theme'] == 'twentyone' ) {
+        $option['toggles'] = array(
+            array('value'=>'imagelist', 'label'=>'Image List'),
+            array('value'=>'tradingcards', 'label'=>'Trading Cards'),
+            );
+    }
+    $options[] = $option;
     $pages['ciniki.events.upcoming'] = array('name'=>'Events - Upcoming', 'options'=>$options);
     $pages['ciniki.events.past'] = array('name'=>'Events - Past', 'options'=>$options);
 
