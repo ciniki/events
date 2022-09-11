@@ -160,7 +160,7 @@ function ciniki_events_web_list($ciniki, $settings, $tnid, $args) {
             if( isset($rc['dates']) ) {
                 $dates = $rc['dates'];
             }
-            if( isset($args['format']) && $args['format'] == 'imagelist' ) {
+            if( isset($args['format']) && ($args['format'] == 'imagelist' || $args['format'] == 'tradingcards') ) {
                 $events[] = array(
                     'title'=>$event['name'], 
                     'subtitle'=>$dates . ' ' . $event['times'],

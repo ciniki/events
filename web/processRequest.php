@@ -54,7 +54,11 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
     if( isset($settings['page-events-display-format']) && $settings['page-events-display-format'] == 'imagelist' ) {
         $display_format = 'imagelist';
     } elseif( isset($settings['site-theme']) && $settings['site-theme'] == 'twentyone' ) {
-        $display_format = 'imagelist';
+        if( isset($settings['page-events-display-format']) && $settings['page-events-display-format'] == 'tradingcards' ) {
+            $display_format = 'tradingcards';
+        } else {
+            $display_format = 'imagelist';
+        }
     }
 
     //
@@ -346,6 +350,9 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             if( $display_format == 'imagelist' ) {
                 $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'list'=>$rc['events'],
                     'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+            } elseif( $display_format == 'tradingcards' ) {
+                $page['blocks'][] = array('type'=>'tradingcards', 'section'=>'upcoming-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'cards'=>$rc['events'],
+                    'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
             } else {
                 $page['blocks'][] = array('type'=>'cilist', 'section'=>'upcoming-events', 'base_url'=>$args['base_url'], 'categories'=>$rc['events'],
                     'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
@@ -375,6 +382,11 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             if( $display_format == 'imagelist' ) {
                 $page['blocks'][] = array('type'=>'imagelist', 'section'=>'past-events', 'noimage'=>'yes', 
                     'base_url'=>$args['base_url'], 'list'=>$rc['events'], 
+                    'limit'=>$page_nav_limit,
+                    'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+            } elseif( $display_format == 'tradingcards' ) {
+                $page['blocks'][] = array('type'=>'tradingcards', 'section'=>'past-events', 'noimage'=>'yes', 
+                    'base_url'=>$args['base_url'], 'cards'=>$rc['events'], 
                     'limit'=>$page_nav_limit,
                     'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
             } else {
@@ -429,13 +441,22 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             if( isset($rc['events']) && count($rc['events']) > 0 ) {
                 $num_current = count($rc['events']);
                 if( $display_format == 'imagelist' ) {
-                    // $page['blocks'][] = array('type'=>'imagelist', 'section'=>'current-events', 'noimage'=>'yes', 'title'=>'Current ' . $module_title, 'base_url'=>$args['base_url'], 'list'=>$rc['events']);
                     $page['blocks'][] = array('type'=>'imagelist', 
                         'section'=>'current-events', 
                         'noimage'=>'yes', 
                         'base_url'=>$args['base_url'], 
                         'title'=>$current_list_title,
                         'list'=>$rc['events'],
+                        'thumbnail_format'=>$thumbnail_format, 
+                        'thumbnail_padding_color'=>$thumbnail_padding_color,
+                        );
+                } elseif( $display_format == 'tradingcards' ) {
+                    $page['blocks'][] = array('type'=>'tradingcards', 
+                        'section'=>'current-events', 
+                        'noimage'=>'yes', 
+                        'base_url'=>$args['base_url'], 
+                        'title'=>$current_list_title,
+                        'cards'=>$rc['events'],
                         'thumbnail_format'=>$thumbnail_format, 
                         'thumbnail_padding_color'=>$thumbnail_padding_color,
                         );
@@ -484,7 +505,14 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                     if( $num_current > 0 ) {
                         $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'title'=>'Upcoming ' . $module_title, 'base_url'=>$args['base_url'], 'list'=>$rc['events']);
                     } else {
-                        $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'list'=>$rc['events'],
+                        $page['blocks'][] = array('type'=>'imagelist', 'section'=>'upcoming-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'cards'=>$rc['events'],
+                            'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+                    }
+                } elseif( $display_format == 'tradingcards' ) {
+                    if( $num_current > 0 ) {
+                        $page['blocks'][] = array('type'=>'tradingcards', 'section'=>'upcoming-events', 'noimage'=>'yes', 'title'=>'Upcoming ' . $module_title, 'base_url'=>$args['base_url'], 'cards'=>$rc['events']);
+                    } else {
+                        $page['blocks'][] = array('type'=>'tradingcards', 'section'=>'upcoming-events', 'noimage'=>'yes', 'base_url'=>$args['base_url'], 'cards'=>$rc['events'],
                             'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                     }
                 } else {
@@ -569,6 +597,15 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                     $page['blocks'][] = array('type'=>'imagelist', 'section'=>'past-events', 'noimage'=>'yes', 
                         'title'=>($page_nav_cur > 1 ? '' : 'Past ' . $module_title), 
                         'base_url'=>$args['base_url'], 'list'=>$rc['events'],
+                        'limit'=>$page_nav_limit,
+                        'thumbnail_format'=>$thumbnail_format, 
+                        'thumbnail_padding_color'=>$thumbnail_padding_color,
+                        );
+                } elseif( $display_format == 'tradingcards' ) {
+                    $page['blocks'][] = array('type'=>'tradingcards', 'section'=>'past-events', 'noimage'=>'yes', 
+                        'title'=>($page_nav_cur > 1 ? '' : 'Past ' . $module_title), 
+                        'base_url'=>$args['base_url'], 
+                        'cards'=>$rc['events'],
                         'limit'=>$page_nav_limit,
                         'thumbnail_format'=>$thumbnail_format, 
                         'thumbnail_padding_color'=>$thumbnail_padding_color,
