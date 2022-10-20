@@ -66,7 +66,7 @@ function ciniki_events_objects($ciniki) {
             'description'=>array(),
             'org_filename'=>array(),
             'publish_date'=>array(),
-            'binary_content'=>array('history'=>'no'),
+            'binary_content'=>array('history'=>'no', 'default'=>''),
             ),
         'history_table'=>'ciniki_event_history',
         );

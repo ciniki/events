@@ -326,7 +326,7 @@ function ciniki_events_eventGet($ciniki) {
                 . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . "AND ciniki_event_links.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
                 . "";
-            $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
+            $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
                 array('container'=>'links', 'fname'=>'id', 'name'=>'link',
                     'fields'=>array('id', 'name', 'url', 'description')),
             ));

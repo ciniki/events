@@ -40,6 +40,16 @@ function ciniki_events_fileDelete(&$ciniki) {
     }   
 
     //
+    // Get the tenant storage directory
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+    $rc = ciniki_tenants_hooks_storageDir($ciniki, $args['tnid'], array());
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $tenant_storage_dir = $rc['storage_dir'];
+
+    //
     // Get the uuid of the events item to be deleted
     //
     $strsql = "SELECT uuid FROM ciniki_event_files "
@@ -53,9 +63,15 @@ function ciniki_events_fileDelete(&$ciniki) {
     if( !isset($rc['file']) ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.18', 'msg'=>'Unable to find existing item'));
     }
-    $uuid = $rc['file']['uuid'];
+    $file = $rc['file'];
 
+    $storage_filename = $tenant_storage_dir . '/ciniki.events/files/' . $file['uuid'][0] . '/' . $file['uuid'];
+    unlink($storage_filename);
+
+    //
+    // Delete the object
+    //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
-    return ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.events.file', $args['file_id'], $uuid, 0x07);
+    return ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.events.file', $args['file_id'], $file['uuid'], 0x07);
 }
 ?>

@@ -40,10 +40,22 @@ function ciniki_events_fileDownload($ciniki) {
     }   
 
     //
+    // Get the tenant storage directory
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+    $rc = ciniki_tenants_hooks_storageDir($ciniki, $args['tnid'], array());
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $tenant_storage_dir = $rc['storage_dir'];
+
+    //
     // Get the uuid for the file
     //
     $strsql = "SELECT ciniki_event_files.id, "
-        . "ciniki_event_files.name, ciniki_event_files.extension, "
+        . "ciniki_event_files.uuid, "
+        . "ciniki_event_files.name, "
+        . "ciniki_event_files.extension, "
         . "ciniki_event_files.binary_content "
         . "FROM ciniki_event_files "
         . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['file_id']) . "' "
@@ -69,6 +81,15 @@ function ciniki_events_fileDownload($ciniki) {
     } else {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.20', 'msg'=>'Unsupported file type'));
     }
+
+    //
+    // Get the storage filename
+    //
+    $storage_filename = $tenant_storage_dir . '/ciniki.events/files/' . $rc['file']['uuid'][0] . '/' . $rc['file']['uuid'];
+    if( file_exists($storage_filename) ) {  
+        $rc['file']['binary_content'] = file_get_contents($storage_filename);    
+    }
+
     // Specify Filename
     header('Content-Disposition: attachment;filename="' . $filename . '"');
     header('Content-Length: ' . strlen($rc['file']['binary_content']));

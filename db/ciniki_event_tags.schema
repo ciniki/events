@@ -7,7 +7,7 @@
 # -------
 # id:               The ID of the tag.
 # uuid:             The Universal Unique ID for the tag.
-# tnid:             The ID of the tenant the blog post is attached to.
+# tnid:             The ID of the tenant the event is attached to.
 #
 # event_id:         The ID of the event.
 #

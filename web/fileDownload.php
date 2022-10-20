@@ -10,9 +10,20 @@
 function ciniki_events_web_fileDownload($ciniki, $tnid, $event_permalink, $file_permalink) {
 
     //
+    // Get the tenant storage directory
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+    $rc = ciniki_tenants_hooks_storageDir($ciniki, $tnid, array());
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $tenant_storage_dir = $rc['storage_dir'];
+
+    //
     // Get the file details
     //
     $strsql = "SELECT ciniki_event_files.id, "
+        . "ciniki_event_files.uuid, "
         . "ciniki_event_files.name, "
         . "ciniki_event_files.permalink, "
         . "ciniki_event_files.extension, "
@@ -34,6 +45,14 @@ function ciniki_events_web_fileDownload($ciniki, $tnid, $event_permalink, $file_
         return array('stat'=>'noexist', 'err'=>array('code'=>'ciniki.events.62', 'msg'=>'Unable to find requested file'));
     }
     $rc['file']['filename'] = $rc['file']['name'] . '.' . $rc['file']['extension'];
+
+    //
+    // Get the storage filename
+    //
+    $storage_filename = $tenant_storage_dir . '/ciniki.events/files/' . $rc['file']['uuid'][0] . '/' . $rc['file']['uuid'];
+    if( file_exists($storage_filename) ) {
+        $rc['file']['binary_content'] = file_get_contents($storage_filename);    
+    }
 
     return array('stat'=>'ok', 'file'=>$rc['file']);
 }
