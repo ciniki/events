@@ -198,6 +198,7 @@ function ciniki_events_eventUpdate(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'hookExec');
     ciniki_core_hookExec($ciniki, $args['tnid'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.events.event', 'object_id'=>$args['event_id']));
+    ciniki_core_hookExec($ciniki, $args['tnid'], 'ciniki', 'wng', 'indexObject', array('object'=>'ciniki.events.event', 'object_id'=>$args['event_id']));
 
     return array('stat'=>'ok');
 }
