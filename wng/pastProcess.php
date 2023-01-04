@@ -10,7 +10,7 @@
 // Returns
 // -------
 //
-function ciniki_events_wng_upcomingProcess(&$ciniki, $tnid, $request, $section) {
+function ciniki_events_wng_pastProcess(&$ciniki, $tnid, $request, $section) {
 
     if( !isset($ciniki['tenant']['modules']['ciniki.events']) ) {
         return array('stat'=>'404', 'err'=>array('code'=>'ciniki.events.102', 'msg'=>"I'm sorry, the page you requested does not exist."));
@@ -66,14 +66,12 @@ function ciniki_events_wng_upcomingProcess(&$ciniki, $tnid, $request, $section) 
         . "AND (events.flags&0x01) = 0x01 " // Visible
         . "";
     if( isset($s['include-current']) && $s['include-current'] == 'yes' ) {
-        $strsql .= "AND ("
-            . "events.start_date >= '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' "
-            . "OR events.end_date >= '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' "
-            . ") ";
+        $strsql .= "AND events.start_date < '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
     } else {
-        $strsql .= "AND events.start_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
+        $strsql .= "AND events.start_date < '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
+        $strsql .= "AND events.end_date < '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
     }
-    $strsql .= "ORDER BY events.start_date, events.name ";
+    $strsql .= "ORDER BY events.start_date DESC, events.name ";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
         array('container'=>'events', 'fname'=>'permalink', 

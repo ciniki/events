@@ -33,6 +33,9 @@ function ciniki_events_wng_process(&$ciniki, $tnid, &$request, $section) {
     if( $section['ref'] == 'ciniki.events.upcoming' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'wng', 'upcomingProcess');
         return ciniki_events_wng_upcomingProcess($ciniki, $tnid, $request, $section);
+    } elseif( $section['ref'] == 'ciniki.events.past' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'wng', 'pastProcess');
+        return ciniki_events_wng_pastProcess($ciniki, $tnid, $request, $section);
     }
 
     return array('stat'=>'ok');

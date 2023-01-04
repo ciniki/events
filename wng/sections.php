@@ -52,6 +52,24 @@ function ciniki_events_wng_sections(&$ciniki, $tnid, $args) {
 //            'limit' => array('label'=>'Number of Items', 'type'=>'text', 'size'=>'small'),
             ),
         );
+        
+    $sections['ciniki.events.past'] = array(
+        'name' => 'Past',
+        'module' => 'Events',
+        'settings' => array(
+            'title' => array('label'=>'Title', 'type'=>'text'),
+            'include-current' => array('label'=>'Include Current Events', 'type'=>'toggle', 'default'=>'no', 'toggles'=>array(
+                'no' => 'No',
+                'yes' => 'Yes',
+                )),
+            'button-text' => array('label'=>'Link Text', 'type'=>'text'),
+            'button-class' => array('label'=>'Link Type', 'type'=>'toggle', 'default'=>'button', 
+                'toggles'=>array(
+                    'button' => 'Button',
+                    'link' => 'Link',
+                )),
+            ),
+        );
 
     return array('stat'=>'ok', 'sections'=>$sections);
 }

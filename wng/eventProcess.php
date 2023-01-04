@@ -159,7 +159,7 @@ function ciniki_events_wng_eventProcess(&$ciniki, $tnid, $request, $section) {
     //
     // Check if prices specified
     //
-    if( isset($event['prices']) && count($event['prices']) > 0 ) {
+    if( isset($event['prices']) && count($event['prices']) > 0 && $section['ref'] != 'ciniki.events.past' ) {
         $blocks[] = array(
             'type' => 'pricelist',
             'prices' => $event['prices'],
@@ -182,6 +182,6 @@ function ciniki_events_wng_eventProcess(&$ciniki, $tnid, $request, $section) {
             );
     }
 
-    return array('stat'=>'ok', 'blocks'=>$blocks);
+    return array('stat'=>'ok', 'blocks'=>$blocks, 'stop'=>'yes', 'clear'=>'yes');
 }
 ?>
