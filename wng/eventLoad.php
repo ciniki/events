@@ -84,7 +84,7 @@ function ciniki_events_wng_eventLoad($ciniki, $tnid, $request, $permalink) {
         return $rc;
     }
     if( !isset($rc['events']) || count($rc['events']) < 1 ) {
-        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.events.61', 'msg'=>"I'm sorry, but we can't find the event you requested."));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.events.104', 'msg'=>"I'm sorry, but we can't find the event you requested."));
     }
     $event = array_pop($rc['events']);
 
