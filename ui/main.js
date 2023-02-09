@@ -175,6 +175,14 @@ function ciniki_events_main() {
             'addTxt':'Manage Sponsors',
             'addFn':'M.startApp(\'ciniki.sponsors.ref\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'object\':\'ciniki.events.event\',\'object_id\':M.ciniki_events_main.event.event_id});',
             },
+        'expenses':{'label':'Expenses', 'type':'simplegrid', 'num_cols':3,
+            'visible':function() { return M.modFlagSet('ciniki.events', 0x0400); },
+            'headerValues':['Date', 'Expense', 'Amount'],
+            'cellClasses':['', 'multiline', ''],
+            'noData':'No expenses',
+            'addTxt':'Add Expenses',
+            'addTopFn':'M.startApp(\'ciniki.sapos.main\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'expense_id\':0,\'object\':\'ciniki.events.event\',\'object_id\':M.ciniki_events_main.event.event_id});',
+            },
         '_buttons':{'label':'', 'buttons':{
             'edit':{'label':'Edit', 'fn':'M.ciniki_events_main.edit.open(\'M.ciniki_events_main.event.open();\',M.ciniki_events_main.event.event_id);'},
             'duplicate':{'label':'Duplicate', 'fn':'M.ciniki_events_main.edit.open(\'M.ciniki_events_main.event.open();\',M.ciniki_events_main.event.event_id,\'yes\');'},
@@ -247,6 +255,13 @@ function ciniki_events_main() {
         if( s == 'sponsors' && j == 0 ) { 
             return '<span class="maintext">' + d.sponsor.title + '</span>';
         }
+        if( s == 'expenses' ) {
+            switch(j) {
+                case 0: return d.invoice_date_display;
+                case 1: return M.multiline(d.name, d.description);
+                case 2: return d.total_amount_display;
+            }
+        }
     };
     this.event.rowFn = function(s, i, d) {
         if( s == 'prices' ) {
@@ -261,7 +276,19 @@ function ciniki_events_main() {
         if( s == 'sponsors' ) {
             return 'M.startApp(\'ciniki.sponsors.ref\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'ref_id\':\'' + d.sponsor.ref_id + '\'});';
         }
+        if( s == 'expenses' ) {
+            return 'event.stopPropagation();M.startApp(\'ciniki.sapos.main\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'expense_id\':\'' + d.id + '\'});';
+        }
     };
+    this.event.footerValue = function(s, i, d) {
+        if( s == 'expenses' ) {
+            if( i == 2 ) {
+                return this.data.expenses_total;
+            }
+            return '';
+        }
+        return null;
+    }
     this.event.thumbFn = function(s, i, d) {
         return 'M.startApp(\'ciniki.events.images\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'event_image_id\':\'' + d.image.id + '\'});';
     };

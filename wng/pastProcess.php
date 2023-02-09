@@ -13,14 +13,14 @@
 function ciniki_events_wng_pastProcess(&$ciniki, $tnid, $request, $section) {
 
     if( !isset($ciniki['tenant']['modules']['ciniki.events']) ) {
-        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.events.102', 'msg'=>"I'm sorry, the page you requested does not exist."));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.events.109', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
 
     //
     // Make sure a valid section was passed
     //
     if( !isset($section['ref']) || !isset($section['settings']) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.103', 'msg'=>"No event specified"));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.110', 'msg'=>"No event specified"));
     }
     $s = $section['settings'];
     $blocks = array();
@@ -80,7 +80,7 @@ function ciniki_events_wng_pastProcess(&$ciniki, $tnid, $request, $section) {
             ),
         ));
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.94', 'msg'=>'Unable to load events', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.108', 'msg'=>'Unable to load events', 'err'=>$rc['err']));
     }
     $events = isset($rc['events']) ? $rc['events'] : array();
 

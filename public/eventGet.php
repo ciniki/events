@@ -378,6 +378,22 @@ function ciniki_events_eventGet($ciniki) {
                 $event['sponsors'] = $rc['sponsors'];
             }
         }
+
+        //
+        // Get any expenses for offering
+        //
+        if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.events', 0x0400) ) {
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'hooks', 'objectExpenses');
+            $rc = ciniki_sapos_hooks_objectExpenses($ciniki, $args['tnid'], array(
+                'object' => 'ciniki.events.event',
+                'object_id' => $args['event_id'],
+                ));
+            if( $rc['stat'] != 'ok' ) {
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.107', 'msg'=>'Unable to load expenses', 'err'=>$rc['err']));
+            }
+            $event['expenses'] = isset($rc['expenses']) ? $rc['expenses'] : array();
+            $event['expenses_total'] = isset($rc['total']) ? '$' . number_format($rc['total'], 2) : '$0';
+        }
     }
 
     $rsp = array('stat'=>'ok', 'event'=>$event);

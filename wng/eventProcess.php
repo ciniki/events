@@ -109,10 +109,10 @@ function ciniki_events_wng_eventProcess(&$ciniki, $tnid, $request, $section) {
         //
         // Generate download
         //
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'fileDownload');
-        $rc = ciniki_blog_web_fileDownload($ciniki, $tnid, $event_permalink, $file_permalink, '');
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'web', 'fileDownload');
+        $rc = ciniki_events_web_fileDownload($ciniki, $tnid, $event_permalink, $file_permalink, '');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.98', 'msg'=>'Unable to download file', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.98', 'msg'=>'Unable to download file', 'err'=>$rc['err']));
         }
         $file = $rc['file'];
 

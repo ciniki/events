@@ -74,7 +74,7 @@ function ciniki_events_sapos_cartItemCheck($ciniki, $tnid, $customer, $args) {
         // Check if ticket is sold out
         //
         if( ($item['webflags']&0x04) == 0x04 ) {
-            return array('stat'=>'unavailable', 'err'=>array('code'=>'ciniki.events.98', 'msg'=>"I'm sorry but this item has already been sold."));
+            return array('stat'=>'unavailable', 'err'=>array('code'=>'ciniki.events.111', 'msg'=>"I'm sorry but this item has already been sold."));
         }
 
         //
