@@ -143,9 +143,35 @@ function ciniki_events_main() {
             'buttons':{
                 'ticketmapedit':{'label':'Edit Ticket Map', 'fn':'M.ciniki_events_main.ticketmap.open(\'M.ciniki_events_main.event.open();\',M.ciniki_events_main.event.event_id);'},
             }},
-        'description':{'label':'Synopsis', 'type':'htmlcontent'},
-        'long_description':{'label':'Description', 'type':'htmlcontent'},
+        '_tabs':{'label':'', 'type':'paneltabs', 'selected':'content', 'tabs':{
+            'content':{'label':'Details', 
+                'fn':'M.ciniki_events_main.event.switchTab("content");',
+                },
+            'prices':{'label':'Prices', 'fn':'M.ciniki_events_main.event.switchTab("prices");',
+                'visible':function() { return M.modOn('ciniki.sapos') ? 'yes' : 'hidden';},
+                },
+            'links':{'label':'Links', 'fn':'M.ciniki_events_main.event.switchTab("links");'},
+            'files':{'label':'Files', 'fn':'M.ciniki_events_main.event.switchTab("files");'},
+            'gallery':{'label':'Gallery', 
+                'fn':'M.ciniki_events_main.event.switchTab("gallery");',
+                },
+            'sponsors':{'label':'Sponsorships', 
+                'visible':function() { return M.modFlagSet('ciniki.sponsors', 0x12);},
+                'fn':'M.ciniki_events_main.event.switchTab("sponsors");',
+                },
+            'expenses':{'label':'Expenses', 
+                'visible':function() { return M.modFlagSet('ciniki.events', 0x0400);},
+                'fn':'M.ciniki_events_main.event.switchTab("expenses");',
+                },
+            }},
+        'description':{'label':'Synopsis', 'type':'htmlcontent',
+            'visible':function() { return M.ciniki_events_main.event.sections._tabs.selected == 'content' ? 'yes' : 'hidden';},
+            },
+        'long_description':{'label':'Description', 'type':'htmlcontent',
+            'visible':function() { return M.ciniki_events_main.event.sections._tabs.selected == 'content' ? 'yes' : 'hidden';},
+            },
         'prices':{'label':'Price List', 'type':'simplegrid', 'num_cols':3,
+            'visible':function() { return M.ciniki_events_main.event.sections._tabs.selected == 'prices' ? 'yes' : 'hidden';},
             'headerValues':null,
             'cellClasses':['', '', ''],
             'noData':'No prices',
@@ -153,6 +179,7 @@ function ciniki_events_main() {
             'addFn':'M.startApp(\'ciniki.events.prices\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'event_id\':M.ciniki_events_main.event.event_id,\'price_id\':\'0\'});',
         },
         'links':{'label':'Links', 'type':'simplegrid', 'num_cols':1,
+            'visible':function() { return M.ciniki_events_main.event.sections._tabs.selected == 'links' ? 'yes' : 'hidden';},
             'headerValues':null,
             'cellClasses':['multiline'],
             'noData':'No event links',
@@ -160,34 +187,60 @@ function ciniki_events_main() {
             'addFn':'M.startApp(\'ciniki.events.links\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'event_id\':M.ciniki_events_main.event.event_id,\'add\':\'yes\'});',
             },
         'files':{'label':'Files', 'type':'simplegrid', 'num_cols':1,
+            'visible':function() { return M.ciniki_events_main.event.sections._tabs.selected == 'files' ? 'yes' : 'hidden';},
             'headerValues':null,
             'cellClasses':['multiline'],
             'noData':'No event files',
             'addTxt':'Add File',
             'addFn':'M.startApp(\'ciniki.events.files\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'event_id\':M.ciniki_events_main.event.event_id,\'add\':\'yes\'});',
         },
-        'images':{'label':'Gallery', 'type':'simplethumbs'},
+        'images':{'label':'Gallery', 'type':'simplethumbs',
+            'visible':function() { return M.ciniki_events_main.event.sections._tabs.selected == 'gallery' ? 'yes' : 'hidden';},
+            },
         '_images':{'label':'', 'type':'simplegrid', 'num_cols':1,
+            'visible':function() { return M.ciniki_events_main.event.sections._tabs.selected == 'gallery' ? 'yes' : 'hidden';},
             'addTxt':'Add Additional Image',
             'addFn':'M.startApp(\'ciniki.events.images\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'event_id\':M.ciniki_events_main.event.event_id,\'add\':\'yes\'});',
             },
-        'sponsors':{'label':'Sponsors', 'type':'simplegrid', 'num_cols':1,
+        'sponsors':{'label':'Sponsor Logos', 'type':'simplegrid', 'num_cols':1,
+            'visible':function() { return (M.ciniki_events_main.event.sections._tabs.selected == 'sponsors' && M.modFlagOn('ciniki.sponsors', 0x02)) ? 'yes' : 'hidden';},
             'addTxt':'Manage Sponsors',
             'addFn':'M.startApp(\'ciniki.sponsors.ref\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'object\':\'ciniki.events.event\',\'object_id\':M.ciniki_events_main.event.event_id});',
             },
+        'sponsorships':{'label':'Sponsorships', 'type':'simplegrid', 'num_cols':3,
+            'visible':function() { return (M.ciniki_events_main.event.sections._tabs.selected == 'sponsors' && M.modFlagOn('ciniki.sponsors', 0x10)) ? 'yes' : 'hidden';},
+            'headerValues':['Date', 'Customer', 'Amount'],
+            'cellClasses':['', '', ''],
+            'noData':'No sponsorships',
+            },
+        'sponsorshippackages':{'label':'Sponsorship Packages', 'type':'simplegrid', 'num_cols':3,
+            'visible':function() { return (M.ciniki_events_main.event.sections._tabs.selected == 'sponsors' && M.modFlagOn('ciniki.sponsors', 0x10)) ? 'yes' : 'hidden';},
+            'headerValues':['Name', 'Category', 'Visible'],
+            'cellClasses':['', '', ''],
+            'noData':'No sponsorship packages',
+            'addTxt':'Add Sponsorship Package',
+            'addFn':'M.startApp(\'ciniki.sponsors.settings\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'package_id\':0,\'object\':\'ciniki.events.event\',\'object_id\':M.ciniki_events_main.event.event_id});',
+            },
         'expenses':{'label':'Expenses', 'type':'simplegrid', 'num_cols':3,
-            'visible':function() { return M.modFlagSet('ciniki.events', 0x0400); },
+            'visible':function() { return M.ciniki_events_main.event.sections._tabs.selected == 'expenses' ? 'yes' : 'hidden';},
             'headerValues':['Date', 'Expense', 'Amount'],
             'cellClasses':['', 'multiline', ''],
             'noData':'No expenses',
             'addTxt':'Add Expenses',
             'addTopFn':'M.startApp(\'ciniki.sapos.main\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'expense_id\':0,\'object\':\'ciniki.events.event\',\'object_id\':M.ciniki_events_main.event.event_id});',
             },
-        '_buttons':{'label':'', 'buttons':{
-            'edit':{'label':'Edit', 'fn':'M.ciniki_events_main.edit.open(\'M.ciniki_events_main.event.open();\',M.ciniki_events_main.event.event_id);'},
-            'duplicate':{'label':'Duplicate', 'fn':'M.ciniki_events_main.edit.open(\'M.ciniki_events_main.event.open();\',M.ciniki_events_main.event.event_id,\'yes\');'},
+        '_buttons':{'label':'', 
+            'visible':function() { return M.ciniki_events_main.event.sections._tabs.selected == 'content' ? 'yes' : 'hidden';},
+            'buttons':{
+                'edit':{'label':'Edit', 'fn':'M.ciniki_events_main.edit.open(\'M.ciniki_events_main.event.open();\',M.ciniki_events_main.event.event_id);'},
+                'duplicate':{'label':'Duplicate', 'fn':'M.ciniki_events_main.edit.open(\'M.ciniki_events_main.event.open();\',M.ciniki_events_main.event.event_id,\'yes\');'},
             }},
     };
+    this.event.switchTab = function(t) {
+        this.sections._tabs.selected = t;
+        this.refreshSection('_tabs');
+        this.showHideSections(['description', 'long_description', 'prices', 'links', 'files', 'images', '_images', 'sponsors', 'sponsorships', 'sponsorshippackages', 'expenses', '_buttons']);
+    }
     this.event.addDropImage = function(iid) {
         var rsp = M.api.getJSON('ciniki.events.imageAdd',
             {'tnid':M.curTenantID, 'image_id':iid, 'event_id':M.ciniki_events_main.event.event_id});
@@ -255,6 +308,20 @@ function ciniki_events_main() {
         if( s == 'sponsors' && j == 0 ) { 
             return '<span class="maintext">' + d.sponsor.title + '</span>';
         }
+        if( s == 'sponsorships' ) {
+            switch(j) {
+                case 0: return d.invoice_date;
+                case 1: return d.display_name;
+                case 2: return M.formatDollar(d.total_amount);
+            }
+        }
+        if( s == 'sponsorshippackages' ) {
+            switch(j) {
+                case 0: return d.name;
+                case 1: return d.category;
+                case 2: return d.visible;
+            }
+        }
         if( s == 'expenses' ) {
             switch(j) {
                 case 0: return d.invoice_date_display;
@@ -276,11 +343,23 @@ function ciniki_events_main() {
         if( s == 'sponsors' ) {
             return 'M.startApp(\'ciniki.sponsors.ref\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'ref_id\':\'' + d.sponsor.ref_id + '\'});';
         }
+        if( s == 'sponsorships' ) {
+            return 'event.stopPropagation();M.startApp(\'ciniki.sponsors.main\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'sponsorship_id\':\'' + d.id + '\'});';
+        }
+        if( s == 'sponsorshippackages' ) {
+            return 'event.stopPropagation();M.startApp(\'ciniki.sponsors.settings\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'package_id\':\'' + d.id + '\'});';
+        }
         if( s == 'expenses' ) {
             return 'event.stopPropagation();M.startApp(\'ciniki.sapos.main\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'expense_id\':\'' + d.id + '\'});';
         }
     };
     this.event.footerValue = function(s, i, d) {
+        if( s == 'sponsorships' ) {
+            if( i == 2 ) {
+                return this.data.sponsorships_total;
+            }
+            return '';
+        }
         if( s == 'expenses' ) {
             if( i == 2 ) {
                 return this.data.expenses_total;
@@ -891,12 +970,12 @@ function ciniki_events_main() {
             this.regFlags['4'] = {'name':'Ticket Groups'};
         }
         this.edit.sections._registrations.fields.reg_flags.flags = this.regFlags;
-        if( M.curTenant.modules['ciniki.sponsors'] != null 
-            && (M.curTenant.modules['ciniki.sponsors'].flags&0x02) ) {
-            this.event.sections.sponsors.visible = 'yes';
-        } else {
-            this.event.sections.sponsors.visible = 'no';
-        }
+//        if( M.curTenant.modules['ciniki.sponsors'] != null 
+//            && (M.curTenant.modules['ciniki.sponsors'].flags&0x02) ) {
+//            this.event.sections.sponsors.visible = 'yes';
+//        } else {
+//            this.event.sections.sponsors.visible = 'no';
+//        }
 
         if( M.curTenant.modules['ciniki.artcatalog'] != null ) {
             this.edit.sections.general.fields.oidref.active = 'yes';
@@ -927,11 +1006,11 @@ function ciniki_events_main() {
         //
         // Check if accounting is enabled
         //
-        if( M.curTenant.modules['ciniki.sapos'] != null ) {
-            this.event.sections.prices.visible = 'yes';
-        } else {
-            this.event.sections.prices.visible = 'no';
-        }
+//        if( M.curTenant.modules['ciniki.sapos'] != null ) {
+//            this.event.sections.prices.visible = 'yes';
+//        } else {
+//            this.event.sections.prices.visible = 'no';
+//        }
 
         //
         // Check if web collections are enabled
