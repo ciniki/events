@@ -12,6 +12,7 @@
 //
 function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
 
+error_log(print_r($args,true));
     if( !isset($args['object']) || $args['object'] == ''
         || !isset($args['object_id']) || $args['object_id'] == '' 
         || !isset($args['price_id']) || $args['price_id'] == '' 
@@ -74,6 +75,9 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
             'unit_discount_percentage' => $event['unit_discount_percentage'],
             'description' => $event['description'],
             );
+        if( isset($args['quantity']) ) {
+            $item['quantity'] = $args['quantity'];
+        }
         
         //
         // If registrations online enabled, check the available tickets
@@ -118,6 +122,7 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
             }
         }
 
+        error_log(print_r($item,true));
         return array('stat'=>'ok', 'item'=>$item);
     }
 
