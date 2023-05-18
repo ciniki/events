@@ -91,6 +91,12 @@ function ciniki_events_objects($ciniki) {
             'position_x'=>array('name'=>'Position X', 'default'=>'0'),
             'position_y'=>array('name'=>'Position Y', 'default'=>'0'),
             'diameter'=>array('name'=>'Diameter', 'default'=>'0'),
+            'ticket_format'=>array('name'=>'Ticket Format', 'default'=>''),
+            'ticket_image_id'=>array('name'=>'Ticket Image', 'default'=>''),
+            'ticket_event_name'=>array('name'=>'Ticket Event Name', 'default'=>''),
+            'ticket_timedate'=>array('name'=>'Ticket Date/Time', 'default'=>''),
+            'ticket_location'=>array('name'=>'Ticket Location', 'default'=>''),
+            'ticket_notes'=>array('name'=>'Ticket Notes', 'default'=>''),
             ),
         'history_table'=>'ciniki_event_history',
         );

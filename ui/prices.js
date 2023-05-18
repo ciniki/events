@@ -35,6 +35,27 @@ function ciniki_events_prices() {
                 },
             'num_tickets':{'label':'Number of Tickets', 'type':'text', 'size':'small', 'visible':'no'},
             }},
+        'printable':{'label':'Printable Tickets', 
+            'visible':function() { return M.modFlagSet('ciniki.events', 0x0800); },
+            'fields':{
+                'webflags9':{'label':'Enable', 'type':'flagtoggle', 'bit':0x0100, 'field':'webflags', 'default':'yes',
+                    'on_fields':['ticket_image_id', 'ticket_event_name', 'ticket_timedate', 'ticket_location', 'ticket_notes'],
+                    },
+                'ticket_image_id':{'label':'Image', 'type':'image_id', 'controls':'all', 'history':'no', 'visible':'no',
+                    'addDropImage':function(iid) {
+                        M.ciniki_events_prices.edit.setFieldValue('ticket_image_id',iid);
+                        return true;
+                        },
+                    'deleteImage':function() {
+                        M.ciniki_events_prices.edit.setFieldValue('ticket_image_id',0);
+                        return true;
+                        },
+                    },
+                'ticket_event_name':{'label':'Display Name', 'type':'text', 'visible':'no'},
+                'ticket_timedate':{'label':'Date & Time', 'type':'textarea', 'size':'small', 'visible':'no'},
+                'ticket_location':{'label':'Location', 'type':'textarea', 'size':'small', 'visible':'no'},
+                'ticket_notes':{'label':'Notes', 'type':'textarea', 'size':'medium', 'visible':'no'},
+            }},
         '_buttons':{'label':'', 'buttons':{
             'save':{'label':'Save', 'fn':'M.ciniki_events_prices.edit.save();'},
             'delete':{'label':'Delete', 'fn':'M.ciniki_events_prices.edit.remove();'},
@@ -64,6 +85,11 @@ function ciniki_events_prices() {
                 var p = M.ciniki_events_prices.edit;
                 p.data = rsp.price;
                 p.sections.price.fields.num_tickets.visible = ((p.data.webflags&0x80) > 0 ? 'yes' : 'no');
+                p.sections.printable.fields.ticket_image_id.visible = ((p.data.webflags&0x0100) > 0 ? 'yes' : 'no');
+                p.sections.printable.fields.ticket_event_name.visible = ((p.data.webflags&0x0100) > 0 ? 'yes' : 'no');
+                p.sections.printable.fields.ticket_timedate.visible = ((p.data.webflags&0x0100) > 0 ? 'yes' : 'no');
+                p.sections.printable.fields.ticket_location.visible = ((p.data.webflags&0x0100) > 0 ? 'yes' : 'no');
+                p.sections.printable.fields.ticket_notes.visible = ((p.data.webflags&0x0100) > 0 ? 'yes' : 'no');
                 p.event_id = rsp.price.event_id;
                 p.refresh();
                 p.show(cb);

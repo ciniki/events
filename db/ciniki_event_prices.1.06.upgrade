@@ -1,0 +1,10 @@
+#
+# Add fields for printable tickets
+#
+ALTER TABLE ciniki_event_prices ADD COLUMN ticket_format varchar(50) not null AFTER diameter;
+ALTER TABLE ciniki_event_prices ADD COLUMN ticket_image_id int not null AFTER ticket_format;
+ALTER TABLE ciniki_event_prices ADD COLUMN ticket_event_name varchar(250) not null AFTER ticket_image_id;
+ALTER TABLE ciniki_event_prices ADD COLUMN ticket_timedate varchar(250) not null AFTER ticket_event_name;
+ALTER TABLE ciniki_event_prices ADD COLUMN ticket_location varchar(250) not null AFTER ticket_timedate;
+ALTER TABLE ciniki_event_prices ADD COLUMN ticket_notes varchar(250) not null AFTER ticket_location;
+ALTER TABLE ciniki_event_prices COMMENT='v1.06';

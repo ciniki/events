@@ -111,6 +111,12 @@ function ciniki_events_priceGet($ciniki) {
             'position_x' => '',
             'position_y' => '',
             'diameter' => 15,
+            'ticket_format' => 'default',
+            'ticket_image_id' => '0',
+            'ticket_event_name' => '',
+            'ticket_timedate' => '',
+            'ticket_location' => '',
+            'ticket_notes' => '',
             );
         //
         // Get the last ticket price
@@ -118,7 +124,9 @@ function ciniki_events_priceGet($ciniki) {
         if( isset($args['ticketmap']) && $args['ticketmap'] > 0 ) {
             $strsql = "SELECT name, available_to, "
                 . "unit_amount, unit_discount_amount, unit_discount_percentage, unit_donation_amount, "
-                . "taxtype_id, webflags, position_num, position_x, position_y, diameter "
+                . "taxtype_id, webflags, position_num, position_x, position_y, diameter, "
+                . "ticket_format, ticket_image_id, ticket_event_name, "
+                . "ticket_timedate, ticket_location, ticket_notes "
                 . "FROM ciniki_event_prices "
                 . "WHERE event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
                 . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
@@ -178,7 +186,13 @@ function ciniki_events_priceGet($ciniki) {
             . "ciniki_event_prices.position_num, "
             . "ciniki_event_prices.position_x, "
             . "ciniki_event_prices.position_y, "
-            . "ciniki_event_prices.diameter "
+            . "ciniki_event_prices.diameter, "
+            . "ciniki_event_prices.ticket_format, "
+            . "ciniki_event_prices.ticket_image_id, "
+            . "ciniki_event_prices.ticket_event_name, "
+            . "ciniki_event_prices.ticket_timedate, "
+            . "ciniki_event_prices.ticket_location, "
+            . "ciniki_event_prices.ticket_notes "
             . "FROM ciniki_event_prices "
             . "WHERE ciniki_event_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_event_prices.id = '" . ciniki_core_dbQuote($ciniki, $args['price_id']) . "' "
@@ -188,7 +202,10 @@ function ciniki_events_priceGet($ciniki) {
             array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
                 'fields'=>array('id', 'event_id', 'name', 'available_to', 'valid_from', 'valid_to', 
                     'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'unit_donation_amount',
-                    'taxtype_id', 'webflags', 'num_tickets', 'position_num', 'position_x', 'position_y', 'diameter'),
+                    'taxtype_id', 'webflags', 'num_tickets', 'position_num', 'position_x', 'position_y', 'diameter',
+                    'ticket_format', 'ticket_image_id', 'ticket_event_name', 
+                    'ticket_timedate', 'ticket_location', 'ticket_notes',
+                    ),
                 'utctotz'=>array('valid_from'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),
                     'valid_to'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),
                     ),
@@ -223,7 +240,9 @@ function ciniki_events_priceGet($ciniki) {
     if( isset($args['ticketmap']) && $args['ticketmap'] > 0 ) {
         $strsql = "SELECT id, name, "
             . "webflags, "
-            . "position_num, position_x, position_y, diameter "
+            . "position_num, position_x, position_y, diameter, "
+            . "ticket_format, ticket_image_id, ticket_event_name, "
+            . "ticket_timedate, ticket_location, ticket_notes "
             . "FROM ciniki_event_prices "
             . "WHERE event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
             . "AND (webflags&0x08) = 0x08 "
@@ -232,7 +251,10 @@ function ciniki_events_priceGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.events', array(
             array('container'=>'tickets', 'fname'=>'id', 
-                'fields'=>array('id', 'name', 'webflags', 'position_num', 'position_x', 'position_y', 'diameter')),
+                'fields'=>array('id', 'name', 'webflags', 'position_num', 'position_x', 'position_y', 'diameter',
+                    'ticket_format', 'ticket_image_id', 'ticket_event_name', 
+                    'ticket_timedate', 'ticket_location', 'ticket_notes',
+                    )),
             ));
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.81', 'msg'=>'Unable to load tickets', 'err'=>$rc['err']));

@@ -42,6 +42,12 @@ function ciniki_events_priceAdd(&$ciniki) {
         'position_x'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Ticket Map Position X'),
         'position_y'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Ticket Map Position Y'),
         'diameter'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Ticket Map Diameter'),
+        'ticket_format'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ticket Format'),
+        'ticket_image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ticket Image'),
+        'ticket_event_name'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ticket Event Name'),
+        'ticket_timedate'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ticket Date/Time'),
+        'ticket_location'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ticket Location'),
+        'ticket_notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ticket Notes'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;

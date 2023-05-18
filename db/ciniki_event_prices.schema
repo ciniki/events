@@ -48,6 +48,10 @@
 #                           0x20 - Show Dealers price to the public.
 #                           0x40 - Show Distributors price to the public.
 #                           0x80 - Limited number of tickets at this price.
+#                           0x0100 - Printable Ticket
+#                           0x0200 - Separate Page per Ticket (default is number seats purchased on ticket) **future**
+#                           0x0400 - 
+#                           0x0800 - 
 #
 # num_tickets:              The number of tickets available for this price. Flag 0x80 must be set
 #
@@ -55,6 +59,15 @@
 # position_x:               The center X position of the circle of the price on the ticketmap.
 # position_y:               The center Y position of the circle of the price on the ticketmap.
 # diameter:                 The diameter of the circle of the price on the ticketmap.
+#
+# ticket_format:            This will be set to a format available **future**
+# ticket_image_id:          The ID of the image when this is a printable ticket.
+# ticket_event_name:        The name of the event for the top of the ticket. May be include a day
+#                               or other details no in the name in event (ciniki_events.name) 
+# ticket_timedate:          The text string for the date and time of the event. 
+# ticket_location:          The text string for the location of the event.
+#
+# ticket_notes:             Any notes that should be included on the ticket.
 #
 # date_added:               The UTC date and time the price was added.
 # last_updated:             The UTC date and time the price was last updated.
@@ -73,15 +86,21 @@ create table ciniki_event_prices (
     unit_discount_percentage decimal(19,4) not null,
     unit_donation_amount decimal(19,4) not null,
     taxtype_id int not null,
-    webflags tinyint unsigned not null,
+    webflags smallint unsigned not null,
     num_tickets int not null,
     position_num int not null,
     position_x int not null,
     position_y int not null,
     diameter int not null,
+    ticket_format varchar(50) not null,
+    ticket_image_id int not null,
+    ticket_event_name varchar(250) not null,
+    ticket_timedate varchar(250) not null,
+    ticket_location varchar(250) not null,
+    ticket_notes text not null,
     date_added datetime not null,
     last_updated datetime not null,
     primary key (id),
     index (event_id, name),
     index sync (uuid, tnid, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.05';
+) ENGINE='InnoDB', COMMENT='v1.06';
