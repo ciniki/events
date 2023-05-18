@@ -16,7 +16,7 @@ function ciniki_events_sapos_itemAdd($ciniki, $tnid, $invoice_id, $item) {
     // An event was added to an invoice item, get the details and see if we need to 
     // create a registration for this event
     //
-    if( isset($item['object']) && $item['object'] == 'ciniki.events.event' && isset($item['object_id']) ) {
+    if( isset($item['object']) && $item['object'] == 'ciniki.events.event' && isset($item['object_id']) && isset($item['customer_id']) && $item['customer_id'] > 0 ) {
         //
         // Check the event exists
         //

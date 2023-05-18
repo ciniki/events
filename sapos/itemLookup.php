@@ -12,7 +12,6 @@
 //
 function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
 
-error_log(print_r($args,true));
     if( !isset($args['object']) || $args['object'] == ''
         || !isset($args['object_id']) || $args['object_id'] == '' 
         || !isset($args['price_id']) || $args['price_id'] == '' 
@@ -70,6 +69,9 @@ error_log(print_r($args,true));
             'id'=>$event['id'],
             'name'=>$event['description'],
             'flags'=>0x08,          // Registration item
+            'object'=>'ciniki.events.event',
+            'object_id'=>$args['object_id'],
+            'price_id'=>$args['price_id'],
             'unit_amount' => $event['unit_amount'],
             'unit_discount_amount' => $event['unit_discount_amount'],
             'unit_discount_percentage' => $event['unit_discount_percentage'],
@@ -122,7 +124,6 @@ error_log(print_r($args,true));
             }
         }
 
-        error_log(print_r($item,true));
         return array('stat'=>'ok', 'item'=>$item);
     }
 
