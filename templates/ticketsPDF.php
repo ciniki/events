@@ -47,7 +47,7 @@ function ciniki_events_templates_ticketsPDF(&$ciniki, $tnid, $args) {
     foreach($args['tickets'] as $ticket) {
         $args['pdf']->AddPage();
 
-        $args['pdf']->setFont('helvetica', 'B', 24);
+        $args['pdf']->setFont('times', 'B', 24);
 //Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=0, $link='', $stretch=0, $ignore_min_height=false, $calign='T', $valign='M')
         $args['pdf']->Cell(180, 14, $tenant_details['name'], 0, 1, 'L', 0, '', 1);
         
@@ -76,12 +76,12 @@ function ciniki_events_templates_ticketsPDF(&$ciniki, $tnid, $args) {
         // Add the event name
         //
         $args['pdf']->setCellPaddings(5,4,5,1);
-        $args['pdf']->setFont('helvetica', 'B', 26);
+        $args['pdf']->setFont('times', 'B', 26);
         if( isset($ticket['ticket_event_name']) && $ticket['ticket_event_name'] != '' ) {
             $args['pdf']->Multicell(186, 20, $ticket['ticket_event_name'], 'LR', 'L');
         }
         $args['pdf']->setTextColor(50);
-        $args['pdf']->setFont('helvetica', '', 16);
+        $args['pdf']->setFont('times', '', 16);
         $args['pdf']->setCellPaddings(5,1,5,3);
         if( isset($ticket['ticket_timedate']) && $ticket['ticket_timedate'] != '' ) {
             $args['pdf']->Multicell(93, 10, $ticket['ticket_timedate'], 'L', 'L', 0, 0);
@@ -102,7 +102,7 @@ function ciniki_events_templates_ticketsPDF(&$ciniki, $tnid, $args) {
             $args['pdf']->Multicell(93, 12, '', 'L', 'L', 0, 0);
         }
 
-        $args['pdf']->setFont('helvetica', '', 14);
+        $args['pdf']->setFont('times', '', 14);
         $args['pdf']->setTextColor(125);
         $args['pdf']->setCellPaddings(5,2,5,5);
         if( isset($ticket['order_number']) && $ticket['order_number'] != '' ) {
@@ -116,7 +116,7 @@ function ciniki_events_templates_ticketsPDF(&$ciniki, $tnid, $args) {
     
         $args['pdf']->Ln(2);
         $args['pdf']->setTextColor(0);
-        $args['pdf']->setFont('helvetica', '', 14);
+        $args['pdf']->setFont('times', '', 14);
         if( isset($ticket['ticket_notes']) && $ticket['ticket_notes'] != '' ) {
             $args['pdf']->Multicell(186, 20, print_r($ticket['ticket_notes'], true), 0, 'L');
         }
