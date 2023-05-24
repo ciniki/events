@@ -118,7 +118,8 @@ function ciniki_events_templates_ticketsPDF(&$ciniki, $tnid, $args) {
         $args['pdf']->setTextColor(0);
         $args['pdf']->setFont('times', '', 14);
         if( isset($ticket['ticket_notes']) && $ticket['ticket_notes'] != '' ) {
-            $args['pdf']->Multicell(186, 20, print_r($ticket['ticket_notes'], true), 0, 'L');
+            $ticket['ticket_notes'] = preg_replace("/\n/", '<br/>', $ticket['ticket_notes']);
+            $args['pdf']->writeHTMLCell(186, '', '', '', $ticket['ticket_notes'], 0, 1, 0, false, 'L');
         }
     }
 
