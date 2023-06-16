@@ -11,7 +11,7 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_events_templates_eventIndividualTickets(&$ciniki, $tnid, $event_id, $tenant_details, $events_settings) {
+function ciniki_events_templates_eventIndividualTickets(&$ciniki, $tnid, $event_id, $price_id, $tenant_details, $events_settings) {
 
     //
     // Load event maps
@@ -58,17 +58,17 @@ function ciniki_events_templates_eventIndividualTickets(&$ciniki, $tnid, $event_
     //
     // Load the registrations
     //
-    $strsql = "SELECT ciniki_event_registrations.id, "
-        . "ciniki_event_registrations.customer_id, "
-        . "ciniki_event_registrations.num_tickets, "
-        . "ciniki_event_registrations.status, "
-        . "ciniki_event_registrations.status AS status_text, "
-        . "ciniki_event_registrations.notes, "
+    $strsql = "SELECT registrations.id, "
+        . "registrations.customer_id, "
+        . "registrations.num_tickets, "
+        . "registrations.status, "
+        . "registrations.status AS status_text, "
+        . "registrations.notes, "
         . "prices.name "
-        . "FROM ciniki_event_registrations "
+        . "FROM ciniki_event_registrations AS registrations "
         . "LEFT JOIN ciniki_sapos_invoice_items AS items ON ("
             . "items.object = 'ciniki.events.registration' "
-            . "AND ciniki_event_registrations.id = items.object_id "
+            . "AND registrations.id = items.object_id "
             . "AND items.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
         . "LEFT JOIN ciniki_event_prices AS prices ON ("
@@ -76,12 +76,15 @@ function ciniki_events_templates_eventIndividualTickets(&$ciniki, $tnid, $event_
             . "AND prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
         . "LEFT JOIN ciniki_customers ON ("
-            . "ciniki_event_registrations.customer_id = ciniki_customers.id "
+            . "registrations.customer_id = ciniki_customers.id "
             . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
-        . "WHERE ciniki_event_registrations.event_id = '" . ciniki_core_dbQuote($ciniki, $event_id) . "' "
-        . "AND ciniki_event_registrations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-        . "ORDER BY ciniki_customers.last, ciniki_customers.first "
+        . "WHERE registrations.event_id = '" . ciniki_core_dbQuote($ciniki, $event_id) . "' "
+        . "AND registrations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' ";
+    if( $price_id > 0 ) {
+        $strsql .= "AND registrations.price_id = '" . ciniki_core_dbQuote($ciniki, $price_id) . "' ";
+    }
+    $strsql .= "ORDER BY ciniki_customers.last, ciniki_customers.first "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.events', array(
@@ -141,7 +144,7 @@ function ciniki_events_templates_eventIndividualTickets(&$ciniki, $tnid, $event_
                             $phones .= $phone['phone_number'];
                         }
                     }
-                    $objPHPExcelWorksheet->setCellValueByColumnAndRow(2, $row, $phones, false);
+                    $objPHPExcelWorksheet->setCellValueByColumnAndRow(3, $row, $phones, false);
                 }
                 if( isset($customer['emails']) ) {
                     $emails = '';
@@ -149,15 +152,15 @@ function ciniki_events_templates_eventIndividualTickets(&$ciniki, $tnid, $event_
                     foreach($customer['emails'] as $e => $email) {
                         $emails .= ($emails!=''?', ':'') . $email['email']['address'];
                     }
-                    $objPHPExcelWorksheet->setCellValueByColumnAndRow(3, $row, $emails, false);
+                    $objPHPExcelWorksheet->setCellValueByColumnAndRow(4, $row, $emails, false);
                 }
             }
         }
 
         $objPHPExcelWorksheet->setCellValueByColumnAndRow(1, $row, $reg['num_tickets'], false);
-        $objPHPExcelWorksheet->setCellValueByColumnAndRow(1, $row, $reg['name'], false);
-        $objPHPExcelWorksheet->setCellValueByColumnAndRow(4, $row, $reg['status_text'], false);
-        $objPHPExcelWorksheet->setCellValueByColumnAndRow(5, $row, $reg['notes'], false);
+        $objPHPExcelWorksheet->setCellValueByColumnAndRow(2, $row, $reg['name'], false);
+        $objPHPExcelWorksheet->setCellValueByColumnAndRow(5, $row, $reg['status_text'], false);
+        $objPHPExcelWorksheet->setCellValueByColumnAndRow(6, $row, $reg['notes'], false);
         $row++;
     }
 
@@ -166,6 +169,7 @@ function ciniki_events_templates_eventIndividualTickets(&$ciniki, $tnid, $event_
     $objPHPExcelWorksheet->getColumnDimension('C')->setAutoSize(true);
     $objPHPExcelWorksheet->getColumnDimension('D')->setAutoSize(true);
     $objPHPExcelWorksheet->getColumnDimension('E')->setAutoSize(true);
+    $objPHPExcelWorksheet->getColumnDimension('F')->setAutoSize(true);
 
     return array('stat'=>'ok', 'event'=>$event, 'excel'=>$objPHPExcel);
 }

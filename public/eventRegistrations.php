@@ -20,6 +20,7 @@ function ciniki_events_eventRegistrations($ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'event_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Event'), 
+        'price_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Price'), 
         'output'=>array('required'=>'no', 'blank'=>'no', 'default'=>'pdf', 'name'=>'Output Format'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -100,7 +101,7 @@ function ciniki_events_eventRegistrations($ciniki) {
         }
         $fn = $rc['function_call'];
 
-        $rc = $fn($ciniki, $args['tnid'], $args['event_id'], $tenant_details, $events_settings);
+        $rc = $fn($ciniki, $args['tnid'], $args['event_id'], $args['price_id'], $tenant_details, $events_settings);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -126,7 +127,7 @@ function ciniki_events_eventRegistrations($ciniki) {
         }
         $fn = $rc['function_call'];
 
-        $rc = $fn($ciniki, $args['tnid'], $args['event_id'], $tenant_details, $events_settings);
+        $rc = $fn($ciniki, $args['tnid'], $args['event_id'], $args['price_id'], $tenant_details, $events_settings);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }

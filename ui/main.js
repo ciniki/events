@@ -150,6 +150,10 @@ function ciniki_events_main() {
             'prices':{'label':'Prices', 'fn':'M.ciniki_events_main.event.switchTab("prices");',
                 'visible':function() { return M.modOn('ciniki.sapos') ? 'yes' : 'hidden';},
                 },
+// ** NOTE:** In future combine ui/registrations into this UI panel
+//            'tickets':{'label':'Tickets', 'fn':'M.ciniki_events_main.event.switchTab("tickets");',
+//                'visible':function() { return M.modOn('ciniki.sapos') ? 'yes' : 'hidden';},
+//                },
             'links':{'label':'Links', 'fn':'M.ciniki_events_main.event.switchTab("links");'},
             'files':{'label':'Files', 'fn':'M.ciniki_events_main.event.switchTab("files");'},
             'gallery':{'label':'Gallery', 

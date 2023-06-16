@@ -5,10 +5,22 @@ function ciniki_events_registrations() {
     //
     // events panel
     //
-    this.menu = new M.panel('Events', 'ciniki_events_registrations', 'menu', 'mc', 'medium', 'sectioned', 'ciniki.events.registrations.menu');
+    this.menu = new M.panel('Events', 'ciniki_events_registrations', 'menu', 'mc', 'medium narrowaside', 'sectioned', 'ciniki.events.registrations.menu');
     this.menu.event_id = 0;
+    this.menu.price_id = 0;
     this.menu.sections = {
 //          'search':{'label':'', 'type':'livesearch'},
+        'prices':{'label':'Prices', 'type':'simplegrid', 'num_cols':1, 'aside':'yes',
+            },
+        '_buttons':{'label':'', 'aside':'yes', 'buttons':{
+//            'registrationspdf':{'label':'Registration List (PDF)', 'fn':'M.ciniki_courses_registrations.offeringRegistrationsPDF(M.ciniki_courses_registrations.menu.offering_id);'},
+            'registrationsexcel':{'label':'Registration List (Excel)', 'fn':'M.ciniki_events_registrations.menu.excel();'},
+            'individualtickets':{'label':'Tickets List (Excel)', 
+                'visible':function() { return M.modFlagOn('ciniki.events', 0x08); },
+                'fn':'M.ciniki_events_registrations.menu.individualtickets();'},
+            'email':{'label':'Email Customers', 
+                'fn':'M.ciniki_events_registrations.menu.emailCustomers();'},
+            }},
         'registrations':{'label':'Registrations', 'type':'simplegrid', 'num_cols':3,
             'sortable':'yes',
             'sortTypes':['text', 'number', 'text'],
@@ -16,67 +28,99 @@ function ciniki_events_registrations() {
             'addTxt':'Add Registration',
             'addFn':'M.ciniki_events_registrations.edit.addCustomer(\'M.ciniki_events_registrations.menu.open();\',M.ciniki_events_registrations.menu.event_id);',
             },
-        '_buttons':{'label':'', 'buttons':{
-//            'registrationspdf':{'label':'Registration List (PDF)', 'fn':'M.ciniki_courses_registrations.offeringRegistrationsPDF(M.ciniki_courses_registrations.menu.offering_id);'},
-            'registrationsexcel':{'label':'Registration List (Excel)', 'fn':'M.ciniki_events_registrations.menu.excel();'},
-            'individualtickets':{'label':'Tickets List (Excel)', 
-                'visible':function() { return M.modFlagOn('ciniki.events', 0x08); },
-                'fn':'M.ciniki_events_registrations.menu.individualtickets();'},
-            }},
         };
     this.menu.cellValue = function(s, i, j, d) {
-        switch(j) {
-            case 0: return '<span class="maintext">' + d.registration.customer_name + '</span><span class="subtext">' + d.registration.customer_notes + '</span>';
-            case 1: return '<span class="maintext">' + d.registration.num_tickets + '</span>';
-            case 2: 
-                var txt = '';
-                if( (M.curTenant.modules['ciniki.events'].flags&0x04)>0 ) {
-                    txt += '<span class="maintext">' + d.registration.status_text + '</span>';
-                } 
-                if( M.curTenant.modules['ciniki.sapos'] != null ) {
-                    if( txt != '' ) {
-                        txt += '<span class="subtext">' + d.registration.invoice_status_text + '</span>';
-                    } else {
-                        txt += '<span class="maintext">' + d.registration.invoice_status_text + '</span>';
+        if( s == 'prices' ) {
+            return M.textCount(d.label, d.num_tickets);
+        }
+        if( s == 'registrations' ) {
+            switch(j) {
+                case 0: return '<span class="maintext">' + d.customer_name + '</span><span class="subtext">' + d.customer_notes + '</span>';
+                case 1: return '<span class="maintext">' + d.num_tickets + '</span>';
+                case 2: 
+                    var txt = '';
+                    if( (M.curTenant.modules['ciniki.events'].flags&0x04)>0 ) {
+                        txt += '<span class="maintext">' + d.status_text + '</span>';
+                    } 
+                    if( M.curTenant.modules['ciniki.sapos'] != null ) {
+                        if( txt != '' ) {
+                            txt += '<span class="subtext">' + d.invoice_status_text + '</span>';
+                        } else {
+                            txt += '<span class="maintext">' + d.invoice_status_text + '</span>';
+                        }
                     }
-                }
-                return txt;
+                    return txt;
+            }
         }
     };
     this.menu.sectionData = function(s) {
         return this.data[s];
     };
     this.menu.rowFn = function(s, i, d) {
-        return 'M.ciniki_events_registrations.edit.open(\'M.ciniki_events_registrations.menu.open();\',null,null,\'' + d.registration.id + '\');';
+        if( s == 'prices' ) {
+            return 'M.ciniki_events_registrations.menu.selectPrice(' + d.id + ');'; 
+        } 
+        if( s == 'registrations' ) {
+            return 'M.ciniki_events_registrations.edit.open(\'M.ciniki_events_registrations.menu.open();\',null,null,\'' + d.id + '\');';
+        }
     };
-    this.menu.open = function(cb, eid) {
+    this.menu.rowClass = function(s, i, d) {
+        if( d.id == this.price_id ) {
+            return 'highlight';
+        }
+        return '';
+    }
+    this.menu.emailCustomers = function() {
+        var customers = [];
+        for(var i in this.data.registrations) {
+            customers[i] = {
+                'id':this.data.registrations[i].customer_id,
+                'name':this.data.registrations[i].customer_name,
+                };
+        }
+        M.startApp('ciniki.mail.omessage',
+            null,
+            'M.ciniki_events_registrations.menu.open();',
+            'mc',
+            {'subject':'Re: Membership',
+                'list':customers, 
+                'removeable':'yes',
+            });
+    }
+    this.menu.selectPrice = function(id) {
+        this.open(null,null,id);
+    }
+    this.menu.open = function(cb, eid, pid) {
         this.data = {};
         if( eid != null ) { this.event_id = eid; }
-        M.api.getJSONCb('ciniki.events.registrationList', {'tnid':M.curTenantID, 'event_id':this.event_id}, function(rsp) {
-            if( rsp.stat != 'ok' ) {
-                M.api.err(rsp);
-                return false;
-            }
-            M.ciniki_events_registrations.menu.data.registrations = rsp.registrations;
-            if( rsp.registrations.length > 0 ) {
-                M.ciniki_events_registrations.menu.sections.registrations.headerValues = ['Name', 'Tickets', 'Status'];
-            } else {
-                M.ciniki_events_registrations.menu.sections.registrations.headerValues = null;
-            }
-            if( M.curTenant.modules['ciniki.sapos'] != null || (M.curTenant.modules['ciniki.events'].flags&0x04) > 0 ) {
-                M.ciniki_events_registrations.menu.sections.registrations.num_cols = 3;
-            } else {
-                M.ciniki_events_registrations.menu.sections.registrations.num_cols = 2;
-            }
-            M.ciniki_events_registrations.menu.refresh();
-            M.ciniki_events_registrations.menu.show(cb);
-        });
+        if( pid != null ) { this.price_id = pid; }
+        M.api.getJSONCb('ciniki.events.registrationList', {'tnid':M.curTenantID, 
+            'event_id':this.event_id, 'price_id':this.price_id, }, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                var p = M.ciniki_events_registrations.menu;
+                p.data = rsp;
+                if( rsp.registrations.length > 0 ) {
+                    p.sections.registrations.headerValues = ['Name', 'Tickets', 'Status'];
+                } else {
+                    p.sections.registrations.headerValues = null;
+                }
+                if( M.curTenant.modules['ciniki.sapos'] != null || (M.curTenant.modules['ciniki.events'].flags&0x04) > 0 ) {
+                    p.sections.registrations.num_cols = 3;
+                } else {
+                    p.sections.registrations.num_cols = 2;
+                }
+                p.refresh();
+                p.show(cb);
+            });
     };
     this.menu.excel = function() {
-        M.api.openFile('ciniki.events.eventRegistrations', {'tnid':M.curTenantID, 'output':'excel', 'event_id':this.event_id});
+        M.api.openFile('ciniki.events.eventRegistrations', {'tnid':M.curTenantID, 'output':'excel', 'event_id':this.event_id, 'price_id':this.price_id});
     }
     this.menu.individualtickets = function() {
-        M.api.openFile('ciniki.events.eventRegistrations', {'tnid':M.curTenantID, 'output':'exceltickets', 'event_id':this.event_id});
+        M.api.openFile('ciniki.events.eventRegistrations', {'tnid':M.curTenantID, 'output':'exceltickets', 'event_id':this.event_id, 'price_id':this.price_id});
     }
     this.menu.addButton('add', 'Add', 'M.ciniki_events_registrations.edit.addCustomer(\'M.ciniki_events_registrations.menu.open();\',M.ciniki_events_registrations.menu.event_id);');
     this.menu.addClose('Back');
@@ -84,13 +128,13 @@ function ciniki_events_registrations() {
     //
     // The panel for editing a registrant
     //
-    this.edit = new M.panel('Registrant', 'ciniki_events_registrations', 'edit', 'mc', 'medium', 'sectioned', 'ciniki.events.registrations.edit');
+    this.edit = new M.panel('Registrant', 'ciniki_events_registrations', 'edit', 'mc', 'medium mediumaside', 'sectioned', 'ciniki.events.registrations.edit');
     this.edit.data = null;
     this.edit.customer_id = 0;
     this.edit.event_id = 0;
     this.edit.registration_id = 0;
     this.edit.sections = { 
-        'customer_details':{'label':'Customer', 'type':'simplegrid', 'num_cols':2,
+        'customer_details':{'label':'Customer', 'type':'simplegrid', 'num_cols':2, 'aside':'yes',
             'cellClasses':['label',''],
             'addTxt':'Edit',
             'addFn':'M.startApp(\'ciniki.customers.edit\',null,\'M.ciniki_events_registrations.edit.updateCustomer(null);\',\'mc\',{\'next\':\'M.ciniki_events_registrations.edit.updateCustomer\',\'customer_id\':M.ciniki_events_registrations.edit.customer_id});',
@@ -423,6 +467,6 @@ function ciniki_events_registrations() {
             return false;
         } 
 
-        this.menu.open(cb, args.event_id);
+        this.menu.open(cb, args.event_id, 0);
     }
 }

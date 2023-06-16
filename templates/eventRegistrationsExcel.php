@@ -11,7 +11,7 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_events_templates_eventRegistrationsExcel(&$ciniki, $tnid, $event_id, $tenant_details, $events_settings) {
+function ciniki_events_templates_eventRegistrationsExcel(&$ciniki, $tnid, $event_id, $price_id, $tenant_details, $events_settings) {
 
     //
     // Load event maps
@@ -58,20 +58,23 @@ function ciniki_events_templates_eventRegistrationsExcel(&$ciniki, $tnid, $event
     //
     // Load the registrations
     //
-    $strsql = "SELECT ciniki_event_registrations.id, "
-        . "ciniki_event_registrations.customer_id, "
-        . "ciniki_event_registrations.num_tickets, "
-        . "ciniki_event_registrations.status, "
-        . "ciniki_event_registrations.status AS status_text, "
-        . "ciniki_event_registrations.notes "
-        . "FROM ciniki_event_registrations "
+    $strsql = "SELECT registrations.id, "
+        . "registrations.customer_id, "
+        . "registrations.num_tickets, "
+        . "registrations.status, "
+        . "registrations.status AS status_text, "
+        . "registrations.notes "
+        . "FROM ciniki_event_registrations AS registrations "
         . "LEFT JOIN ciniki_customers ON ("
-            . "ciniki_event_registrations.customer_id = ciniki_customers.id "
+            . "registrations.customer_id = ciniki_customers.id "
             . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
-        . "WHERE ciniki_event_registrations.event_id = '" . ciniki_core_dbQuote($ciniki, $event_id) . "' "
-        . "AND ciniki_event_registrations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-        . "ORDER BY ciniki_customers.last, ciniki_customers.first "
+        . "WHERE registrations.event_id = '" . ciniki_core_dbQuote($ciniki, $event_id) . "' "
+        . "AND registrations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' ";
+    if( $price_id > 0 ) {
+        $strsql .= "AND registrations.price_id = '" . ciniki_core_dbQuote($ciniki, $price_id) . "' ";
+    }
+    $strsql .= "ORDER BY ciniki_customers.last, ciniki_customers.first "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.events', array(
