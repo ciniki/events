@@ -77,6 +77,10 @@ function ciniki_events_sapos_itemLookup($ciniki, $tnid, $args) {
             'unit_discount_percentage' => $event['unit_discount_percentage'],
             'description' => $event['description'],
             );
+        if( $event['unit_donation_amount'] > 0 ) {
+            $item['unit_donation_amount'] = $event['unit_donation_amount'];
+            $item['flags'] |= 0x8000;
+        }
         if( isset($args['quantity']) ) {
             $item['quantity'] = $args['quantity'];
         }

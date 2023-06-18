@@ -83,15 +83,20 @@ function ciniki_events_templates_ticketsPDF(&$ciniki, $tnid, $args) {
         $args['pdf']->setTextColor(50);
         $args['pdf']->setFont('times', '', 16);
         $args['pdf']->setCellPaddings(5,1,5,3);
+        $lh = $args['pdf']->getStringHeight(93, isset($ticket['ticket_timedate']) ? $ticket['ticket_timedate'] : '');
+        $lh2 = $args['pdf']->getStringHeight(93, isset($ticket['ticket_location']) ? $ticket['ticket_location'] : '');
+        if( $lh2 > $lh ) {
+            $lh = $lh2;
+        }
         if( isset($ticket['ticket_timedate']) && $ticket['ticket_timedate'] != '' ) {
-            $args['pdf']->Multicell(93, 10, $ticket['ticket_timedate'], 'L', 'L', 0, 0);
+            $args['pdf']->Multicell(93, $lh, $ticket['ticket_timedate'], 'L', 'L', 0, 0);
         } else {
-            $args['pdf']->Multicell(93, 10, '', 'L', 'L', 0, 0);
+            $args['pdf']->Multicell(93, $lh, '', 'L', 'L', 0, 0);
         }
         if( isset($ticket['ticket_location']) && $ticket['ticket_location'] != '' ) {
-            $args['pdf']->Multicell(93, 10, $ticket['ticket_location'], 'R', 'L', 0, 1);
+            $args['pdf']->Multicell(93, $lh, $ticket['ticket_location'], 'R', 'L', 0, 1);
         } else {
-            $args['pdf']->Multicell(93, 10, '', 'R', 'L', 0, 1);
+            $args['pdf']->Multicell(93, $lh, '', 'R', 'L', 0, 1);
         }
 
         if( isset($ticket['num_tickets']) && $ticket['num_tickets'] == 1 ) {
