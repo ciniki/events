@@ -107,6 +107,7 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
                     'notes'=>'',
                     );
                 if( $price['unit_donation_amount'] > 0 ) {
+                    $details['flags'] = 0x0800;
                     $details['unit_donation_amount'] = $price['unit_donation_amount'];
                 }
                 if( $price['name'] != '' ) {
