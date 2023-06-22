@@ -47,6 +47,14 @@ function ciniki_events_priceHistory($ciniki) {
         return $rc;
     }
 
+    if( preg_match("/^webflags([0-9]+)/", $args['field'], $m) ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistoryFlagBit');
+        return ciniki_core_dbGetModuleHistoryFlagBit($ciniki, 'ciniki.events', 'ciniki_event_history', 
+            $args['tnid'], 'ciniki_event_prices', $args['price_id'], 'webflags', pow(2, ($m[1]-1)), 'No', 'Yes');
+            
+
+    }
+
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
     return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.events', 
         'ciniki_event_history', $args['tnid'], 
