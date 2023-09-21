@@ -20,6 +20,18 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
     $date_format = ciniki_users_dateFormat($ciniki);
 
     //
+    // Load the tenant settings
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $intl_timezone = $rc['settings']['intl-default-timezone'];
+    
+    $dt = new DateTime('now', new DateTimezone($intl_timezone));
+
+    //
     // FIXME: Query for the taxes for events
     //
 //  ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
@@ -66,7 +78,10 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
             . ") "
         . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND (ciniki_events.reg_flags&0x03) > 0 "
-        . "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
+//        . "AND (ciniki_events.end_date >= DATE(NOW()) OR ciniki_events.start_date >= DATE(NOW())) "
+        . "AND (ciniki_events.end_date >= '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' "
+            . "OR ciniki_events.start_date >= '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "'"
+            . ") "
         . "HAVING (search_name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . "OR search_name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . ") "
