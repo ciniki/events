@@ -386,6 +386,17 @@ function ciniki_events_main() {
                 + 'r="' + t.diameter + '" '
                 + 'stroke="green" stroke-width="0" '
                 + 'fill="' + ((t.webflags&0x04) == 0x04 ? 'red' : 'blue') + '" />';
+            svg += "<text "
+                + "x='" + t.position_x + "' "
+                + "y='" + t.position_y + "' "
+                + "width='25px' "
+                + "height='25px' "
+                + "fill='#fff' "
+                + "dominant-baseline='middle' "
+                + "text-anchor='middle' "
+                + "class='pricelabel pricelabel-" + t.diameter + "'>" 
+                + t.position_num 
+                + "</text>";
         }
         svg += '</svg>';
 
@@ -635,6 +646,17 @@ function ciniki_events_main() {
                 + 'r="' + t.diameter + '" '
                 + 'stroke="green" stroke-width="0" '
                 + 'fill="' + ((t.webflags&0x04) == 0x04 ? 'red' : 'blue') + '" />';
+            svg += "<text "
+                + "x='" + t.position_x + "' "
+                + "y='" + t.position_y + "' "
+                + "width='25px' "
+                + "height='25px' "
+                + "fill='#fff' "
+                + "dominant-baseline='middle' "
+                + "text-anchor='middle' "
+                + "class='pricelabel pricelabel-" + t.diameter + "'>" 
+                + t.position_num 
+                + "</text>";
         }
         svg += '</svg>';
         svg += '<input id="' + this.panelUID + '_ticketmap1_image_id_upload" class="image_uploader" name="ticketmap1_image_id" type="file" onchange="' + this.panelRef + '.uploadDropImages(\'ticketmap1_image_id\');"/>';
@@ -789,6 +811,17 @@ function ciniki_events_main() {
                 + (t.id != this.price_id ? 'onclick="M.ciniki_events_main.mapticket.switchTicket(' + t.id + ');" ' : '')
 //                + 'fill="' + (s == 'off' ? 'blue' : 'red') + '" />';
                 + 'fill="' + ((t.id == this.price_id && s == 'on') || (t.webflags&0x04) == 0x04 ? 'red' : 'blue') + '" />';
+            svg += "<text "
+                + "x='" + t.position_x + "' "
+                + "y='" + t.position_y + "' "
+                + "width='25px' "
+                + "height='25px' "
+                + "fill='#fff' "
+                + "dominant-baseline='middle' "
+                + "text-anchor='middle' "
+                + "class='pricelabel pricelabel-" + t.diameter + "'>" 
+                + t.position_num 
+                + "</text>";
         }
         svg += '</svg>';
 
