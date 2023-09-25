@@ -812,6 +812,7 @@ function ciniki_events_main() {
 //                + 'fill="' + (s == 'off' ? 'blue' : 'red') + '" />';
                 + 'fill="' + ((t.id == this.price_id && s == 'on') || (t.webflags&0x04) == 0x04 ? 'red' : 'blue') + '" />';
             svg += "<text "
+                + 'id="' + this.panelUID + '_price_' + t.id + '_num" '
                 + "x='" + t.position_x + "' "
                 + "y='" + t.position_y + "' "
                 + "width='25px' "
@@ -845,6 +846,7 @@ function ciniki_events_main() {
             e.stopPropagation();
         }
         var p = M.gE(this.panelUID + '_price_' + this.price_id);
+        var p_num = M.gE(this.panelUID + '_price_' + this.price_id + '_num');
         if( p == null ) {
             var s = M.gE(this.panelUID + '_map_image');
             var p = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -883,6 +885,12 @@ function ciniki_events_main() {
         }
         p.setAttribute("cx", x);
         p.setAttribute("cy", y);
+        console.log('mv');
+        if( p_num != null ) {
+            console.log(p_num);
+            p_num.setAttribute("x", x);
+            p_num.setAttribute("y", y);
+        }
         p.setAttribute("stroke", "green");
         p.setAttribute("stroke-width", "0");
         var f = this.formValue('webflags3');
