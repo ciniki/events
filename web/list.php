@@ -164,6 +164,7 @@ function ciniki_events_web_list($ciniki, $settings, $tnid, $args) {
                 $events[] = array(
                     'title'=>$event['name'], 
                     'subtitle'=>$dates . ' ' . $event['times'],
+                    'subname'=>$dates . ' ' . $event['times'],
                     'image_id'=>$event['image_id'],
                     'synopsis'=>$event['synopsis'],
                     'permalink'=>$event['permalink'],
