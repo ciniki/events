@@ -43,6 +43,21 @@ function ciniki_events_wng_sections(&$ciniki, $tnid, $args) {
 //                'no' => 'No',
 //                'yes' => 'Yes',
 //                )),
+            'image-position'=>array('label'=>'Image Position', 'type'=>'select', 'default'=>'top-right', 'options'=>array(
+                'top-left' => 'Top Left',
+                'top-left-inline' => 'Top Left Inline',
+                'bottom-left' => 'Bottom Left',
+                'top-right' => 'Top Right',
+                'top-right-inline' => 'Top Right Inline',
+                'bottom-right' => 'Bottom Right',
+                )),
+            'image-size'=>array('label'=>'Image Size', 'type'=>'toggle', 'default'=>'half', 'toggles'=>array(
+                'half' => 'Full',
+                'large' => 'Large',
+                'medium' => 'Medium',
+                'small' => 'Small',
+                'tiny' => 'Tiny',
+                )),
             'button-text' => array('label'=>'Link Text', 'type'=>'text'),
             'button-class' => array('label'=>'Link Type', 'type'=>'toggle', 'default'=>'button', 
                 'toggles'=>array(
@@ -61,6 +76,21 @@ function ciniki_events_wng_sections(&$ciniki, $tnid, $args) {
             'include-current' => array('label'=>'Include Current Events', 'type'=>'toggle', 'default'=>'no', 'toggles'=>array(
                 'no' => 'No',
                 'yes' => 'Yes',
+                )),
+            'image-position'=>array('label'=>'Image Position', 'type'=>'select', 'default'=>'top-right', 'options'=>array(
+                'top-left' => 'Top Left',
+                'top-left-inline' => 'Top Left Inline',
+                'bottom-left' => 'Bottom Left',
+                'top-right' => 'Top Right',
+                'top-right-inline' => 'Top Right Inline',
+                'bottom-right' => 'Bottom Right',
+                )),
+            'image-size'=>array('label'=>'Image Size', 'type'=>'toggle', 'default'=>'half', 'toggles'=>array(
+                'half' => 'Full',
+                'large' => 'Large',
+                'medium' => 'Medium',
+                'small' => 'Small',
+                'tiny' => 'Tiny',
                 )),
             'button-text' => array('label'=>'Link Text', 'type'=>'text'),
             'button-class' => array('label'=>'Link Type', 'type'=>'toggle', 'default'=>'button', 

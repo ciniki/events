@@ -118,6 +118,8 @@ function ciniki_events_wng_pastProcess(&$ciniki, $tnid, $request, $section) {
                 'subtitle' => $event['start_date'],
                 'content' => $event['synopsis'],
                 'image-id' => $event['image-id'],
+                'image-position' => isset($s['image-position']) && $s['image-position'] != '' ? $s['image-position'] : '',
+                'image-size' => isset($s['image-size']) && $s['image-size'] != '' ? $s['image-size'] : '',
                 'button-1-text' => isset($s['button-text']) && $s['button-text'] != '' ? $s['button-text'] : 'More info',
                 'button-1-url' => $request['page']['path'] . '/' . $event['permalink'],
                 );
