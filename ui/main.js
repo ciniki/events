@@ -315,7 +315,7 @@ function ciniki_events_main() {
         if( s == 'sponsorships' ) {
             switch(j) {
                 case 0: return d.invoice_date;
-                case 1: return d.display_name;
+                case 1: return d.sponsor_name;
                 case 2: return M.formatDollar(d.total_amount);
             }
         }
@@ -348,7 +348,11 @@ function ciniki_events_main() {
             return 'M.startApp(\'ciniki.sponsors.ref\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'ref_id\':\'' + d.sponsor.ref_id + '\'});';
         }
         if( s == 'sponsorships' ) {
-            return 'event.stopPropagation();M.startApp(\'ciniki.sponsors.main\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'sponsorship_id\':\'' + d.id + '\'});';
+//            return 'event.stopPropagation();M.startApp(\'ciniki.sapos.invoice\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'invoice_id\':\'' + d.invoice_id + '\'});';
+            if( d.sponsor_id > 0 ) {
+                return 'event.stopPropagation();M.startApp(\'ciniki.sponsors.main\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'sponsor_id\':\'' + d.sponsor_id + '\'});';
+            } 
+            return '';
         }
         if( s == 'sponsorshippackages' ) {
             return 'event.stopPropagation();M.startApp(\'ciniki.sponsors.settings\',null,\'M.ciniki_events_main.event.open();\',\'mc\',{\'package_id\':\'' + d.id + '\'});';
