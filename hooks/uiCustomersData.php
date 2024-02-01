@@ -89,6 +89,7 @@ function ciniki_events_hooks_uiCustomersData($ciniki, $tnid, $args) {
     $rsp['tabs'][] = array(
         'id' => 'ciniki.events.registrations',
         'label' => 'Events',
+        'priority' => 3000,
         'sections' => $sections,
         );
     $sections = array();
