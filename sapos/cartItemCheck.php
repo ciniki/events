@@ -18,6 +18,7 @@ function ciniki_events_sapos_cartItemCheck($ciniki, $tnid, $customer, $args) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.83', 'msg'=>'No event specified.'));
     }
 
+    error_log(print_r($args,true));
     //
     // Lookup the requested event if specified along with a price_id
     //
@@ -97,6 +98,12 @@ function ciniki_events_sapos_cartItemCheck($ciniki, $tnid, $customer, $args) {
             }
         }
 
+        return array('stat'=>'ok');
+    }
+    //
+    // This happens when event registrations is added via Ciniki Manager
+    //
+    if( $args['object'] == 'ciniki.events.registration' && isset($args['price_id']) && $args['price_id'] > 0 ) {
         return array('stat'=>'ok');
     }
 
