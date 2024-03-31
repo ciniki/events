@@ -18,7 +18,6 @@ function ciniki_events_sapos_cartItemCheck($ciniki, $tnid, $customer, $args) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.83', 'msg'=>'No event specified.'));
     }
 
-    error_log(print_r($args,true));
     //
     // Lookup the requested event if specified along with a price_id
     //
