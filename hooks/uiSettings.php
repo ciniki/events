@@ -24,7 +24,7 @@ function ciniki_events_hooks_uiSettings($ciniki, $tnid, $args) {
     //
     if( isset($ciniki['tenant']['modules']['ciniki.events'])
         && (isset($args['permissions']['owners'])
-            || isset($args['permissions']['employees'])
+            || isset($args['permissions']['ciniki.events'])
             || isset($args['permissions']['resellers'])
             || ($ciniki['session']['user']['perms']&0x01) == 0x01
             )
