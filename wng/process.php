@@ -36,6 +36,12 @@ function ciniki_events_wng_process(&$ciniki, $tnid, &$request, $section) {
     } elseif( $section['ref'] == 'ciniki.events.past' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'wng', 'pastProcess');
         return ciniki_events_wng_pastProcess($ciniki, $tnid, $request, $section);
+    } elseif( $section['ref'] == 'ciniki.events.eventprices' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'wng', 'eventPricesProcess');
+        return ciniki_events_wng_eventPricesProcess($ciniki, $tnid, $request, $section);
+    } elseif( $section['ref'] == 'ciniki.events.eventbuytickets' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'wng', 'eventBuyTicketsProcess');
+        return ciniki_events_wng_eventBuyTicketsProcess($ciniki, $tnid, $request, $section);
     }
 
     return array('stat'=>'ok');

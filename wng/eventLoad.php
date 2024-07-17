@@ -61,9 +61,13 @@ function ciniki_events_wng_eventLoad($ciniki, $tnid, $request, $permalink) {
             . "AND ciniki_event_images.image_id > 0 "
             . "AND (ciniki_event_images.webflags&0x01) = 0 "
             . ") "
-        . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-        . "AND ciniki_events.permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' "
-        . "AND (ciniki_events.flags&0x01) = 0x01 "
+        . "WHERE ciniki_events.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' ";
+    if( is_numeric($permalink) ) {
+        $strsql .= "AND ciniki_events.id = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' ";
+    } else {
+        $strsql .= "AND ciniki_events.permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' ";
+    }
+    $strsql .= "AND (ciniki_events.flags&0x01) = 0x01 "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artclub', array(
