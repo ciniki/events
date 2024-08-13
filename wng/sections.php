@@ -75,6 +75,10 @@ function ciniki_events_wng_sections(&$ciniki, $tnid, $args) {
 //                'no' => 'No',
 //                'yes' => 'Yes',
 //                )),
+            'layout' => array('label'=>'Format', 'type'=>'select', 'options'=>array(
+                'tradingcards' => 'Trading Cards',
+                'contentphoto' => 'Text & Photo',
+                )),
             'image-position'=>array('label'=>'Image Position', 'type'=>'select', 'default'=>'top-right', 'options'=>array(
                 'top-left' => 'Top Left',
                 'top-left-inline' => 'Top Left Inline',

@@ -77,7 +77,7 @@ function ciniki_events_wng_upcomingProcess(&$ciniki, $tnid, $request, $section) 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
         array('container'=>'events', 'fname'=>'permalink', 
-            'fields'=>array('id', 'name', 'permalink', 'flags', 'synopsis', 'start_date', 'end_date', 'times', 
+            'fields'=>array('id', 'title'=>'name', 'permalink', 'flags', 'synopsis', 'subtitle'=>'start_date', 'end_date', 'times', 
                 'image-id'=>'primary_image_id'),
             ),
         ));
@@ -95,7 +95,13 @@ function ciniki_events_wng_upcomingProcess(&$ciniki, $tnid, $request, $section) 
         ) {
         $request['cur_uri_pos']++;
         ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'wng', 'eventProcess');
-        return ciniki_events_wng_eventProcess($ciniki, $tnid, $request, $section);
+        $rc = ciniki_events_wng_eventProcess($ciniki, $tnid, $request, $section);
+        if( $rc['stat'] == 'ok' ) {
+            $rc['stop'] = 'yes';
+            $rc['clear'] = 'yes';
+            $rc['url_found'] = 'yes';   // Stop 404 errors from home page
+        }
+        return $rc;
     }
 
     //
@@ -112,18 +118,29 @@ function ciniki_events_wng_upcomingProcess(&$ciniki, $tnid, $request, $section) 
             'type' => 'text',
             'content' => 'No upcoming events',
             );
+    } elseif( isset($s['layout']) && $s['layout'] == 'tradingcards' ) {
+        foreach($events as $eid => $event) {
+            $events[$eid]['button-class'] = 'button';
+            $events[$eid]['button-1-text'] = 'More Info';
+            $events[$eid]['button-1-url'] = ($request['page']['path'] != '/' ? $request['page']['path'] : '') . '/' . $event['permalink'];
+        }
+        $blocks[] = array(
+            'type' => 'tradingcards',
+            'image-ratio' => '1-1',
+            'items' => $events,
+            );
     } else {
         foreach($events as $event) {
             $blocks[] = array(
                 'type' => 'contentphoto',
-                'title' => $event['name'],
-                'subtitle' => $event['start_date'],
+                'title' => $event['title'],
+                'subtitle' => $event['subtitle'],
                 'content' => $event['synopsis'],
                 'image-id' => $event['image-id'],
                 'image-position' => isset($s['image-position']) && $s['image-position'] != '' ? $s['image-position'] : '',
                 'image-size' => isset($s['image-size']) && $s['image-size'] != '' ? $s['image-size'] : '',
                 'button-1-text' => isset($s['button-text']) && $s['button-text'] != '' ? $s['button-text'] : 'More info',
-                'button-1-url' => $request['page']['path'] . '/' . $event['permalink'],
+                'button-1-url' => ($request['page']['path'] != '/' ? $request['page']['path'] : '') . '/' . $event['permalink'],
                 );
         }
     }
