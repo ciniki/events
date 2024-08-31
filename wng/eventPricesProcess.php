@@ -29,8 +29,6 @@ function ciniki_events_wng_eventPricesProcess(&$ciniki, $tnid, &$request, $secti
         return $rc;
     }
     $intl_timezone = $rc['settings']['intl-default-timezone'];
-    $intl_currency_fmt = numfmt_create($rc['settings']['intl-default-locale'], NumberFormatter::CURRENCY);
-    $intl_currency = $rc['settings']['intl-default-currency'];
     $dt = new DateTime('now', new DateTimezone($intl_timezone));
 
     //
