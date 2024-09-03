@@ -105,7 +105,7 @@ function ciniki_events_registrationGet($ciniki) {
                 . ") "
             . "WHERE prices.event_id = '" . ciniki_core_dbQuote($ciniki, $registration['event_id']) . "' "
             . "AND (prices.webflags&0x08) = 0 "   // Skip mapped ticket prices
-            . "ORDER BY prices.name COLLATE latin1_general_cs "
+            . "ORDER BY prices.name "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.events', array(

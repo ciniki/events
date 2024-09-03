@@ -69,7 +69,7 @@ function ciniki_events_eventList($ciniki) {
             . "WHERE ciniki_event_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_event_tags.tag_type = '10' "
             . "GROUP BY ciniki_event_tags.permalink "
-            . "ORDER BY ciniki_event_tags.tag_name COLLATE latin1_general_cs "
+            . "ORDER BY ciniki_event_tags.tag_name "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
         $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(

@@ -54,7 +54,7 @@ function ciniki_events_tagList($ciniki) {
         . "FROM ciniki_event_tags "
         . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
-        . "ORDER BY tag_name COLLATE latin1_general_cs "
+        . "ORDER BY tag_name "
         . "";
     $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
         array('container'=>'tags', 'fname'=>'tag_name', 'name'=>'tag',

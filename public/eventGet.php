@@ -254,7 +254,7 @@ function ciniki_events_eventGet($ciniki) {
                 . "WHERE prices.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
                 . "AND (prices.webflags&0x08) = 0 "   // Skip mapped ticket prices
                 . "GROUP BY prices.id "
-                . "ORDER BY prices.name COLLATE latin1_general_cs "
+                . "ORDER BY prices.name "
                 . "";
             $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.events', array(
                 array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
@@ -292,7 +292,7 @@ function ciniki_events_eventGet($ciniki) {
                 . "FROM ciniki_event_prices "
                 . "WHERE ciniki_event_prices.event_id = '" . ciniki_core_dbQuote($ciniki, $args['event_id']) . "' "
                 . "AND (ciniki_event_prices.webflags&0x08) = 0x08 "
-                . "ORDER BY ciniki_event_prices.name COLLATE latin1_general_cs "
+                . "ORDER BY ciniki_event_prices.name "
                 . "";
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
             $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.events', array(
