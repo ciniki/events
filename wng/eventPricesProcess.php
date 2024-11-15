@@ -74,20 +74,10 @@ function ciniki_events_wng_eventPricesProcess(&$ciniki, $tnid, &$request, $secti
             );
     }
 
-    $blocks[] = array(
-        'type' => 'html',
-        'html' => '<pre>' . print_r($rc, true) . '</pre>',
-        );
-
-    return array('stat'=>'ok', 'blocks'=>$blocks);
-
-
-
-
-
-
-
-//    $blocks[] = array('type'=>'html', 'html'=>'<pre>' . print_r($request, true) . '</pre>');
+//    $blocks[] = array(
+//        'type' => 'html',
+//        'html' => '<pre>' . print_r($rc, true) . '</pre>',
+//        );
 
     return array('stat'=>'ok', 'blocks'=>$blocks);
 }
