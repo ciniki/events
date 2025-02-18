@@ -75,7 +75,7 @@ function ciniki_events_wng_pastProcess(&$ciniki, $tnid, $request, $section) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
         array('container'=>'events', 'fname'=>'permalink', 
-            'fields'=>array('id', 'name', 'permalink', 'flags', 'synopsis', 'start_date', 'end_date', 'times', 
+            'fields'=>array('id', 'title'=>'name', 'permalink', 'flags', 'synopsis', 'start_date', 'end_date', 'times', 
                 'image-id'=>'primary_image_id'),
             ),
         ));
@@ -110,11 +110,22 @@ function ciniki_events_wng_pastProcess(&$ciniki, $tnid, $request, $section) {
             'type' => 'text',
             'content' => 'No upcoming events',
             );
+    } elseif( isset($s['layout']) && $s['layout'] == 'tradingcards' ) {
+        foreach($events as $eid => $event) {
+            $events[$eid]['button-class'] = 'button';
+            $events[$eid]['button-1-text'] = 'More Info';
+            $events[$eid]['button-1-url'] = ($request['page']['path'] != '/' ? $request['page']['path'] : '') . '/' . $event['permalink'];
+        }
+        $blocks[] = array(
+            'type' => 'tradingcards',
+            'image-ratio' => '1-1',
+            'items' => $events,
+            );
     } else {
         foreach($events as $event) {
             $blocks[] = array(
                 'type' => 'contentphoto',
-                'title' => $event['name'],
+                'title' => $event['title'],
                 'subtitle' => $event['start_date'],
                 'content' => $event['synopsis'],
                 'image-id' => $event['image-id'],
