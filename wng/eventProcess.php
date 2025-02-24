@@ -92,6 +92,7 @@ function ciniki_events_wng_eventProcess(&$ciniki, $tnid, $request, $section) {
         $blocks[] = array(
             'type' => 'image',
             'title' => $event['name'] . ($image['title'] != '' ? ' - ' . $image['title'] : ''),
+            'content' => isset($image['description']) ? $image['description'] : $image['description'],
             'image-id' => $image['image-id'],
             'image-list' => $event['images'],
             'image-permalink' => $image['permalink'],
