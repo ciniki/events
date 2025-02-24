@@ -123,6 +123,7 @@ function ciniki_events_wng_upcomingProcess(&$ciniki, $tnid, $request, $section) 
             $events[$eid]['button-class'] = 'button';
             $events[$eid]['button-1-text'] = 'More Info';
             $events[$eid]['button-1-url'] = ($request['page']['path'] != '/' ? $request['page']['path'] : '') . '/' . $event['permalink'];
+            $events[$eid]['url'] = ($request['page']['path'] != '/' ? $request['page']['path'] : '') . '/' . $event['permalink'];
         }
         $blocks[] = array(
             'type' => 'tradingcards',

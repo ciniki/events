@@ -10,7 +10,7 @@
 // Returns
 // -------
 //
-function ciniki_events_wng_pastProcess(&$ciniki, $tnid, $request, $section) {
+function ciniki_events_wng_pastYearsProcess(&$ciniki, $tnid, $request, $section) {
 
     if( !isset($ciniki['tenant']['modules']['ciniki.events']) ) {
         return array('stat'=>'404', 'err'=>array('code'=>'ciniki.events.109', 'msg'=>"I'm sorry, the page you requested does not exist."));
@@ -50,13 +50,14 @@ function ciniki_events_wng_pastProcess(&$ciniki, $tnid, $request, $section) {
     $dt = new DateTime('now', new DateTimezone($intl_timezone));
 
     //
-    // Get the upcoming and current (optional) events
+    // Get the years we have events for
     //
     $strsql = "SELECT events.id, "
         . "events.name, "
         . "events.permalink, "
         . "events.flags, "
         . "events.description AS synopsis, "
+        . "DATE_FORMAT(events.start_date, '%Y') AS year, "
         . "DATE_FORMAT(events.start_date, '%a %b %e, %Y') AS start_date, "
         . "DATE_FORMAT(events.end_date, '%a %b %e, %Y') AS end_date, "
         . "events.times, "
@@ -77,6 +78,9 @@ function ciniki_events_wng_pastProcess(&$ciniki, $tnid, $request, $section) {
     $strsql .= "ORDER BY events.start_date DESC, events.name ";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(
+        array('container'=>'years', 'fname'=>'year', 
+            'fields'=>array('year'),
+            ),
         array('container'=>'events', 'fname'=>'permalink', 
             'fields'=>array('id', 'title'=>'name', 'permalink', 'flags', 'synopsis', 'start_date', 'end_date', 'times', 
                 'image-id'=>'primary_image_id'),
@@ -85,67 +89,63 @@ function ciniki_events_wng_pastProcess(&$ciniki, $tnid, $request, $section) {
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.events.108', 'msg'=>'Unable to load events', 'err'=>$rc['err']));
     }
-    $events = isset($rc['events']) ? $rc['events'] : array();
+    $years = isset($rc['years']) ? $rc['years'] : array();
 
-    //
-    // Check for event request
-    //
-    if( isset($request['uri_split'][($request['cur_uri_pos']+1)])
-        && $request['uri_split'][($request['cur_uri_pos']+1)] != '' 
-        && isset($events[$request['uri_split'][($request['cur_uri_pos']+1)]])
-        ) {
-        $request['cur_uri_pos']++;
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'wng', 'eventProcess');
-        return ciniki_events_wng_eventProcess($ciniki, $tnid, $request, $section);
+    foreach($years as $yid => $year) {
+        $years[$yid]['image-id'] = 0;
+        foreach($year['events'] as $event) {
+            if( $years[$yid]['image-id'] == 0 && $event['image-id'] > 0 ) {
+                $years[$yid]['image-id'] = $event['image-id'];
+            }
+            $years[$yid]['url'] = $request['page']['path'] . '/' . $yid;
+            $years[$yid]['button-1-url'] = $request['page']['path'] . '/' . $yid;
+            $years[$yid]['button-1-text'] = 'More Info';
+            $years[$yid]['title'] = $yid;
+
+
+            //
+            // Check for event request
+            //
+            if( isset($request['uri_split'][($request['cur_uri_pos']+1)])
+                && $request['uri_split'][($request['cur_uri_pos']+1)] == $yid 
+                ) {
+                $request['cur_uri_pos']++;
+                $request['page']['path'] .= '/' . $yid;
+                $section['settings']['year'] = $yid;
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'events', 'wng', 'pastProcess');
+                $rc = ciniki_events_wng_pastProcess($ciniki, $tnid, $request, $section);
+                return array('stat'=>'ok', 'blocks'=>$rc['blocks'], 'stop'=>'yes', 'clear'=>'yes');
+            }
+            
+        }
     }
 
     //
-    // Display list of events
+    // Display list of years
     //
     if( isset($s['title']) && $s['title'] != '' ) {
-        if( isset($s['year']) && $s['year'] != '' ) {
-            $blocks[] = array(
-                'type' => 'title',
-                'title' => $s['title'] . ' - ' . $s['year'],
-                );
-        } else {
-            $blocks[] = array(
-                'type' => 'title',
-                'title' => $s['title'],
-                );
-        }
+        $blocks[] = array(
+            'type' => 'title',
+            'title' => $s['title'],
+            );
     }
-    if( count($events) <= 0 ) {
+    if( count($years) <= 0 ) {
         $blocks[] = array(
             'type' => 'text',
-            'content' => 'No upcoming events',
-            );
-    } elseif( isset($s['layout']) && $s['layout'] == 'tradingcards' ) {
-        foreach($events as $eid => $event) {
-            $events[$eid]['button-class'] = 'button';
-            $events[$eid]['button-1-text'] = 'More Info';
-            $events[$eid]['button-1-url'] = ($request['page']['path'] != '/' ? $request['page']['path'] : '') . '/' . $event['permalink'];
-            $events[$eid]['url'] = ($request['page']['path'] != '/' ? $request['page']['path'] : '') . '/' . $event['permalink'];
-        }
-        $blocks[] = array(
-            'type' => 'tradingcards',
-            'image-ratio' => '1-1',
-            'items' => $events,
+            'content' => 'No past events',
             );
     } else {
-        foreach($events as $event) {
-            $blocks[] = array(
-                'type' => 'contentphoto',
-                'title' => $event['title'],
-                'subtitle' => $event['start_date'],
-                'content' => $event['synopsis'],
-                'image-id' => $event['image-id'],
-                'image-position' => isset($s['image-position']) && $s['image-position'] != '' ? $s['image-position'] : '',
-                'image-size' => isset($s['image-size']) && $s['image-size'] != '' ? $s['image-size'] : '',
-                'button-1-text' => isset($s['button-text']) && $s['button-text'] != '' ? $s['button-text'] : 'More info',
-                'button-1-url' => $request['page']['path'] . '/' . $event['permalink'],
-                );
-        }
+        $blocks[] = array(
+            'type' => 'buttons',
+            'class' => 'aligncenter',
+            'image-ratio' => '1-1',
+            'items' => $years,
+            );
+/*        $blocks[] = array(
+            'type' => 'tradingcards',
+            'image-ratio' => '1-1',
+            'items' => $years,
+            ); */
     }
 
     return array('stat'=>'ok', 'blocks'=>$blocks);
