@@ -72,6 +72,11 @@ function ciniki_events_wng_pastYearsProcess(&$ciniki, $tnid, $request, $section)
         $strsql .= "AND events.start_date < '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
         $strsql .= "AND events.end_date < '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
     }
+    if( isset($s['limit-years']) && is_numeric($s['limit-years']) && $s['limit-years'] > 0 ) {
+        $year = clone $dt;
+        $year->sub(new DateInterval('P' . intval($s['limit-years']) . 'Y'));
+        $strsql .= "AND YEAR(events.start_date) <= '" . ciniki_core_dbQuote($ciniki, $year->format('Y')) . "' ";
+    }
     if( isset($s['year']) && $s['year'] != '' ) {
         $strsql .= "AND YEAR(events.start_date) = '" . ciniki_core_dbQuote($ciniki, $s['year']) . "' ";
     }

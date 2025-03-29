@@ -74,6 +74,11 @@ function ciniki_events_wng_pastProcess(&$ciniki, $tnid, $request, $section) {
     if( isset($s['year']) && $s['year'] != '' ) {
         $strsql .= "AND YEAR(events.start_date) = '" . ciniki_core_dbQuote($ciniki, $s['year']) . "' ";
     }
+    elseif( isset($s['limit-years']) && is_numeric($s['limit-years']) && $s['limit-years'] > 0 ) {
+        $year = clone $dt;
+        $year->sub(new DateInterval('P' . intval($s['limit-years']) . 'Y'));
+        $strsql .= "AND YEAR(events.start_date) > '" . ciniki_core_dbQuote($ciniki, $year->format('Y')) . "' ";
+    }
     $strsql .= "ORDER BY events.start_date DESC, events.name ";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.events', array(

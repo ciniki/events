@@ -113,6 +113,14 @@ function ciniki_events_wng_sections(&$ciniki, $tnid, $args) {
                 'no' => 'No',
                 'yes' => 'Yes',
                 )),
+            'limit-years' => array('label'=>'Limit Years', 'type'=>'toggle', 'default'=>'no', 'toggles'=>array(
+                '0' => 'No Limit',
+                '1' => '1 Year',
+                '2' => '2 Years',
+                '3' => '3 Years',
+                '4' => '4 Years',
+                '5' => '5 Years',
+                )),
             'layout' => array('label'=>'Format', 'type'=>'select', 'options'=>array(
                 'tradingcards' => 'Trading Cards',
                 'contentphoto' => 'Text & Photo',
@@ -149,6 +157,14 @@ function ciniki_events_wng_sections(&$ciniki, $tnid, $args) {
             'include-current' => array('label'=>'Include Current Events', 'type'=>'toggle', 'default'=>'no', 'toggles'=>array(
                 'no' => 'No',
                 'yes' => 'Yes',
+                )),
+            'limit-years' => array('label'=>'Years Old', 'type'=>'toggle', 'default'=>'no', 'toggles'=>array(
+                '0' => 'All Years',
+                '1' => '1 Year',
+                '2' => '2 Years',
+                '3' => '3 Years',
+                '4' => '4 Years',
+                '5' => '5 Years',
                 )),
             'layout' => array('label'=>'Format', 'type'=>'select', 'options'=>array(
                 'tradingcards' => 'Trading Cards',
