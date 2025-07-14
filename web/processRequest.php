@@ -194,6 +194,7 @@ function ciniki_events_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             return $rc;
         }
         $event = $rc['event'];
+        $page['article-class'] = 'ciniki-events ciniki-event';
     
 //        $page['title'] = $module_title;
 //        $page['breadcrumbs'][] = array('name'=>$module_title, 'url'=>$args['base_url']);
