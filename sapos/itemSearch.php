@@ -30,6 +30,7 @@ function ciniki_events_sapos_itemSearch($ciniki, $tnid, $args) {
     $intl_timezone = $rc['settings']['intl-default-timezone'];
     
     $dt = new DateTime('now', new DateTimezone($intl_timezone));
+    $dt->sub(new DateInterval('P30D'));
 
     //
     // FIXME: Query for the taxes for events
