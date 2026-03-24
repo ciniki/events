@@ -64,10 +64,10 @@ function ciniki_events_templates_ticketsPDF(&$ciniki, $tnid, $args) {
                 $ir = $w/$h;    // image ratio
                 $ar = 176/40;   // Available ratio
                 if( $ar < $ir ) {
-                    $args['pdf']->Image('@'.$image->getImageBlob(), '', '', 186, 0, 'JPEG', '', 'C', 2, '150');
+                    $args['pdf']->Image('@'.$image->getImageBlob(), '', '', 186, 0, '', '', 'C', 2, '150');
                 } else {    
                     $new_width = ($w*40)/$h;
-                    $args['pdf']->Image('@'.$image->getImageBlob(), PDF_MARGIN_LEFT + 5 + ((176-$new_width)/2), ($args['pdf']->getY() + 5), $new_width, 40, 'JPEG', '', 'C', 2, '150');
+                    $args['pdf']->Image('@'.$image->getImageBlob(), PDF_MARGIN_LEFT + 5 + ((176-$new_width)/2), ($args['pdf']->getY() + 5), $new_width, 40, '', '', 'C', 2, '150');
                     $args['pdf']->Cell(186, 45, '', 'TLR', 1);
                 }
             }
