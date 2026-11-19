@@ -69,7 +69,7 @@ function ciniki_events_wng_eventLoad($ciniki, $tnid, $request, $permalink) {
         $strsql .= "AND ciniki_events.permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' ";
     }
     $strsql .= "AND (ciniki_events.flags&0x01) = 0x01 "
-        . "ORDER BY ciniki_events.id, ciniki_event_images.title, ciniki_event_images.date_added "
+        . "ORDER BY ciniki_events.id, ciniki_event_images.name, ciniki_event_images.date_added "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artclub', array(
